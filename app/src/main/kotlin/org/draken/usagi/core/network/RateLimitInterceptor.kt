@@ -23,7 +23,12 @@ class RateLimitInterceptor : Interceptor {
 	}
 
 	private fun String.parseRetryAfter(): Long {
-		return toLongOrNull()?.let { TimeUnit.SECONDS.toMillis(it) }
-			?: ZonedDateTime.parse(this, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toEpochMilli()
+		return toLongOrNull()?.let { TimeUnit.SECONDS.toMillis(it) } ?: runCatching {
+			ZonedDateTime.parse(this, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toEpochMilli()
+		}.getOrDefault(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(DEFAULT_RETRY_SECONDS))
+	}
+
+	private companion object {
+		const val DEFAULT_RETRY_SECONDS = 5L
 	}
 }

@@ -15,6 +15,7 @@ import com.davemorrissey.labs.subscaleview.decoder.SkiaPooledImageRegionDecoder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.sync.Mutex
@@ -50,12 +51,12 @@ class EdgeDetector(private val context: Context) {
 					)
 
 					try {
-						val edges = coroutineScope {
+						val edges = supervisorScope {
 							listOf(
-								async { detectLeftRightEdge(fullBitmap, size, sampleSize, isLeft = true) },
-								async { detectTopBottomEdge(fullBitmap, size, sampleSize, isTop = true) },
-								async { detectLeftRightEdge(fullBitmap, size, sampleSize, isLeft = false) },
-								async { detectTopBottomEdge(fullBitmap, size, sampleSize, isTop = false) },
+								async { runCatching { detectLeftRightEdge(fullBitmap, size, sampleSize, isLeft = true) }.getOrDefault(-1) },
+								async { runCatching { detectTopBottomEdge(fullBitmap, size, sampleSize, isTop = true) }.getOrDefault(-1) },
+								async { runCatching { detectLeftRightEdge(fullBitmap, size, sampleSize, isLeft = false) }.getOrDefault(-1) },
+								async { runCatching { detectTopBottomEdge(fullBitmap, size, sampleSize, isTop = false) }.getOrDefault(-1) },
 							).awaitAll()
 						}
 						var hasEdges = false

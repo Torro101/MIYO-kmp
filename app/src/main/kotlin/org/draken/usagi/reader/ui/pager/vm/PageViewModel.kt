@@ -79,6 +79,12 @@ class PageViewModel(
 		job?.cancel()
 	}
 
+	fun evictFromMemory() {
+		state.value = PageState.Empty
+		cachedBounds = null
+		job?.cancel()
+	}
+
 	override fun onImageLoaded() {
 		state.update { currentState ->
 			if (currentState is PageState.Loaded) {

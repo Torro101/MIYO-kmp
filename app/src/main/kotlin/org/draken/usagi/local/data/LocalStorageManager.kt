@@ -33,9 +33,9 @@ import javax.inject.Inject
 
 private const val DIR_NAME = "manga"
 private const val NOMEDIA = ".nomedia"
-private const val CACHE_DISK_PERCENTAGE = 0.02
-private const val CACHE_SIZE_MIN: Long = 10 * 1024 * 1024 // 10MB
-private const val CACHE_SIZE_MAX: Long = 250 * 1024 * 1024 // 250MB
+private const val CACHE_DISK_PERCENTAGE = 0.05
+private const val CACHE_SIZE_MIN: Long = 20 * 1024 * 1024 // 20MB
+private const val CACHE_SIZE_MAX: Long = 500 * 1024 * 1024 // 500MB
 
 @Reusable
 class LocalStorageManager @Inject constructor(

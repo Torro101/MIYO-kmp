@@ -142,7 +142,19 @@ abstract class BasePageHolder<B : ViewBinding>(
 	}
 
 	override fun onTrimMemory(level: Int) {
-		// TODO
+		when (level) {
+			ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE,
+			ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
+			ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL,
+			ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
+				ssiv.recycle()
+			}
+			ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
+			ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
+				ssiv.recycle()
+				viewModel.evictFromMemory()
+			}
+		}
 	}
 
 	override fun onConfigurationChanged(newConfig: Configuration) = Unit

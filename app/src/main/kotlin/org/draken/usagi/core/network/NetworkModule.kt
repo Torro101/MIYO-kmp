@@ -69,6 +69,7 @@ interface NetworkModule {
 			connectTimeout(20, TimeUnit.SECONDS)
 			readTimeout(60, TimeUnit.SECONDS)
 			writeTimeout(20, TimeUnit.SECONDS)
+			connectionPool(okhttp3.ConnectionPool(20, 10, TimeUnit.MINUTES))
 			cookieJar(cookieJar)
 			proxySelector(proxyProvider.selector)
 			proxyAuthenticator(proxyProvider.authenticator)

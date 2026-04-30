@@ -45,6 +45,26 @@ object BitmapDecoderCompat {
 		if (format == FORMAT_AVIF) {
 			return decodeAvif(stream.toByteBuffer())
 		}
+
+		// Attempt native JPEG decode for performance (2-6x faster)
+		if (format == "jpeg" || format == "jpg" || type == null) {
+			val bytes = stream.readBytes()
+			val nativeResult = tryNativeJpegDecode(bytes)
+			if (nativeResult != null) {
+				return nativeResult
+			}
+			// Fall back to standard decoders with the bytes we already read
+			val byteBuffer = ByteBuffer.wrap(bytes)
+			return if (AvifDecoder.isAvifImage(byteBuffer)) {
+				decodeAvif(byteBuffer)
+			} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+				ImageDecoder.decodeBitmap(ImageDecoder.createSource(byteBuffer), DecoderConfigListener(isMutable))
+			} else {
+				val opts = BitmapFactory.Options().apply { inMutable = isMutable }
+				checkBitmapNotNull(BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts), format)
+			}
+		}
+
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
 			val opts = BitmapFactory.Options()
 			opts.inMutable = isMutable
@@ -56,6 +76,13 @@ object BitmapDecoderCompat {
 		} else {
 			ImageDecoder.decodeBitmap(ImageDecoder.createSource(byteBuffer), DecoderConfigListener(isMutable))
 		}
+	}
+
+	private fun tryNativeJpegDecode(data: ByteArray): Bitmap? {
+		if (!NativeJpegDecoder.isAvailable) return null
+		return runCatchingCancellable {
+			NativeJpegDecoder.decodeJpegWithFallback(data)
+		}.getOrNull()
 	}
 
 	@Blocking
