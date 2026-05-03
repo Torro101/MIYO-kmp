@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.hilt.work.HiltWorker
@@ -27,15 +28,15 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.internal.closeQuietly
@@ -47,14 +48,12 @@ import org.draken.usagi.R
 import org.draken.usagi.core.image.BitmapDecoderCompat
 import org.draken.usagi.core.model.ids
 import org.draken.usagi.core.model.isLocal
+import org.draken.usagi.core.nativeio.NativeImageProbe
 import org.draken.usagi.core.network.MangaHttpClient
 import org.draken.usagi.core.network.imageproxy.ImageProxyInterceptor
 import org.draken.usagi.core.parser.MangaDataRepository
 import org.draken.usagi.core.parser.MangaRepository
-<<<<<<< HEAD
-=======
 import org.draken.usagi.core.parser.MirrorSwitcher
->>>>>>> abd49974e6e6c21783ada6501e12b3446c988ec6
 import org.draken.usagi.core.prefs.AppSettings
 import org.draken.usagi.core.util.MimeTypes
 import org.draken.usagi.core.util.Throttler
@@ -91,22 +90,22 @@ import org.draken.usagi.local.domain.model.LocalManga
 import org.koitharu.kotatsu.parsers.exception.TooManyRequestExceptions
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.model.MangaChapter
+import org.koitharu.kotatsu.parsers.model.MangaPage
 import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koitharu.kotatsu.parsers.util.ifNullOrEmpty
 import org.koitharu.kotatsu.parsers.util.mapToSet
 import org.koitharu.kotatsu.parsers.util.requireBody
 import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
-import org.draken.usagi.reader.domain.PageLoader
-<<<<<<< HEAD
-=======
 import org.draken.usagi.download.domain.DownloadParallelismManager
 import org.draken.usagi.download.domain.SmartDownloadQueue
 import org.draken.usagi.download.domain.analytics.DownloadAnalytics
->>>>>>> abd49974e6e6c21783ada6501e12b3446c988ec6
+import org.draken.usagi.reader.domain.PageLoader
+import org.jsoup.HttpStatusException
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 
 @HiltWorker
@@ -123,13 +122,11 @@ class DownloadWorker @AssistedInject constructor(
 	@LocalStorageChanges private val localStorageChanges: MutableSharedFlow<LocalManga?>,
 	private val slowdownDispatcher: DownloadSlowdownDispatcher,
 	private val imageProxyInterceptor: ImageProxyInterceptor,
-<<<<<<< HEAD
-=======
 	private val mirrorSwitcher: MirrorSwitcher,
 	private val parallelismManager: DownloadParallelismManager,
 	private val analytics: DownloadAnalytics,
 	private val smartQueue: SmartDownloadQueue,
->>>>>>> abd49974e6e6c21783ada6501e12b3446c988ec6
+	private val nativeImageProbe: NativeImageProbe,
 	notificationFactoryFactory: DownloadNotificationFactory.Factory,
 ) : CoroutineWorker(appContext, params) {
 
@@ -149,6 +146,7 @@ class DownloadWorker @AssistedInject constructor(
 		setForeground(getForegroundInfo())
 		val manga = mangaDataRepository.findMangaById(task.mangaId, withChapters = true) ?: return Result.failure()
 		publishState(DownloadState(manga = manga, isIndeterminate = true).also { lastPublishedState = it })
+		var keepCancellationNotification = false
 		val downloadedIds = getDoneChapters(manga)
 		return try {
 			val pausingHandle = PausingHandle()
@@ -160,6 +158,8 @@ class DownloadWorker @AssistedInject constructor(
 			}
 			Result.success(currentState.toWorkData())
 		} catch (_: CancellationException) {
+			keepCancellationNotification = true
+			smartQueue.remove(task.mangaId)
 			withContext(NonCancellable) {
 				val notification = notificationFactory.create(currentState.copy(isStopped = true))
 				notificationManager.notify(id.hashCode(), notification)
@@ -178,7 +178,9 @@ class DownloadWorker @AssistedInject constructor(
 				).toWorkData(),
 			)
 		} finally {
-			notificationManager.cancel(id.hashCode())
+			if (!keepCancellationNotification) {
+				notificationManager.cancel(id.hashCode())
+			}
 		}
 	}
 
@@ -243,17 +245,17 @@ class DownloadWorker @AssistedInject constructor(
 						repo.getPages(chapter.value)
 					} ?: continue
 					val pageCounter = AtomicInteger(0)
+					val chapterBytes = AtomicLong(0L)
 					channelFlow {
-<<<<<<< HEAD
-						val semaphore = Semaphore(MAX_PAGES_PARALLELISM)
-=======
-						val pageParallelism = parallelismManager.resolveParallelism(settings.downloadParallelism)
-						val semaphore = Semaphore(pageParallelism)
->>>>>>> abd49974e6e6c21783ada6501e12b3446c988ec6
-						for ((pageIndex, page) in pages.withIndex()) {
-							checkIsPaused()
+						val pageParallelism = parallelismManager.resolveParallelism(
+							sourceOverride = settings.downloadParallelism,
+							isHighSpeedModeEnabled = settings.isHighSpeedModeEnabled,
+						)
+						val pageQueue = Channel<IndexedValue<MangaPage>>(capacity = pageParallelism)
+						val workers = List(pageParallelism) {
 							launch {
-								semaphore.withPermit {
+								for ((pageIndex, page) in pageQueue) {
+									checkIsPaused()
 									runFailsafe {
 										val url = repo.getPageUrl(page)
 										val file = cache[url]
@@ -264,6 +266,7 @@ class DownloadWorker @AssistedInject constructor(
 											pageNumber = pageIndex,
 											type = getMediaType(url, file),
 										)
+										chapterBytes.addAndGet(file.length())
 										if (file.extension == "tmp") {
 											file.deleteAwait()
 										}
@@ -271,6 +274,16 @@ class DownloadWorker @AssistedInject constructor(
 									send(pageIndex)
 								}
 							}
+						}
+						try {
+							for ((pageIndex, page) in pages.withIndex()) {
+								checkIsPaused()
+								pageQueue.send(IndexedValue(pageIndex, page))
+							}
+							pageQueue.close()
+							workers.joinAll()
+						} finally {
+							pageQueue.close()
 						}
 					}.map {
 						DownloadProgress(
@@ -292,32 +305,30 @@ class DownloadWorker @AssistedInject constructor(
 							),
 						)
 					}
+					analytics.recordChapterComplete(repo.source, pages.size, chapterBytes.get())
 					if (output.flushChapter(chapter.value)) {
 						runCatchingCancellable {
 							localStorageChanges.emit(LocalMangaParser(output.rootFile).getManga(withDetails = false))
 						}.onFailure(Throwable::printStackTraceDebug)
 					}
 					publishState(currentState.copy(downloadedChapters = currentState.downloadedChapters + 1))
-				}
-				publishState(currentState.copy(isIndeterminate = true, eta = -1L, isStuck = false))
-				output.mergeWithExisting()
-				output.finish()
-				val localManga = LocalMangaParser(output.rootFile).getManga(withDetails = false)
-				localStorageChanges.emit(localManga)
-				publishState(currentState.copy(localManga = localManga, eta = -1L, isStuck = false))
-<<<<<<< HEAD
-=======
-				smartQueue.remove(manga.id)
->>>>>>> abd49974e6e6c21783ada6501e12b3446c988ec6
-			} catch (e: Exception) {
-				if (e !is CancellationException) {
-					publishState(
-						currentState.copy(
-							error = e,
-							errorMessage = e.getDisplayMessage(applicationContext.resources),
-						),
-					)
-				}
+					}
+					publishState(currentState.copy(isIndeterminate = true, eta = -1L, isStuck = false))
+					output.mergeWithExisting()
+					output.finish()
+					val localManga = LocalMangaParser(output.rootFile).getManga(withDetails = false)
+					localStorageChanges.emit(localManga)
+					publishState(currentState.copy(localManga = localManga, eta = -1L, isStuck = false))
+					smartQueue.remove(manga.id)
+				} catch (e: Exception) {
+					if (e !is CancellationException) {
+						publishState(
+							currentState.copy(
+								error = e,
+								errorMessage = e.getDisplayMessage(applicationContext.resources),
+							),
+						)
+					}
 				throw e
 			} finally {
 				withContext(NonCancellable) {
@@ -391,6 +402,14 @@ class DownloadWorker @AssistedInject constructor(
 	}
 
 	private suspend fun getMediaType(url: String, file: File): MimeType? = runInterruptible(Dispatchers.IO) {
+		MimeTypes.probeMimeType(file)?.let {
+			return@runInterruptible it
+		}
+		if (nativeImageProbe.isAvailable) {
+			nativeImageProbe.probeFormat(file).toMimeTypeOrNull()?.let {
+				return@runInterruptible it
+			}
+		}
 		BitmapDecoderCompat.probeMimeType(file)?.let {
 			return@runInterruptible it
 		}
@@ -422,26 +441,51 @@ class DownloadWorker @AssistedInject constructor(
 			return file
 		}
 		val request = PageLoader.createPageRequest(url, source)
+		analytics.recordPageRequest(source)
 		slowdownDispatcher.delay(source)
-		return imageProxyInterceptor.interceptPageRequest(request, okHttp)
-			.ensureSuccess()
-			.use { response ->
-				var file: File? = null
-				try {
-					response.requireBody().use { body ->
-						file = destination.createTempFile(
-							ext = MimeTypes.getExtension(body.contentType()?.toMimeType())
-						)
-						file.sink(append = false).buffer().use {
-							it.writeAllCancellable(body.source())
+		val startedAt = SystemClock.elapsedRealtime()
+		return try {
+			imageProxyInterceptor.interceptPageRequest(request, okHttp)
+				.ensureSuccess()
+				.use { response ->
+					var file: File? = null
+					try {
+						response.requireBody().use { body ->
+							file = destination.createTempFile(
+								ext = MimeTypes.getExtension(body.contentType()?.toMimeType())
+							)
+							file.sink(append = false).buffer().use {
+								it.writeAllCancellable(body.source())
+							}
 						}
+					} catch (e: Exception) {
+						file?.delete()
+						throw e
 					}
-				} catch (e: Exception) {
-					file?.delete()
-					throw e
+					val result = checkNotNull(file)
+					val elapsedMs = (SystemClock.elapsedRealtime() - startedAt).coerceAtLeast(1L)
+					analytics.recordPageSuccess(source, result.length(), elapsedMs)
+					if (elapsedMs >= SLOW_RESPONSE_THRESHOLD_MS) {
+						slowdownDispatcher.recordSlowResponse(source)
+					}
+					result
 				}
-				checkNotNull(file)
+		} catch (e: CancellationException) {
+			throw e
+		} catch (e: Exception) {
+			analytics.recordPageFailure(source)
+			if (e.isRateLimit()) {
+				analytics.record429(source)
+				slowdownDispatcher.recordRateLimit(source)
 			}
+			throw e
+		}
+	}
+
+	private fun Throwable.isRateLimit(): Boolean = when (this) {
+		is TooManyRequestExceptions -> true
+		is HttpStatusException -> statusCode == HTTP_TOO_MANY_REQUESTS
+		else -> false
 	}
 
 	private fun File.createTempFile(ext: String?) = File(
@@ -508,15 +552,12 @@ class DownloadWorker @AssistedInject constructor(
 	}
 
 	@Reusable
-	class Scheduler @Inject constructor(
-		@ApplicationContext private val context: Context,
-		private val mangaDataRepository: MangaDataRepository,
-		private val workManager: WorkManager,
-<<<<<<< HEAD
-=======
-		private val smartQueue: SmartDownloadQueue,
->>>>>>> abd49974e6e6c21783ada6501e12b3446c988ec6
-	) {
+		class Scheduler @Inject constructor(
+			@ApplicationContext private val context: Context,
+			private val mangaDataRepository: MangaDataRepository,
+			private val workManager: WorkManager,
+			private val smartQueue: SmartDownloadQueue,
+		) {
 
 		fun observeWorks(): Flow<List<WorkInfo>> = workManager
 			.getWorkInfosByTagFlow(TAG)
@@ -535,11 +576,14 @@ class DownloadWorker @AssistedInject constructor(
 		}
 
 		suspend fun cancel(id: UUID) {
+			val task = getTask(id)
 			workManager.cancelWorkById(id).await()
+			task?.let { smartQueue.remove(it.mangaId) }
 		}
 
 		suspend fun cancelAll() {
 			workManager.cancelAllWorkByTag(TAG).await()
+			smartQueue.clear()
 		}
 
 		fun pause(id: UUID) = context.sendBroadcast(
@@ -559,12 +603,17 @@ class DownloadWorker @AssistedInject constructor(
 		)
 
 		suspend fun delete(id: UUID) {
+			val task = getTask(id)
 			workManager.deleteWork(id)
+			task?.let { smartQueue.remove(it.mangaId) }
 		}
 
 		suspend fun delete(ids: Collection<UUID>) {
 			val wm = workManager
-			ids.forEach { id -> wm.cancelWorkById(id).await() }
+			ids.forEach { id ->
+				getTask(id)?.let { smartQueue.remove(it.mangaId) }
+				wm.cancelWorkById(id).await()
+			}
 			workManager.deleteWorks(ids)
 		}
 
@@ -580,10 +629,14 @@ class DownloadWorker @AssistedInject constructor(
 				if (work.state.isFinished) {
 					continue
 				}
+				val inputData = workManager.getWorkInputData(work.id) ?: continue
 				val request = OneTimeWorkRequestBuilder<DownloadWorker>()
 					.setConstraints(constraints)
 					.addTag(TAG)
 					.setId(work.id)
+					.keepResultsForAtLeast(30, TimeUnit.DAYS)
+					.setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
+					.setInputData(inputData)
 					.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
 					.build()
 				workManager.awaitUpdateWork(request)
@@ -596,7 +649,7 @@ class DownloadWorker @AssistedInject constructor(
 			}
 			val requests = tasks.map { (manga, task) ->
 				mangaDataRepository.storeManga(manga, replaceExisting = true)
-				OneTimeWorkRequestBuilder<DownloadWorker>()
+				val request = OneTimeWorkRequestBuilder<DownloadWorker>()
 					.setConstraints(createConstraints(task.allowMeteredNetwork))
 					.addTag(TAG)
 					.keepResultsForAtLeast(30, TimeUnit.DAYS)
@@ -604,8 +657,18 @@ class DownloadWorker @AssistedInject constructor(
 					.setInputData(task.toData())
 					.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
 					.build()
+				manga.id to request
 			}
-			workManager.enqueue(requests).await()
+			workManager.enqueue(requests.map { it.second }).await()
+			smartQueue.enqueueAll(
+				requests.map { (mangaId, request) ->
+					SmartDownloadQueue.QueueEntry(
+						mangaId = mangaId,
+						priority = SmartDownloadQueue.Priority.DEFAULT,
+						workId = request.id,
+					)
+				},
+			)
 		}
 
 		private fun createConstraints(allowMeteredNetwork: Boolean) = Constraints.Builder()
@@ -616,13 +679,11 @@ class DownloadWorker @AssistedInject constructor(
 	private companion object {
 
 		const val MAX_FAILSAFE_ATTEMPTS = 2
-<<<<<<< HEAD
-		const val MAX_PAGES_PARALLELISM = 4
-=======
 		// Adaptive: resolved at runtime via DownloadParallelismManager
->>>>>>> abd49974e6e6c21783ada6501e12b3446c988ec6
 		const val DOWNLOAD_ERROR_DELAY = 2_000L
 		const val MAX_RETRY_DELAY = 7_200_000L // 2 hours
+		const val HTTP_TOO_MANY_REQUESTS = 429
+		const val SLOW_RESPONSE_THRESHOLD_MS = 8_000L
 		const val TAG = "download"
 	}
 }

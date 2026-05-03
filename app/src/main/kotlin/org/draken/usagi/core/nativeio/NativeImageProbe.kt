@@ -7,13 +7,14 @@ import javax.inject.Inject
 @Reusable
 class NativeImageProbe @Inject constructor() {
 
-    val isAvailable: Boolean
-        get() = try {
+    val isAvailable: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        try {
             System.loadLibrary("usagi-native")
             true
         } catch (e: UnsatisfiedLinkError) {
             false
         }
+    }
 
     fun probeFormat(file: File): String {
         return nativeProbeFormat(file.absolutePath) ?: ""

@@ -7,13 +7,14 @@ import javax.inject.Inject
 @Reusable
 class NativeZipWriter @Inject constructor() {
 
-    val isAvailable: Boolean
-        get() = try {
+    val isAvailable: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        try {
             System.loadLibrary("usagi-native")
             true
         } catch (e: UnsatisfiedLinkError) {
             false
         }
+    }
 
     fun openZip(path: File, append: Boolean = false): Long {
         return nativeOpenZip(path.absolutePath, append)

@@ -11,7 +11,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.work.WorkManager
 import coil3.ImageLoader
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
@@ -46,7 +45,6 @@ private const val GROUP_ID = "downloads"
 
 class DownloadNotificationFactory @AssistedInject constructor(
 	@LocalizedAppContext private val context: Context,
-	private val workManager: WorkManager,
 	private val coil: ImageLoader,
 	@Assisted private val uuid: UUID,
 	@Assisted val isSilent: Boolean,
@@ -68,7 +66,7 @@ class DownloadNotificationFactory @AssistedInject constructor(
 		NotificationCompat.Action(
 			appcompatR.drawable.abc_ic_clear_material,
 			context.getString(android.R.string.cancel),
-			workManager.createCancelPendingIntent(uuid),
+			DownloadCancelReceiver.createPendingIntent(context, uuid, isSilent),
 		)
 	}
 
@@ -135,6 +133,8 @@ class DownloadNotificationFactory @AssistedInject constructor(
 		builder.clearActions()
 		builder.setSubText(null)
 		builder.setShowWhen(false)
+		builder.setAutoCancel(false)
+		builder.setOngoing(false)
 		builder.setVisibility(
 			if (state != null && state.manga.isNsfw()) {
 				NotificationCompat.VISIBILITY_SECRET
@@ -159,12 +159,14 @@ class DownloadNotificationFactory @AssistedInject constructor(
 
 			state.isStopped -> {
 				builder.setProgress(0, 0, false)
-				builder.setContentText(context.getString(R.string.queued))
+				builder.setContentText(context.getString(R.string.canceled))
 				builder.setCategory(NotificationCompat.CATEGORY_PROGRESS)
 				builder.setStyle(null)
-				builder.setOngoing(true)
+				builder.setAutoCancel(true)
+				builder.setOngoing(false)
+				builder.setShowWhen(true)
+				builder.setWhen(System.currentTimeMillis())
 				builder.setSmallIcon(R.drawable.ic_stat_paused)
-				builder.addAction(actionCancel)
 			}
 
 			state.isPaused -> { // paused (with error or manually)

@@ -95,6 +95,11 @@ class DownloadsSettingsFragment :
 				updateDownloadsConstraints()
 			}
 
+			AppSettings.KEY_HIGH_SPEED_MODE -> {
+				findPreference<ListPreference>(AppSettings.KEY_DOWNLOADS_PARALLELISM)?.isEnabled =
+					!settings.isHighSpeedModeEnabled
+			}
+
 			AppSettings.KEY_PAGES_SAVE_DIR -> {
 				findPreference<Preference>(AppSettings.KEY_PAGES_SAVE_DIR)?.bindPagesDirectory()
 			}
