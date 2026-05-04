@@ -51,7 +51,9 @@ testRules = "1.7.0"
 testRunner = "1.7.0"
 transition = "1.6.0"
 viewpager2 = "1.1.0"
-webkit = "1.15.0"
+#noinspection GradleDependency
+# AndroidX WebKit 1.15.x raises minSdk to 23; keep 1.14.0 while app minSdk is 21.
+webkit = "1.14.0"
 #noinspection GradleDependency
 # WorkManager 2.11.x raises minSdk to 23; keep 2.10.5 while app minSdk is 21.
 workRuntime = "2.10.5"
