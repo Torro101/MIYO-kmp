@@ -3,7 +3,6 @@ package org.draken.usagi.settings
 import android.os.Bundle
 import androidx.preference.Preference
 import leakcanary.LeakCanary
-import org.draken.usagi.UsagiApp
 import org.draken.usagi.R
 import org.draken.usagi.core.model.TestMangaSource
 import org.draken.usagi.core.nav.router
@@ -14,13 +13,16 @@ import org.koitharu.workinspector.WorkInspector
 class DebugSettingsFragment : BasePreferenceFragment(R.string.debug), Preference.OnPreferenceChangeListener,
 	Preference.OnPreferenceClickListener {
 
-	private val application
-		get() = requireContext().applicationContext as UsagiApp
+	private var isLeakCanaryEnabled: Boolean
+		get() = LeakCanary.config.dumpHeap
+		set(value) {
+			LeakCanary.config = LeakCanary.config.copy(dumpHeap = value)
+		}
 
 	override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 		addPreferencesFromResource(R.xml.pref_debug)
 		findPreference<SplitSwitchPreference>(KEY_LEAK_CANARY)?.let { pref ->
-			pref.isChecked = application.isLeakCanaryEnabled
+			pref.isChecked = isLeakCanaryEnabled
 			pref.onPreferenceChangeListener = this
 			pref.onContainerClickListener = this
 		}
@@ -28,7 +30,7 @@ class DebugSettingsFragment : BasePreferenceFragment(R.string.debug), Preference
 
 	override fun onResume() {
 		super.onResume()
-		findPreference<SplitSwitchPreference>(KEY_LEAK_CANARY)?.isChecked = application.isLeakCanaryEnabled
+		findPreference<SplitSwitchPreference>(KEY_LEAK_CANARY)?.isChecked = isLeakCanaryEnabled
 	}
 
 	override fun onPreferenceTreeClick(preference: Preference): Boolean = when (preference.key) {
@@ -56,7 +58,7 @@ class DebugSettingsFragment : BasePreferenceFragment(R.string.debug), Preference
 
 	override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean = when (preference.key) {
 		KEY_LEAK_CANARY -> {
-			application.isLeakCanaryEnabled = newValue as Boolean
+			isLeakCanaryEnabled = newValue as Boolean
 			true
 		}
 

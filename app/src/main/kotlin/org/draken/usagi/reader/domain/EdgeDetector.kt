@@ -16,13 +16,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.draken.usagi.core.util.SynchronizedSieveCache
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
@@ -53,10 +53,10 @@ class EdgeDetector(private val context: Context) {
 					try {
 						val edges = supervisorScope {
 							listOf(
-								async { runCatching { detectLeftRightEdge(fullBitmap, size, sampleSize, isLeft = true) }.getOrDefault(-1) },
-								async { runCatching { detectTopBottomEdge(fullBitmap, size, sampleSize, isTop = true) }.getOrDefault(-1) },
-								async { runCatching { detectLeftRightEdge(fullBitmap, size, sampleSize, isLeft = false) }.getOrDefault(-1) },
-								async { runCatching { detectTopBottomEdge(fullBitmap, size, sampleSize, isTop = false) }.getOrDefault(-1) },
+								async { runCatching { detectLeftRightEdge(fullBitmap, isLeft = true) }.getOrDefault(-1) },
+								async { runCatching { detectTopBottomEdge(fullBitmap, isTop = true) }.getOrDefault(-1) },
+								async { runCatching { detectLeftRightEdge(fullBitmap, isLeft = false) }.getOrDefault(-1) },
+								async { runCatching { detectTopBottomEdge(fullBitmap, isTop = false) }.getOrDefault(-1) },
 							).awaitAll()
 						}
 						var hasEdges = false
@@ -104,13 +104,13 @@ class EdgeDetector(private val context: Context) {
 
 	private suspend fun detectLeftRightEdge(
 		bitmap: Bitmap,
-		size: Point,
-		sampleSize: Int,
 		isLeft: Boolean,
 	): Int = withContext(Dispatchers.Default) {
 		val width = bitmap.width
 		val height = bitmap.height
 		val edgeColor = detectEdgeColor(bitmap, width, height, isLeft)
+		val requiredPixels = ceil(height * MIN_EDGE_FRACTION).toInt().coerceAtLeast(1)
+		val sampleStep = (height / (requiredPixels * 2f)).toInt().coerceAtLeast(1)
 		val xStart = if (isLeft) 0 else width - 1
 		val xEnd = if (isLeft) width else -1
 		val step = if (isLeft) 1 else -1
@@ -119,7 +119,6 @@ class EdgeDetector(private val context: Context) {
 		var x = xStart
 		while (x != xEnd) {
 			var matchingPixels = 0
-			val totalPixels = height * MIN_EDGE_FRACTION
 			var y = 0
 			while (y < height) {
 				val actualY = y
@@ -130,12 +129,12 @@ class EdgeDetector(private val context: Context) {
 				) {
 					matchingPixels++
 				}
-				y += max(1, (height / (totalPixels * 2)).coerceAtLeast(1))
-				if (matchingPixels >= totalPixels) {
+				y += sampleStep
+				if (matchingPixels >= requiredPixels) {
 					break
 				}
 			}
-			if (matchingPixels >= totalPixels) {
+			if (matchingPixels >= requiredPixels) {
 				edge = if (isLeft) x else width - 1 - x
 				break
 			}
@@ -146,13 +145,13 @@ class EdgeDetector(private val context: Context) {
 
 	private suspend fun detectTopBottomEdge(
 		bitmap: Bitmap,
-		size: Point,
-		sampleSize: Int,
 		isTop: Boolean,
 	): Int = withContext(Dispatchers.Default) {
 		val width = bitmap.width
 		val height = bitmap.height
 		val edgeColor = detectEdgeColor(bitmap, width, height, isTop)
+		val requiredPixels = ceil(width * MIN_EDGE_FRACTION).toInt().coerceAtLeast(1)
+		val sampleStep = (width / (requiredPixels * 2f)).toInt().coerceAtLeast(1)
 		val yStart = if (isTop) 0 else height - 1
 		val yEnd = if (isTop) height else -1
 		val step = if (isTop) 1 else -1
@@ -161,7 +160,6 @@ class EdgeDetector(private val context: Context) {
 		var y = yStart
 		while (y != yEnd) {
 			var matchingPixels = 0
-			val totalPixels = width * MIN_EDGE_FRACTION
 			var x = 0
 			while (x < width) {
 				val actualX = x
@@ -172,12 +170,12 @@ class EdgeDetector(private val context: Context) {
 				) {
 					matchingPixels++
 				}
-				x += max(1, (width / (totalPixels * 2)).coerceAtLeast(1))
-				if (matchingPixels >= totalPixels) {
+				x += sampleStep
+				if (matchingPixels >= requiredPixels) {
 					break
 				}
 			}
-			if (matchingPixels >= totalPixels) {
+			if (matchingPixels >= requiredPixels) {
 				edge = if (isTop) y else height - 1 - y
 				break
 			}
@@ -186,10 +184,9 @@ class EdgeDetector(private val context: Context) {
 		edge
 	}
 
-	private fun detectEdgeColor(bitmap: Bitmap, width: Int, height: Int, isStart: Boolean): @ColorInt Int {
+	@ColorInt
+	private fun detectEdgeColor(bitmap: Bitmap, width: Int, height: Int, isStart: Boolean): Int {
 		val sampleY = if (isStart) 0 else height - 1
-		val sampleX = if (isStart) 0 else width - 1
-		val color = bitmap.getPixel(sampleX, sampleY)
 
 		// Check if the very first/last row is uniform enough
 		var rSum = 0
@@ -212,6 +209,13 @@ class EdgeDetector(private val context: Context) {
 	}
 
 	companion object {
+		fun isColorTheSame(@ColorInt color: Int, @ColorInt other: Int, tolerance: Int): Boolean {
+			return abs(color.red - other.red) <= tolerance &&
+				abs(color.green - other.green) <= tolerance &&
+				abs(color.blue - other.blue) <= tolerance &&
+				abs(color.alpha - other.alpha) <= tolerance
+		}
+
 		private const val MAX_SAMPLE_DIMENSION = 512
 		private const val MIN_EDGE_FRACTION = 0.85f
 		private const val COLOR_THRESHOLD = 30
