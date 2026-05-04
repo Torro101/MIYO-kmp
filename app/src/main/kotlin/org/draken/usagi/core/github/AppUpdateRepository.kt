@@ -1,7 +1,5 @@
 package org.draken.usagi.core.github
 
-import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,7 +9,6 @@ import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import org.draken.usagi.BuildConfig
-import org.draken.usagi.R
 import org.draken.usagi.core.network.BaseHttpClient
 import org.draken.usagi.core.os.AppValidator
 import org.draken.usagi.core.prefs.AppSettings
@@ -22,6 +19,7 @@ import org.koitharu.kotatsu.parsers.util.json.mapJSONNotNull
 import org.koitharu.kotatsu.parsers.util.parseJsonArray
 import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
 import org.koitharu.kotatsu.parsers.util.suspendlazy.getOrNull
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,13 +31,12 @@ class AppUpdateRepository @Inject constructor(
 	private val appValidator: AppValidator,
 	private val settings: AppSettings,
 	@BaseHttpClient private val okHttp: OkHttpClient,
-	@ApplicationContext context: Context,
 ) {
 
 	private val availableUpdate = MutableStateFlow<AppVersion?>(null)
 	private val releasesUrl = buildString {
 		append("https://api.github.com/repos/")
-		append(context.getString(R.string.github_updates_repo))
+		append(BuildConfig.UPDATES_REPO)
 		append("/releases?page=1&per_page=10")
 	}
 
@@ -54,16 +51,14 @@ class AppUpdateRepository @Inject constructor(
 			.url(releasesUrl)
 		val jsonArray = okHttp.newCall(request.build()).await().parseJsonArray()
 		return jsonArray.mapJSONNotNull { json ->
-			val asset = json.optJSONArray("assets")?.find { jo ->
-				jo.optString("content_type") == CONTENT_TYPE_APK
-			} ?: return@mapJSONNotNull null
+			val asset = json.optJSONArray("assets")?.findBestApkAsset() ?: return@mapJSONNotNull null
 			AppVersion(
 				id = json.getLong("id"),
 				url = json.getString("html_url"),
-				name = json.getString("name").removePrefix("v"),
-				apkSize = asset.getLong("size"),
+				name = json.optString("name").ifBlank { json.getString("tag_name") }.removePrefix("v"),
+				apkSize = asset.optLong("size"),
 				apkUrl = asset.getString("browser_download_url"),
-				description = json.getString("body"),
+				description = json.optString("body"),
 			)
 		}
 	}
@@ -90,17 +85,49 @@ class AppUpdateRepository @Inject constructor(
 
 	@Suppress("KotlinConstantConditions")
 	suspend fun isUpdateSupported(): Boolean {
-		return BuildConfig.BUILD_TYPE != BUILD_TYPE_RELEASE || appValidator.isOriginalApp.getOrNull() == true
+		return BuildConfig.BUILD_TYPE != BUILD_TYPE_RELEASE || appValidator.isReleaseSignatureTrusted.getOrNull() == true
 	}
 
-	private inline fun JSONArray.find(predicate: (JSONObject) -> Boolean): JSONObject? {
-		val size = length()
-		for (i in 0 until size) {
-			val jo = getJSONObject(i)
-			if (predicate(jo)) {
-				return jo
+	private fun JSONObject.isApkAsset(): Boolean {
+		val name = optString("name")
+		val url = optString("browser_download_url")
+		return optString("content_type") == CONTENT_TYPE_APK ||
+			name.endsWith(".apk", ignoreCase = true) ||
+			url.substringBefore('?').endsWith(".apk", ignoreCase = true)
+	}
+
+	private fun JSONObject.apkAssetScore(): Int {
+		if (!isApkAsset()) {
+			return -1
+		}
+		val name = optString("name").lowercase(Locale.ROOT)
+		var score = 0
+		if (optString("content_type") == CONTENT_TYPE_APK) {
+			score += 8
+		}
+		if ("universal" in name) {
+			score += 4
+		}
+		if ("release" in name) {
+			score += 2
+		}
+		if ("debug" in name) {
+			score -= 16
+		}
+		return score
+	}
+
+	private fun JSONArray.findBestApkAsset(): JSONObject? {
+		var best: JSONObject? = null
+		var bestScore = -1
+		for (i in 0 until length()) {
+			val asset = getJSONObject(i)
+			val score = asset.apkAssetScore()
+			if (score > bestScore) {
+				best = asset
+				bestScore = score
 			}
 		}
-		return null
+		return best
 	}
 }

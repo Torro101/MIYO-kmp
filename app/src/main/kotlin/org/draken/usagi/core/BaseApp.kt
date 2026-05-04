@@ -92,7 +92,10 @@ open class BaseApp : Application(), Configuration.Provider {
 		}
 		setupActivityLifecycleCallbacks()
 		processLifecycleScope.launch {
-			ACRA.errorReporter.putCustomData("isOriginalApp", appValidator.isOriginalApp.getOrNull().toString())
+			ACRA.errorReporter.putCustomData(
+				"isReleaseSignatureTrusted",
+				appValidator.isReleaseSignatureTrusted.getOrNull().toString(),
+			)
 			ACRA.errorReporter.putCustomData("isMiui", RomCompat.isMiui.getOrNull().toString())
 		}
 		processLifecycleScope.launch(Dispatchers.Default) {

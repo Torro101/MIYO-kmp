@@ -10,6 +10,39 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+	localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+def propertyOrDefault = { name, defaultValue ->
+	def value = providers.gradleProperty(name).orNull
+	if (value == null || value.trim().isEmpty()) {
+		value = localProperties.getProperty(name)
+	}
+	return value == null || value.trim().isEmpty() ? defaultValue : value
+}
+
+def buildConfigString = { value ->
+	def escaped = String.valueOf(value)
+		.replace('\\', '\\\\')
+		.replace('"', '\\"')
+	return "\"${escaped}\""
+}
+
+def appDisplayName = propertyOrDefault('app.displayName', 'Usagi')
+def appUpdatesRepo = propertyOrDefault('app.updatesRepo', 'asanlamma-ux/Usagi-Clone')
+def appSourceUrl = propertyOrDefault('app.sourceUrl', "https://github.com/${appUpdatesRepo}")
+def appIconUrl = propertyOrDefault(
+	'app.iconUrl',
+	"https://raw.githubusercontent.com/${appUpdatesRepo}/refs/heads/main/.github/assets/icon.png"
+)
+def appReleaseCertSha256 = propertyOrDefault(
+	'app.releaseCertSha256',
+	'4C0BD9188836B7279DCF91123AC99DC4F54FE221FB66FB9203803D167E066FC9'
+)
+
 android {
 	compileSdk = 36
 	buildToolsVersion = '36.1.0'
@@ -30,12 +63,13 @@ android {
 			// https://issuetracker.google.com/issues/408030127
 			generateLocaleConfig = false
 		}
-		def localProperties = new Properties()
-		def localPropertiesFile = rootProject.file('local.properties')
-		if (localPropertiesFile.exists()) {
-			localProperties.load(new FileInputStream(localPropertiesFile))
-		}
+		resValue 'string', 'app_name', appDisplayName
+		resValue 'string', 'url_github', appSourceUrl
+		resValue 'string', 'github_updates_repo', appUpdatesRepo
+		resValue 'string', 'app_icon_url', appIconUrl
 		resValue 'string', 'tg_backup_bot_token', localProperties.getProperty('tg_backup_bot_token', '')
+		buildConfigField 'String', 'UPDATES_REPO', buildConfigString(appUpdatesRepo)
+		buildConfigField 'String', 'RELEASE_CERT_SHA256', buildConfigString(appReleaseCertSha256)
 	}
 	buildTypes {
 		debug {
