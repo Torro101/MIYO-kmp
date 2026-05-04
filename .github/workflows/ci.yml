@@ -25,7 +25,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Lint
-        run: ./gradlew lint --stacktrace --debug
+        run: ./gradlew lint --stacktrace
 
       - name: Upload Lint Results
         uses: actions/upload-artifact@v7
@@ -54,14 +54,16 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Unit Tests
-        run: ./gradlew test --stacktrace --debug
+        run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results
-          path: app/build/reports/tests/
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
 
   build:
     runs-on: ubuntu-latest
@@ -85,7 +87,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace --debug
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v7
@@ -95,7 +97,7 @@ jobs:
 
       - name: Build Release APK
         if: github.ref == 'refs/heads/main'
-        run: ./gradlew assembleRelease --stacktrace --debug
+        run: ./gradlew assembleRelease --stacktrace
 
       - name: Upload Release APK
         if: github.ref == 'refs/heads/main'

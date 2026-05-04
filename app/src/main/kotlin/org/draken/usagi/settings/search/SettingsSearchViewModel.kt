@@ -19,15 +19,13 @@ class SettingsSearchViewModel @Inject constructor(
 ) : BaseViewModel() {
 
 	private val query = MutableStateFlow<String?>(null)
-	private val allSettings by lazy {
-		searchHelper.inflatePreferences()
-	}
+	private var allSettingsCache: List<SettingsItem>? = null
 
 	val content = query.map { q ->
 		if (q == null) {
 			emptyList()
 		} else {
-			allSettings.filter { it.title.contains(q, ignoreCase = true) }
+			getAllSettings().filter { it.title.contains(q, ignoreCase = true) }
 		}
 	}.stateIn(viewModelScope + Dispatchers.Default, SharingStarted.Lazily, emptyList())
 
@@ -56,5 +54,13 @@ class SettingsSearchViewModel @Inject constructor(
 	fun navigateToPreference(item: SettingsItem) {
 		discardSearch()
 		onNavigateToPreference.call(item)
+	}
+
+	private fun getAllSettings(): List<SettingsItem> {
+		val cached = allSettingsCache
+		if (cached != null) return cached
+		return searchHelper.inflatePreferences().also {
+			allSettingsCache = it
+		}
 	}
 }

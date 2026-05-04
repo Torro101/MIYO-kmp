@@ -144,9 +144,9 @@ class PreviewSettingsPreference @JvmOverloads constructor(
 		val ctx = parent.context
 		val gap = ctx.dp(6)
 		val chipH = ctx.dp(22)
-		val rows = listOf(
-			listOf(ctx.dp(80), ctx.dp(54), ctx.dp(60)),
-			listOf(ctx.dp(50), ctx.dp(66)),
+		val rows = arrayOf(
+			intArrayOf(ctx.dp(80), ctx.dp(54), ctx.dp(60)),
+			intArrayOf(ctx.dp(50), ctx.dp(66)),
 		)
 		rows.forEachIndexed { ri, widths ->
 			val row = LinearLayout(ctx).apply {
@@ -191,7 +191,7 @@ class PreviewSettingsPreference @JvmOverloads constructor(
 		}
 
 		val labelWidth = ctx.dp(44)
-		val valueWidths = listOf(ctx.dp(72), ctx.dp(56), ctx.dp(44), ctx.dp(36))
+		val valueWidths = intArrayOf(ctx.dp(72), ctx.dp(56), ctx.dp(44), ctx.dp(36))
 		valueWidths.forEachIndexed { i, valWidth ->
 			val row = LinearLayout(ctx).apply {
 				orientation = LinearLayout.HORIZONTAL
