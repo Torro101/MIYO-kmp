@@ -26,8 +26,8 @@
 		tools:ignore="RequestInstallPackagesPolicy" />
 	<uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 	<uses-permission
-		android:name="android.permission.QUERY_ALL_PACKAGES"
-		tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
+		android:name="android.permission.READ_EXTERNAL_STORAGE"
+		android:maxSdkVersion="32" />
 	<uses-permission
 		android:name="android.permission.WRITE_EXTERNAL_STORAGE"
 		android:maxSdkVersion="29" />
@@ -43,6 +43,9 @@
 		<intent>
 			<action android:name="android.speech.action.RECOGNIZE_SPEECH" />
 		</intent>
+		<intent>
+			<action android:name="app.kotatsu.parser.PROVIDE_MANGA" />
+		</intent>
 	</queries>
 
 	<application
@@ -51,7 +54,6 @@
 		android:backupAgent="org.draken.usagi.backups.domain.AppBackupAgent"
 		android:dataExtractionRules="@xml/backup_rules"
 		android:enableOnBackInvokedCallback="@bool/is_predictive_back_enabled"
-		android:extractNativeLibs="true"
 		android:fullBackupContent="@xml/backup_content"
 		android:fullBackupOnly="true"
 		android:hasFragileUserData="true"
@@ -76,7 +78,7 @@
 			</intent-filter>
 			<meta-data
 				android:name="android.app.default_searchable"
-				android:value="org.draken.usagi.search.ui.multi.MultiSearchActivity" />
+				android:value="org.draken.usagi.search.ui.multi.SearchActivity" />
 		</activity>
 		<activity
 			android:name="org.draken.usagi.details.ui.DetailsActivity"

@@ -51,7 +51,10 @@ android {
 		viewBinding true
 		buildConfig true
 	}
-	packagingOptions {
+	packaging {
+		jniLibs {
+			useLegacyPackaging = true
+		}
 		resources {
 			excludes += [
 				'META-INF/README.md',
