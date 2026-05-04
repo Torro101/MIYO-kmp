@@ -4,7 +4,7 @@
 	<style name="Base.V31.Miyo" parent="Base.V27.Miyo">
 		<item name="android:windowSplashScreenAnimatedIcon">@drawable/avd_splash</item>
 		<item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
-		<item name="android:windowSplashScreenBackground">@color/m3_sys_color_dynamic_light_surface</item>
+		<item name="android:windowSplashScreenBackground">@color/miyo_splash_background</item>
 	</style>
 
 	<style name="Theme.Miyo" parent="Base.V31.Miyo" />
