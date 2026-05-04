@@ -87,7 +87,25 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        env:
+          APP_APPLICATION_ID: ${{ vars.APP_APPLICATION_ID }}
+          APP_DISPLAY_NAME: ${{ vars.APP_DISPLAY_NAME }}
+          APP_UPDATES_REPO: ${{ vars.APP_UPDATES_REPO }}
+          APP_SOURCE_URL: ${{ vars.APP_SOURCE_URL }}
+          APP_ICON_URL: ${{ vars.APP_ICON_URL }}
+        run: |
+          set -euo pipefail
+          APP_APPLICATION_ID="${APP_APPLICATION_ID:-org.koharu.miyo}"
+          APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Miyo}"
+          APP_UPDATES_REPO="${APP_UPDATES_REPO:-asanlamma-ux/MIYO}"
+          APP_SOURCE_URL="${APP_SOURCE_URL:-https://github.com/${APP_UPDATES_REPO}}"
+          APP_ICON_URL="${APP_ICON_URL:-https://raw.githubusercontent.com/${APP_UPDATES_REPO}/refs/heads/main/.github/assets/icon.png}"
+          ./gradlew assembleDebug --stacktrace \
+            -Papp.applicationId="${APP_APPLICATION_ID}" \
+            -Papp.displayName="${APP_DISPLAY_NAME}" \
+            -Papp.updatesRepo="${APP_UPDATES_REPO}" \
+            -Papp.sourceUrl="${APP_SOURCE_URL}" \
+            -Papp.iconUrl="${APP_ICON_URL}"
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v7
@@ -95,9 +113,50 @@ jobs:
           name: debug-apk
           path: app/build/outputs/apk/debug/*.apk
 
+      - name: Decode Release Keystore
+        if: github.ref == 'refs/heads/main'
+        env:
+          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          : "${ANDROID_RELEASE_KEYSTORE_BASE64:?ANDROID_RELEASE_KEYSTORE_BASE64 secret is missing}"
+          mkdir -p "${RUNNER_TEMP}/keystore"
+          printf '%s' "${ANDROID_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${RUNNER_TEMP}/keystore/miyo-release.p12"
+
       - name: Build Release APK
         if: github.ref == 'refs/heads/main'
-        run: ./gradlew assembleRelease --stacktrace
+        env:
+          APP_APPLICATION_ID: ${{ vars.APP_APPLICATION_ID }}
+          APP_DISPLAY_NAME: ${{ vars.APP_DISPLAY_NAME }}
+          APP_UPDATES_REPO: ${{ vars.APP_UPDATES_REPO }}
+          APP_SOURCE_URL: ${{ vars.APP_SOURCE_URL }}
+          APP_ICON_URL: ${{ vars.APP_ICON_URL }}
+          APP_RELEASE_CERT_SHA256: ${{ secrets.APP_RELEASE_CERT_SHA256 }}
+          ANDROID_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD }}
+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${APP_RELEASE_CERT_SHA256:?APP_RELEASE_CERT_SHA256 secret is missing}"
+          : "${ANDROID_RELEASE_KEYSTORE_PASSWORD:?ANDROID_RELEASE_KEYSTORE_PASSWORD secret is missing}"
+          : "${ANDROID_RELEASE_KEY_ALIAS:?ANDROID_RELEASE_KEY_ALIAS secret is missing}"
+          : "${ANDROID_RELEASE_KEY_PASSWORD:?ANDROID_RELEASE_KEY_PASSWORD secret is missing}"
+          APP_APPLICATION_ID="${APP_APPLICATION_ID:-org.koharu.miyo}"
+          APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Miyo}"
+          APP_UPDATES_REPO="${APP_UPDATES_REPO:-asanlamma-ux/MIYO}"
+          APP_SOURCE_URL="${APP_SOURCE_URL:-https://github.com/${APP_UPDATES_REPO}}"
+          APP_ICON_URL="${APP_ICON_URL:-https://raw.githubusercontent.com/${APP_UPDATES_REPO}/refs/heads/main/.github/assets/icon.png}"
+          ./gradlew assembleRelease --stacktrace \
+            -Papp.applicationId="${APP_APPLICATION_ID}" \
+            -Papp.displayName="${APP_DISPLAY_NAME}" \
+            -Papp.updatesRepo="${APP_UPDATES_REPO}" \
+            -Papp.sourceUrl="${APP_SOURCE_URL}" \
+            -Papp.iconUrl="${APP_ICON_URL}" \
+            -Papp.releaseCertSha256="${APP_RELEASE_CERT_SHA256}" \
+            -Prelease.storeFile="${RUNNER_TEMP}/keystore/miyo-release.p12" \
+            -Prelease.storePassword="${ANDROID_RELEASE_KEYSTORE_PASSWORD}" \
+            -Prelease.keyAlias="${ANDROID_RELEASE_KEY_ALIAS}" \
+            -Prelease.keyPassword="${ANDROID_RELEASE_KEY_PASSWORD}"
 
       - name: Upload Release APK
         if: github.ref == 'refs/heads/main'

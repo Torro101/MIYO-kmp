@@ -43,6 +43,16 @@ def appReleaseCertSha256 = propertyOrDefault(
 	'app.releaseCertSha256',
 	'4C0BD9188836B7279DCF91123AC99DC4F54FE221FB66FB9203803D167E066FC9'
 )
+def releaseStoreFile = propertyOrDefault('release.storeFile', '')
+def releaseStorePassword = propertyOrDefault('release.storePassword', '')
+def releaseKeyAlias = propertyOrDefault('release.keyAlias', '')
+def releaseKeyPassword = propertyOrDefault('release.keyPassword', '')
+def hasReleaseSigning = [
+	releaseStoreFile,
+	releaseStorePassword,
+	releaseKeyAlias,
+	releaseKeyPassword
+].every { !String.valueOf(it).trim().isEmpty() }
 
 android {
 	compileSdk = 36
@@ -75,11 +85,24 @@ android {
 		buildConfigField 'String', 'UPDATES_REPO', buildConfigString(appUpdatesRepo)
 		buildConfigField 'String', 'RELEASE_CERT_SHA256', buildConfigString(appReleaseCertSha256)
 	}
+	signingConfigs {
+		if (hasReleaseSigning) {
+			release {
+				storeFile = file(releaseStoreFile)
+				storePassword = releaseStorePassword
+				keyAlias = releaseKeyAlias
+				keyPassword = releaseKeyPassword
+			}
+		}
+	}
 	buildTypes {
 		debug {
 			applicationIdSuffix = '.debug'
 		}
 		release {
+			if (hasReleaseSigning) {
+				signingConfig = signingConfigs.release
+			}
 			minifyEnabled = true
 			shrinkResources = true
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
