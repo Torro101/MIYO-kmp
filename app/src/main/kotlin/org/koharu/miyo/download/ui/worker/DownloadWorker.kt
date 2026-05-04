@@ -45,6 +45,8 @@ import okio.buffer
 import okio.sink
 import okio.use
 import org.koharu.miyo.R
+import org.koharu.miyo.core.exceptions.NoDataReceivedException
+import org.koharu.miyo.core.exceptions.UnsupportedFileException
 import org.koharu.miyo.core.image.BitmapDecoderCompat
 import org.koharu.miyo.core.model.ids
 import org.koharu.miyo.core.model.isLocal
@@ -68,6 +70,7 @@ import org.koharu.miyo.core.util.ext.ensureSuccess
 import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.getWorkInputData
 import org.koharu.miyo.core.util.ext.getWorkSpec
+import org.koharu.miyo.core.util.ext.isImage
 import org.koharu.miyo.core.util.ext.openSource
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import org.koharu.miyo.core.util.ext.toFileOrNull
@@ -161,11 +164,18 @@ class DownloadWorker @AssistedInject constructor(
 			keepCancellationNotification = true
 			smartQueue.remove(task.mangaId)
 			withContext(NonCancellable) {
-				val notification = notificationFactory.create(currentState.copy(isStopped = true))
+				val notification = notificationFactory.create(
+					currentState.copy(
+						isStopped = true,
+						eta = -1L,
+						isStuck = false,
+						doctorMessage = null,
+					),
+				)
 				notificationManager.notify(id.hashCode(), notification)
 			}
 			Result.failure(
-				currentState.copy(eta = -1L, isStuck = false).toWorkData(),
+				currentState.copy(eta = -1L, isStuck = false, doctorMessage = null).toWorkData(),
 			)
 		} catch (e: Exception) {
 			e.printStackTraceDebug()
@@ -175,6 +185,7 @@ class DownloadWorker @AssistedInject constructor(
 					errorMessage = e.getDisplayMessage(applicationContext.resources),
 					eta = -1L,
 					isStuck = false,
+					doctorMessage = null,
 				).toWorkData(),
 			)
 		} finally {
@@ -230,7 +241,8 @@ class DownloadWorker @AssistedInject constructor(
 				val coverUrl = mangaDetails.largeCoverUrl.ifNullOrEmpty { mangaDetails.coverUrl }
 				if (!coverUrl.isNullOrEmpty()) {
 					downloadFile(coverUrl, destination, repo.source).let { file ->
-						output.addCover(file, getMediaType(coverUrl, file))
+						val nativeInfo = probeNativeImage(file)
+						output.addCover(file, getMediaType(coverUrl, file, nativeInfo))
 						file.deleteAwait()
 					}
 				}
@@ -238,7 +250,13 @@ class DownloadWorker @AssistedInject constructor(
 				for ((chapterIndex, chapter) in chapters.withIndex()) {
 					checkIsPaused()
 					if (chaptersToSkip.remove(chapter.value.id)) {
-						publishState(currentState.copy(downloadedChapters = currentState.downloadedChapters + 1))
+						publishState(
+							currentState.copy(
+								downloadedChapters = currentState.downloadedChapters + 1,
+								isStuck = false,
+								doctorMessage = null,
+							),
+						)
 						continue
 					}
 					val pages = runFailsafe {
@@ -258,17 +276,30 @@ class DownloadWorker @AssistedInject constructor(
 									checkIsPaused()
 									runFailsafe {
 										val url = repo.getPageUrl(page)
-										val file = cache[url]
-											?: downloadFile(url, destination, repo.source)
+										var file = cache[url]
+										var nativeInfo: NativeImageProbe.ImageInfo? = null
+										if (file != null) {
+											try {
+												nativeInfo = validateDownloadedImage(url, file, declaredType = null)
+											} catch (e: Exception) {
+												file.deleteAwait()
+												file = null
+											}
+										}
+										if (file == null) {
+											file = downloadFile(url, destination, repo.source)
+											nativeInfo = probeNativeImage(file)
+										}
+										val pageFile = checkNotNull(file)
 										output.addPage(
 											chapter = chapter,
-											file = file,
+											file = pageFile,
 											pageNumber = pageIndex,
-											type = getMediaType(url, file),
+											type = getMediaType(url, pageFile, nativeInfo),
 										)
-										chapterBytes.addAndGet(file.length())
-										if (file.extension == "tmp") {
-											file.deleteAwait()
+										chapterBytes.addAndGet(pageFile.length())
+										if (pageFile.extension == "tmp") {
+											pageFile.deleteAwait()
 										}
 									}
 									send(pageIndex)
@@ -293,6 +324,7 @@ class DownloadWorker @AssistedInject constructor(
 							currentPage = pageCounter.getAndIncrement(),
 						)
 					}.withTicker(2L, TimeUnit.SECONDS).collect { progress ->
+						val isStuck = etaEstimator.isStuck()
 						publishState(
 							currentState.copy(
 								totalChapters = progress.totalChapters,
@@ -301,7 +333,12 @@ class DownloadWorker @AssistedInject constructor(
 								currentPage = progress.currentPage,
 								isIndeterminate = false,
 								eta = etaEstimator.getEta(),
-								isStuck = etaEstimator.isStuck(),
+								isStuck = isStuck,
+								doctorMessage = if (isStuck) {
+									applicationContext.getString(R.string.download_doctor_source_stalled)
+								} else {
+									null
+								},
 							),
 						)
 					}
@@ -311,24 +348,47 @@ class DownloadWorker @AssistedInject constructor(
 							localStorageChanges.emit(LocalMangaParser(output.rootFile).getManga(withDetails = false))
 						}.onFailure(Throwable::printStackTraceDebug)
 					}
-					publishState(currentState.copy(downloadedChapters = currentState.downloadedChapters + 1))
-					}
-					publishState(currentState.copy(isIndeterminate = true, eta = -1L, isStuck = false))
-					output.mergeWithExisting()
-					output.finish()
-					val localManga = LocalMangaParser(output.rootFile).getManga(withDetails = false)
-					localStorageChanges.emit(localManga)
-					publishState(currentState.copy(localManga = localManga, eta = -1L, isStuck = false))
-					smartQueue.remove(manga.id)
-				} catch (e: Exception) {
-					if (e !is CancellationException) {
-						publishState(
-							currentState.copy(
-								error = e,
-								errorMessage = e.getDisplayMessage(applicationContext.resources),
-							),
-						)
-					}
+					publishState(
+						currentState.copy(
+							downloadedChapters = currentState.downloadedChapters + 1,
+							isStuck = false,
+							doctorMessage = null,
+						),
+					)
+				}
+				publishState(
+					currentState.copy(
+						isIndeterminate = true,
+						eta = -1L,
+						isStuck = false,
+						doctorMessage = null,
+					),
+				)
+				output.mergeWithExisting()
+				output.finish()
+				val localManga = LocalMangaParser(output.rootFile).getManga(withDetails = false)
+				localStorageChanges.emit(localManga)
+				publishState(
+					currentState.copy(
+						localManga = localManga,
+						eta = -1L,
+						isStuck = false,
+						doctorMessage = null,
+					),
+				)
+				smartQueue.remove(manga.id)
+			} catch (e: Exception) {
+				if (e !is CancellationException) {
+					publishState(
+						currentState.copy(
+							error = e,
+							errorMessage = e.getDisplayMessage(applicationContext.resources),
+							eta = -1L,
+							isStuck = false,
+							doctorMessage = null,
+						),
+					)
+				}
 				throw e
 			} finally {
 				withContext(NonCancellable) {
@@ -369,6 +429,7 @@ class DownloadWorker @AssistedInject constructor(
 							errorMessage = e.getDisplayMessage(applicationContext.resources),
 							eta = -1L,
 							isStuck = false,
+							doctorMessage = null,
 						),
 					)
 					countDown = MAX_FAILSAFE_ATTEMPTS
@@ -379,11 +440,26 @@ class DownloadWorker @AssistedInject constructor(
 							return null
 						}
 					} finally {
-						publishState(currentState.copy(isPaused = false, error = null, errorMessage = null))
+						publishState(
+							currentState.copy(
+								isPaused = false,
+								error = null,
+								errorMessage = null,
+								doctorMessage = null,
+							),
+						)
 					}
 				} else {
 					countDown--
+					publishState(
+						currentState.copy(
+							eta = -1L,
+							isStuck = true,
+							doctorMessage = getRetryDoctorMessage(e),
+						),
+					)
 					delay(retryDelay)
+					publishState(currentState.copy(isStuck = false, doctorMessage = null))
 				}
 			}
 		}
@@ -392,21 +468,35 @@ class DownloadWorker @AssistedInject constructor(
 	private suspend fun checkIsPaused() {
 		val pausingHandle = PausingHandle.current()
 		if (pausingHandle.isPaused) {
-			publishState(currentState.copy(isPaused = true, eta = -1L, isStuck = false))
+			publishState(
+				currentState.copy(
+					isPaused = true,
+					eta = -1L,
+					isStuck = false,
+					doctorMessage = null,
+				),
+			)
 			try {
 				pausingHandle.awaitResumed()
 			} finally {
-				publishState(currentState.copy(isPaused = false))
+				publishState(currentState.copy(isPaused = false, doctorMessage = null))
 			}
 		}
 	}
 
-	private suspend fun getMediaType(url: String, file: File): MimeType? = runInterruptible(Dispatchers.IO) {
+	private suspend fun getMediaType(
+		url: String,
+		file: File,
+		nativeInfo: NativeImageProbe.ImageInfo? = null,
+	): MimeType? = runInterruptible(Dispatchers.IO) {
+		nativeInfo?.mimeType?.toMimeTypeOrNull()?.let {
+			return@runInterruptible it
+		}
 		MimeTypes.probeMimeType(file)?.let {
 			return@runInterruptible it
 		}
 		if (nativeImageProbe.isAvailable) {
-			nativeImageProbe.probeFormat(file).toMimeTypeOrNull()?.let {
+			probeNativeImage(file)?.mimeType?.toMimeTypeOrNull()?.let {
 				return@runInterruptible it
 			}
 		}
@@ -434,6 +524,7 @@ class DownloadWorker @AssistedInject constructor(
 						it.writeAllCancellable(input)
 					}
 				}
+				validateDownloadedImage(url, file, cr.getType(uri)?.toMimeTypeOrNull())
 			} catch (e: Exception) {
 				file.delete()
 				throw e
@@ -442,17 +533,22 @@ class DownloadWorker @AssistedInject constructor(
 		}
 		val request = PageLoader.createPageRequest(url, source)
 		analytics.recordPageRequest(source)
-		slowdownDispatcher.delay(source)
+		val slowdownDelayMs = slowdownDispatcher.getDelayMs(source)
+		if (slowdownDelayMs > 0L) {
+			delay(slowdownDelayMs)
+		}
 		val startedAt = SystemClock.elapsedRealtime()
 		return try {
 			imageProxyInterceptor.interceptPageRequest(request, okHttp)
 				.ensureSuccess()
 				.use { response ->
 					var file: File? = null
+					var declaredType: MimeType? = null
 					try {
 						response.requireBody().use { body ->
+							declaredType = body.contentType()?.toMimeType()
 							file = destination.createTempFile(
-								ext = MimeTypes.getExtension(body.contentType()?.toMimeType())
+								ext = MimeTypes.getExtension(declaredType)
 							)
 							file.sink(append = false).buffer().use {
 								it.writeAllCancellable(body.source())
@@ -463,6 +559,7 @@ class DownloadWorker @AssistedInject constructor(
 						throw e
 					}
 					val result = checkNotNull(file)
+					validateDownloadedImage(url, result, declaredType)
 					val elapsedMs = (SystemClock.elapsedRealtime() - startedAt).coerceAtLeast(1L)
 					analytics.recordPageSuccess(source, result.length(), elapsedMs)
 					if (elapsedMs >= SLOW_RESPONSE_THRESHOLD_MS) {
@@ -482,10 +579,50 @@ class DownloadWorker @AssistedInject constructor(
 		}
 	}
 
+	private fun validateDownloadedImage(
+		url: String,
+		file: File,
+		declaredType: MimeType?,
+	): NativeImageProbe.ImageInfo? {
+		if (!file.isFile || file.length() == 0L) {
+			throw NoDataReceivedException(url)
+		}
+		if (declaredType != null && !declaredType.isImage) {
+			throw UnsupportedFileException("Unsupported image type: $declaredType")
+		}
+		val nativeInfo = probeNativeImage(file)
+		if (nativeInfo?.isCorrupt == true) {
+			throw UnsupportedFileException("Corrupt image file")
+		}
+		val detectedType = nativeInfo?.mimeType?.toMimeTypeOrNull()
+			?: MimeTypes.probeMimeType(file)
+			?: BitmapDecoderCompat.probeMimeType(file)
+		if (detectedType == null || !detectedType.isImage) {
+			throw UnsupportedFileException("Unsupported image file")
+		}
+		return nativeInfo
+	}
+
+	private fun probeNativeImage(file: File): NativeImageProbe.ImageInfo? {
+		return if (nativeImageProbe.isAvailable) {
+			nativeImageProbe.probe(file)
+		} else {
+			null
+		}
+	}
+
 	private fun Throwable.isRateLimit(): Boolean = when (this) {
 		is TooManyRequestExceptions -> true
 		is HttpStatusException -> statusCode == HTTP_TOO_MANY_REQUESTS
 		else -> false
+	}
+
+	private fun getRetryDoctorMessage(error: Throwable): String {
+		return if (error.isRateLimit()) {
+			applicationContext.getString(R.string.download_doctor_rate_limited)
+		} else {
+			applicationContext.getString(R.string.download_doctor_retrying_source)
+		}
 	}
 
 	private fun File.createTempFile(ext: String?) = File(
@@ -502,15 +639,16 @@ class DownloadWorker @AssistedInject constructor(
 
 	private suspend fun publishState(state: DownloadState) {
 		val previousState = currentState
-		lastPublishedState = state
-		if (previousState.isParticularProgress && state.isParticularProgress) {
-			etaEstimator.onProgressChanged(state.progress, state.max)
+		val nextState = state.withDoctorMessage()
+		lastPublishedState = nextState
+		if (previousState.isParticularProgress && nextState.isParticularProgress) {
+			etaEstimator.onProgressChanged(nextState.progress, nextState.max)
 		} else {
 			etaEstimator.reset()
 			notificationThrottler.reset()
 		}
-		val notification = notificationFactory.create(state)
-		if (state.isFinalState) {
+		val notification = notificationFactory.create(nextState)
+		if (nextState.isFinalState) {
 			if (!notificationFactory.isSilent) {
 				notificationManager.notify(id.toString(), id.hashCode(), notification)
 			}
@@ -519,7 +657,23 @@ class DownloadWorker @AssistedInject constructor(
 		} else {
 			return
 		}
-		setProgress(state.toWorkData())
+		setProgress(nextState.toWorkData())
+	}
+
+	private fun DownloadState.withDoctorMessage(): DownloadState {
+		return when {
+			isFinalState || isPaused || isStopped || !isStuck -> if (doctorMessage == null) {
+				this
+			} else {
+				copy(doctorMessage = null)
+			}
+
+			doctorMessage.isNullOrBlank() -> copy(
+				doctorMessage = applicationContext.getString(R.string.download_doctor_source_stalled),
+			)
+
+			else -> this
+		}
 	}
 
 	private suspend fun getDoneChapters(manga: Manga) = runCatchingCancellable {
@@ -647,7 +801,8 @@ class DownloadWorker @AssistedInject constructor(
 			if (tasks.isEmpty()) {
 				return
 			}
-			val requests = tasks.map { (manga, task) ->
+			val orderedTasks = smartQueue.orderForScheduling(tasks) { it.first }
+			val requests = orderedTasks.map { (manga, task) ->
 				mangaDataRepository.storeManga(manga, replaceExisting = true)
 				val request = OneTimeWorkRequestBuilder<DownloadWorker>()
 					.setConstraints(createConstraints(task.allowMeteredNetwork))
@@ -657,14 +812,15 @@ class DownloadWorker @AssistedInject constructor(
 					.setInputData(task.toData())
 					.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
 					.build()
-				manga.id to request
+				manga to request
 			}
 			workManager.enqueue(requests.map { it.second }).await()
 			smartQueue.enqueueAll(
-				requests.map { (mangaId, request) ->
+				requests.map { (manga, request) ->
 					SmartDownloadQueue.QueueEntry(
-						mangaId = mangaId,
-						priority = SmartDownloadQueue.Priority.DEFAULT,
+						mangaId = manga.id,
+						manga = manga,
+						priority = smartQueue.priorityFor(manga),
 						workId = request.id,
 					)
 				},

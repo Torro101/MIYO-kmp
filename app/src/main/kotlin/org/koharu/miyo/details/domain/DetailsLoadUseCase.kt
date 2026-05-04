@@ -44,7 +44,11 @@ class DetailsLoadUseCase @Inject constructor(
 	private val networkState: NetworkState,
 ) {
 
-	operator fun invoke(intent: MangaIntent, force: Boolean): Flow<MangaDetails> = flow {
+	operator fun invoke(
+		intent: MangaIntent,
+		force: Boolean,
+		preferLocalChapters: Boolean = false,
+	): Flow<MangaDetails> = flow {
 		val manga = requireNotNull(mangaDataRepository.resolveIntent(intent, withChapters = true)) {
 			"Cannot resolve intent $intent"
 		}
@@ -59,9 +63,9 @@ class DetailsLoadUseCase @Inject constructor(
 			),
 		)
 		if (manga.isLocal) {
-			loadLocal(manga, override, force)
+			loadLocal(manga, override, force, preferLocalChapters)
 		} else {
-			loadRemote(manga, override, force)
+			loadRemote(manga, override, force, preferLocalChapters)
 		}
 	}.distinctUntilChanged()
 		.flowOn(Dispatchers.Default)
@@ -70,7 +74,12 @@ class DetailsLoadUseCase @Inject constructor(
 	 * Load local manga + try to load the linked remote one if network is not restricted
 	 * Suppress any network errors
 	 */
-	private suspend fun FlowCollector<MangaDetails>.loadLocal(manga: Manga, override: MangaOverride?, force: Boolean) {
+	private suspend fun FlowCollector<MangaDetails>.loadLocal(
+		manga: Manga,
+		override: MangaOverride?,
+		force: Boolean,
+		preferLocalChapters: Boolean,
+	) {
 		val skipNetworkLoad = !force && networkState.isOfflineOrRestricted()
 		val localDetails = localMangaRepository.getDetails(manga)
 		emit(
@@ -83,6 +92,18 @@ class DetailsLoadUseCase @Inject constructor(
 			),
 		)
 		if (skipNetworkLoad) {
+			return
+		}
+		if (preferLocalChapters) {
+			emit(
+				MangaDetails(
+					manga = localDetails,
+					localManga = null,
+					override = override,
+					description = localDetails.description?.parseAsHtml(withImages = true),
+					isLoaded = true,
+				),
+			)
 			return
 		}
 		val remoteManga = localMangaRepository.getRemoteManga(manga)
@@ -119,9 +140,12 @@ class DetailsLoadUseCase @Inject constructor(
 	private suspend fun FlowCollector<MangaDetails>.loadRemote(
 		manga: Manga,
 		override: MangaOverride?,
-		force: Boolean
+		force: Boolean,
+		preferLocalChapters: Boolean,
 	) = coroutineScope {
-		val remoteDeferred = async {
+		val remoteDeferred = if (preferLocalChapters) {
+			null
+		} else async {
 			getDetails(manga, force)
 		}
 		val localManga = localMangaRepository.findSavedManga(manga, withDetails = true)
@@ -135,8 +159,22 @@ class DetailsLoadUseCase @Inject constructor(
 					isLoaded = false,
 				),
 			)
+			if (preferLocalChapters) {
+				emit(
+					MangaDetails(
+						manga = manga,
+						localManga = localManga,
+						override = override,
+						description = localManga.manga.description?.parseAsHtml(withImages = true),
+						isLoaded = true,
+					),
+				)
+				return@coroutineScope
+			}
 		}
-		val remoteDetails = remoteDeferred.await().getOrThrow()
+		val remoteDetails = (remoteDeferred ?: async {
+			getDetails(manga, force)
+		}).await().getOrThrow()
 		val mangaDetails = MangaDetails(
 			manga = remoteDetails,
 			localManga = localManga,

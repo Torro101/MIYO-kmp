@@ -39,8 +39,17 @@ class ChaptersLoader @Inject constructor(
 		val index = if (isNext) chapters.indexOfFirst(predicate) else chapters.indexOfLast(predicate)
 		if (index == -1) return false
 		val newChapter = chapters.getOrNull(if (isNext) index + 1 else index - 1) ?: return false
+		val isAlreadyLoaded = mutex.withLock {
+			newChapter.id in chapterPages
+		}
+		if (isAlreadyLoaded) {
+			return true
+		}
 		val newPages = loadChapter(newChapter.id)
-		mutex.withLock {
+		return mutex.withLock {
+			if (newChapter.id in chapterPages) {
+				return@withLock true
+			}
 			if (chapterPages.chaptersSize > 1) {
 				// trim pages
 				if (chapterPages.size > PAGES_TRIM_THRESHOLD) {
@@ -56,8 +65,8 @@ class ChaptersLoader @Inject constructor(
 			} else {
 				chapterPages.addFirst(newChapter.id, newPages)
 			}
+			true
 		}
-		return true
 	}
 
 	@CheckResult

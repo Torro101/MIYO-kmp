@@ -708,6 +708,9 @@
     <string name="sfw">SFW</string>
     <string name="skip_all">Skip all</string>
     <string name="stuck">Stuck</string>
+    <string name="download_doctor_source_stalled">Stuck · waiting on source</string>
+    <string name="download_doctor_retrying_source">Stuck · retrying source</string>
+    <string name="download_doctor_rate_limited">Stuck · rate limited</string>
     <string name="not_in_favorites">Not in favorites</string>
     <string name="updated_long_ago">Updated long ago</string>
     <string name="unpopular">Unpopular</string>

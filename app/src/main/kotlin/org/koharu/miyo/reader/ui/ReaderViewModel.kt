@@ -30,6 +30,7 @@ import org.koharu.miyo.R
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.bookmarks.domain.BookmarksRepository
 import org.koharu.miyo.core.exceptions.EmptyMangaException
+import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.model.getPreferredBranch
 import org.koharu.miyo.core.nav.MangaIntent
 import org.koharu.miyo.core.nav.ReaderIntent
@@ -299,6 +300,7 @@ class ReaderViewModel @Inject constructor(
             content.value = ReaderContent(emptyList(), null)
             chaptersLoader.loadSingleChapter(id)
             val newState = ReaderState(id, page, 0)
+            preloadNextChapterAfterLocal(newState.chapterId, mangaDetails.requireValue())
             content.value = ReaderContent(chaptersLoader.snapshot(), newState)
             saveCurrentState(newState)
         }
@@ -327,6 +329,7 @@ class ReaderViewModel @Inject constructor(
                 page = if (delta == 0) prevState.page else 0,
                 scroll = if (delta == 0) prevState.scroll else 0,
             )
+            preloadNextChapterAfterLocal(newState.chapterId, mangaDetails.requireValue())
             content.value = ReaderContent(chaptersLoader.snapshot(), newState)
             saveCurrentState(newState)
         }
@@ -336,34 +339,48 @@ class ReaderViewModel @Inject constructor(
     fun onCurrentPageChanged(lowerPos: Int, upperPos: Int) {
         val prevJob = stateChangeJob
         val pages = content.value.pages // capture immediately
+        val centerPos = (lowerPos + upperPos) / 2
+        val capturedPage = pages.getOrNull(centerPos)
         stateChangeJob = launchJob(Dispatchers.Default) {
             prevJob?.cancelAndJoin()
             loadingJob?.join()
-            if (pages.size != content.value.pages.size) {
-                return@launchJob // TODO
-            }
-            val centerPos = (lowerPos + upperPos) / 2
-            pages.getOrNull(centerPos)?.let { page ->
+            val currentPages = content.value.pages
+            val resolvedCenterPos = capturedPage?.let { page ->
+                currentPages.indexOfFirst {
+                    it.id == page.id && it.chapterId == page.chapterId && it.index == page.index
+                }.takeIf { it >= 0 }
+            } ?: centerPos.coerceIn(0, currentPages.lastIndex.coerceAtLeast(0))
+            val currentPage = currentPages.getOrNull(resolvedCenterPos)
+            if (currentPage != null) {
                 readingState.update { cs ->
-                    cs?.copy(chapterId = page.chapterId, page = page.index)
+                    cs?.copy(chapterId = currentPage.chapterId, page = currentPage.index)
                 }
             }
             notifyStateChanged()
-            if (pages.isEmpty() || loadingJob?.isActive == true) {
+            if (currentPages.isEmpty() || loadingJob?.isActive == true) {
                 return@launchJob
             }
             ensureActive()
+            val visibleBefore = (centerPos - lowerPos).coerceAtLeast(0)
+            val visibleAfter = (upperPos - centerPos).coerceAtLeast(0)
+            val resolvedLowerPos = (resolvedCenterPos - visibleBefore).coerceAtLeast(0)
+            val resolvedUpperPos = (resolvedCenterPos + visibleAfter).coerceAtMost(currentPages.lastIndex)
             val autoLoadAllowed = readerMode.value != ReaderMode.WEBTOON || !isWebtoonPullGestureEnabled.value
             if (autoLoadAllowed) {
-                if (upperPos >= pages.lastIndex - BOUNDS_PAGE_OFFSET) {
-                    loadPrevNextChapter(pages.last().chapterId, isNext = true)
+                if (resolvedUpperPos >= currentPages.lastIndex - BOUNDS_PAGE_OFFSET) {
+                    loadPrevNextChapter(currentPages.last().chapterId, isNext = true)
                 }
-                if (lowerPos <= BOUNDS_PAGE_OFFSET) {
-                    loadPrevNextChapter(pages.first().chapterId, isNext = false)
+                if (resolvedLowerPos <= BOUNDS_PAGE_OFFSET) {
+                    loadPrevNextChapter(currentPages.first().chapterId, isNext = false)
                 }
             }
             if (pageLoader.isPrefetchApplicable()) {
-                pageLoader.prefetch(pages.trySublist(upperPos + 1, upperPos + PREFETCH_LIMIT))
+                pageLoader.prefetch(
+                    currentPages.trySublist(
+                        fromIndex = resolvedUpperPos + 1,
+                        toIndex = resolvedUpperPos + 1 + PREFETCH_LIMIT,
+                    ),
+                )
             }
         }
     }
@@ -409,7 +426,7 @@ class ReaderViewModel @Inject constructor(
             var exception: Exception? = null
             var loadedDetails: MangaDetails? = null
             try {
-                detailsLoadUseCase(intent, force = false)
+                detailsLoadUseCase(intent, force = false, preferLocalChapters = true)
                     .collect { details ->
                         loadedDetails = details
                         if (mangaDetails.value == null) {
@@ -423,6 +440,10 @@ class ReaderViewModel @Inject constructor(
                             if (newState == null) {
                                 return@collect // manga not loaded yet if cannot get state
                             }
+                            if (!details.canLoadInitialChapter(newState.chapterId)) {
+                                mangaDetails.value = details.filterChapters(selectedBranch.value)
+                                return@collect
+                            }
                             readingState.value = newState
                             val mode = runCatchingCancellable {
                                 detectReaderModeUseCase(manga, newState)
@@ -432,6 +453,7 @@ class ReaderViewModel @Inject constructor(
                             readerMode.value = mode
                             try {
                                 chaptersLoader.loadSingleChapter(newState.chapterId)
+                                preloadNextChapterAfterLocal(newState.chapterId, details)
                             } catch (e: Exception) {
                                 readingState.value = null // try next time
                                 exception = e.mergeWith(exception)
@@ -485,6 +507,26 @@ class ReaderViewModel @Inject constructor(
         }
     }
 
+    private fun MangaDetails.canLoadInitialChapter(chapterId: Long): Boolean {
+        return isLoaded || isLocal || chaptersLoader.peekChapter(chapterId)?.source == LocalMangaSource
+    }
+
+    private suspend fun preloadNextChapterAfterLocal(currentId: Long, details: MangaDetails) {
+        if (!settings.isPagesPreloadEnabled) {
+            return
+        }
+        if (readerMode.value == ReaderMode.WEBTOON && isWebtoonPullGestureEnabled.value) {
+            return
+        }
+        val chapter = chaptersLoader.peekChapter(currentId) ?: return
+        if (chapter.source != LocalMangaSource) {
+            return
+        }
+        runCatchingCancellable {
+            chaptersLoader.loadPrevNextChapter(details, currentId, isNext = true)
+        }.getOrNull()
+    }
+
     @AnyThread
     private fun loadPrevNextChapter(currentId: Long, isNext: Boolean) {
         val prevJob = loadingJob
@@ -496,8 +538,8 @@ class ReaderViewModel @Inject constructor(
     }
 
     private fun <T> List<T>.trySublist(fromIndex: Int, toIndex: Int): List<T> {
-        val fromIndexBounded = fromIndex.coerceAtMost(lastIndex)
-        val toIndexBounded = toIndex.coerceIn(fromIndexBounded, lastIndex)
+        val fromIndexBounded = fromIndex.coerceIn(0, size)
+        val toIndexBounded = toIndex.coerceIn(fromIndexBounded, size)
         return if (fromIndexBounded == toIndexBounded) {
             emptyList()
         } else {

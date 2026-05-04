@@ -24,6 +24,14 @@ class NativeZipWriter @Inject constructor() {
         nativeCloseZip(handle)
     }
 
+    fun finishZip(handle: Long): Boolean {
+        return nativeFinishZip(handle)
+    }
+
+    fun addDirectory(handle: Long, entryName: String): Boolean {
+        return nativeAddDirectory(handle, entryName)
+    }
+
     fun appendFileFromDisk(handle: Long, entryName: String, srcPath: File): Boolean {
         return nativeAppendFileFromDisk(handle, entryName, srcPath.absolutePath)
     }
@@ -38,6 +46,8 @@ class NativeZipWriter @Inject constructor() {
 
     private external fun nativeOpenZip(path: String, append: Boolean): Long
     private external fun nativeCloseZip(handle: Long)
+    private external fun nativeFinishZip(handle: Long): Boolean
+    private external fun nativeAddDirectory(handle: Long, entryName: String): Boolean
     private external fun nativeAppendFileFromDisk(handle: Long, entryName: String, srcPath: String): Boolean
     private external fun nativeAppendFileFromMemory(handle: Long, entryName: String, data: ByteArray, offset: Int, length: Int): Boolean
     private external fun nativeBenchmarkWrite(path: String, targetSizeMb: Int): Long

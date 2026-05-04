@@ -36,12 +36,14 @@ import org.koharu.miyo.download.ui.list.DownloadsActivity
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.util.format
 import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
+import java.util.LinkedHashMap
 import java.util.UUID
 import androidx.appcompat.R as appcompatR
 
 private const val CHANNEL_ID_DEFAULT = "download"
 private const val CHANNEL_ID_SILENT = "download_bg"
 private const val GROUP_ID = "downloads"
+private const val COVER_CACHE_SIZE = 16
 
 class DownloadNotificationFactory @AssistedInject constructor(
 	@LocalizedAppContext private val context: Context,
@@ -50,7 +52,11 @@ class DownloadNotificationFactory @AssistedInject constructor(
 	@Assisted val isSilent: Boolean,
 ) {
 
-	private val covers = HashMap<Manga, Drawable>() // TODO cache
+	private val covers = object : LinkedHashMap<Long, Drawable>(COVER_CACHE_SIZE, 0.75f, true) {
+		override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Long, Drawable>?): Boolean {
+			return eldest != null && size > COVER_CACHE_SIZE
+		}
+	}
 	private val builder = NotificationCompat.Builder(context, if (isSilent) CHANNEL_ID_SILENT else CHANNEL_ID_DEFAULT)
 	private val mutex = Mutex()
 
@@ -226,7 +232,14 @@ class DownloadNotificationFactory @AssistedInject constructor(
 
 			else -> {
 				builder.setProgress(state.max, state.progress, false)
-				builder.setContentText(getProgressString(state.percent, state.eta, state.isStuck))
+				builder.setContentText(
+					getProgressString(
+						percent = state.percent,
+						eta = state.eta,
+						isStuck = state.isStuck,
+						doctorMessage = state.doctorMessage,
+					),
+				)
 				builder.setCategory(NotificationCompat.CATEGORY_PROGRESS)
 				builder.setStyle(null)
 				builder.setOngoing(true)
@@ -237,15 +250,21 @@ class DownloadNotificationFactory @AssistedInject constructor(
 		return builder.build()
 	}
 
-	private fun getProgressString(percent: Float, eta: Long, isStuck: Boolean): CharSequence? {
+	private fun getProgressString(
+		percent: Float,
+		eta: Long,
+		isStuck: Boolean,
+		doctorMessage: String?,
+	): CharSequence? {
 		val percentString = if (percent >= 0f) {
 			context.getString(R.string.percent_string_pattern, (percent * 100).format())
 		} else {
 			null
 		}
 		val etaString = when {
-			eta <= 0L -> null
+			!doctorMessage.isNullOrBlank() -> doctorMessage
 			isStuck -> context.getString(R.string.stuck)
+			eta <= 0L -> null
 			else -> DateUtils.getRelativeTimeSpanString(
 				eta,
 				System.currentTimeMillis(),
@@ -272,7 +291,7 @@ class DownloadNotificationFactory @AssistedInject constructor(
 		false,
 	)
 
-	private suspend fun getCover(manga: Manga) = covers[manga] ?: run {
+	private suspend fun getCover(manga: Manga) = covers[manga.id] ?: run {
 		runCatchingCancellable {
 			coil.execute(
 				ImageRequest.Builder(context)
@@ -284,7 +303,7 @@ class DownloadNotificationFactory @AssistedInject constructor(
 					.build(),
 			).getDrawableOrThrow()
 		}.onSuccess {
-			covers[manga] = it
+			covers[manga.id] = it
 		}.onFailure {
 			it.printStackTraceDebug()
 		}.getOrNull()

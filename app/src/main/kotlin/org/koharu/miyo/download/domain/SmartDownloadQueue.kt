@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koitharu.kotatsu.parsers.model.Manga
+import java.util.ArrayDeque
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,13 +16,8 @@ class SmartDownloadQueue @Inject constructor() {
 
 	private val queue = ArrayList<QueueEntry>()
 	private val queueComparator = compareBy<QueueEntry> {
-		when (it.priority) {
-			Priority.READING_NOW -> 0
-			Priority.FAVORITE_RECENT -> 1
-			Priority.FAVORITE_OTHER -> 2
-			Priority.DEFAULT -> 3
-		}
-	}.thenByDescending { it.addedAtMs }
+		it.priority.rank
+	}.thenBy { it.addedAtMs }
 
 	private val _currentReading = MutableStateFlow<Long?>(null)
 	val currentReading: Flow<Long?> = _currentReading.asStateFlow()
@@ -30,6 +26,31 @@ class SmartDownloadQueue @Inject constructor() {
 
 	fun setCurrentReading(mangaId: Long?) {
 		_currentReading.value = mangaId
+	}
+
+	fun priorityFor(manga: Manga): Priority {
+		return if (_currentReading.value == manga.id) Priority.READING_NOW else Priority.DEFAULT
+	}
+
+	fun <T> orderForScheduling(
+		items: Collection<T>,
+		mangaProvider: (T) -> Manga,
+	): List<T> {
+		if (items.size <= 1) {
+			return items.toList()
+		}
+		val ordered = items.mapIndexed { index, item ->
+			val manga = mangaProvider(item)
+			ScheduledItem(
+				item = item,
+				manga = manga,
+				index = index,
+				priority = priorityFor(manga),
+			)
+		}.sortedWith(
+			compareBy<ScheduledItem<T>> { it.priority.rank }.thenBy { it.index },
+		)
+		return distributeBySource(ordered)
 	}
 
 	suspend fun enqueue(task: QueueEntry) = mutex.withLock {
@@ -80,6 +101,40 @@ class SmartDownloadQueue @Inject constructor() {
 		}
 		return bestIndex
 	}
+
+	private fun <T> distributeBySource(items: List<ScheduledItem<T>>): List<T> {
+		val lanes = LinkedHashMap<String, ArrayDeque<ScheduledItem<T>>>()
+		for (item in items) {
+			lanes.getOrPut(item.manga.source.name) { ArrayDeque() }.addLast(item)
+		}
+		val result = ArrayList<T>(items.size)
+		while (lanes.isNotEmpty()) {
+			val iterator = lanes.entries.iterator()
+			while (iterator.hasNext()) {
+				val lane = iterator.next().value
+				result.add(lane.removeFirst().item)
+				if (lane.isEmpty()) {
+					iterator.remove()
+				}
+			}
+		}
+		return result
+	}
+
+	private val Priority.rank: Int
+		get() = when (this) {
+			Priority.READING_NOW -> 0
+			Priority.FAVORITE_RECENT -> 1
+			Priority.FAVORITE_OTHER -> 2
+			Priority.DEFAULT -> 3
+		}
+
+	private data class ScheduledItem<T>(
+		val item: T,
+		val manga: Manga,
+		val index: Int,
+		val priority: Priority,
+	)
 
 	data class QueueEntry(
 		val mangaId: Long,

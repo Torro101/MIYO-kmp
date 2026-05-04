@@ -126,7 +126,7 @@ fun downloadItemAD(
 				binding.textViewPercent.isVisible = true
 				binding.textViewDetails.textAndVisible = when {
 					item.isPaused -> item.getErrorMessage(context)
-					item.isStuck -> context.getString(R.string.stuck)
+					item.isStuck -> item.getDoctorMessage(context)
 					else -> item.getEtaString()
 				}
 				binding.buttonCancel.isVisible = true

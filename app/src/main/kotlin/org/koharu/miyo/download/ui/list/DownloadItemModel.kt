@@ -8,6 +8,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.work.WorkInfo
 import kotlinx.coroutines.flow.StateFlow
+import org.koharu.miyo.R
 import org.koharu.miyo.core.util.ext.getThemeColor
 import org.koharu.miyo.download.ui.list.chapters.DownloadChapter
 import org.koharu.miyo.list.ui.ListModelDiffCallback
@@ -28,6 +29,7 @@ data class DownloadItemModel(
 	val progress: Int,
 	val eta: Long,
 	val isStuck: Boolean,
+	val doctorMessage: String?,
 	val timestamp: Instant,
 	val chaptersDownloaded: Int,
 	val isExpanded: Boolean,
@@ -54,6 +56,14 @@ data class DownloadItemModel(
 		)
 	} else {
 		null
+	}
+
+	fun getDoctorMessage(context: Context): CharSequence? {
+		return doctorMessage?.takeIf { it.isNotBlank() } ?: if (isStuck) {
+			context.getString(R.string.stuck)
+		} else {
+			null
+		}
 	}
 
 	fun getErrorMessage(context: Context): CharSequence? = if (error != null) {

@@ -272,6 +272,7 @@ class DownloadsViewModel @Inject constructor(
 			progress = DownloadState.getProgress(workData),
 			eta = DownloadState.getEta(workData),
 			isStuck = DownloadState.isStuck(workData),
+			doctorMessage = DownloadState.getDoctorMessage(workData),
 			timestamp = DownloadState.getTimestamp(workData),
 			chaptersDownloaded = DownloadState.getDownloadedChapters(workData),
 			isExpanded = isExpanded,

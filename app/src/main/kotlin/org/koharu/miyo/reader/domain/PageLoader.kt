@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -37,6 +38,7 @@ import okio.use
 import org.jetbrains.annotations.Blocking
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.image.BitmapDecoderCompat
+import org.koharu.miyo.core.nativeio.NativeImageProbe
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.MangaHttpClient
 import org.koharu.miyo.core.network.imageproxy.ImageProxyInterceptor
@@ -91,6 +93,7 @@ class PageLoader @Inject constructor(
 	private val mangaRepositoryFactory: MangaRepository.Factory,
 	private val imageProxyInterceptor: ImageProxyInterceptor,
 	private val downloadSlowdownDispatcher: DownloadSlowdownDispatcher,
+	private val nativeImageProbe: NativeImageProbe,
 ) {
 
 	val loaderScope = lifecycle.lifecycleScope + InternalErrorHandler() + Dispatchers.Default
@@ -104,8 +107,10 @@ class PageLoader @Inject constructor(
 	private var repository: MangaRepository? = null
 	private val prefetchQueue = LinkedList<MangaPage>()
 	private val counter = AtomicInteger(0)
-	private var prefetchQueueLimit = PREFETCH_LIMIT_DEFAULT // TODO adaptive
 	private val edgeDetector = EdgeDetector(context)
+
+	@Volatile
+	private var lastPageDecodeBytes = 0L
 
 	fun isPrefetchApplicable(): Boolean {
 		return repository is CachingMangaRepository
@@ -116,18 +121,28 @@ class PageLoader @Inject constructor(
 
 	@AnyThread
 	fun prefetch(pages: List<ReaderPage>) = loaderScope.launch {
+		var hasPendingPrefetch = false
 		prefetchLock.withLock {
+			val queueLimit = getPrefetchQueueLimit()
+			if (queueLimit <= 0) {
+				prefetchQueue.clear()
+				return@withLock
+			}
 			for (page in pages.asReversed()) {
-				if (tasks.containsKey(page.id)) {
+				val hasTask = synchronized(tasks) {
+					tasks.containsKey(page.id)
+				}
+				if (hasTask) {
 					continue
 				}
 				prefetchQueue.offerFirst(page.toMangaPage())
-				if (prefetchQueue.size > prefetchQueueLimit) {
+				if (prefetchQueue.size > queueLimit) {
 					prefetchQueue.pollLast()
 				}
 			}
+			hasPendingPrefetch = prefetchQueue.isNotEmpty()
 		}
-		if (counter.get() == 0) {
+		if (hasPendingPrefetch && counter.get() == 0) {
 			onIdle()
 		}
 	}
@@ -168,7 +183,9 @@ class PageLoader @Inject constructor(
 	}
 
 	fun loadPageAsync(page: MangaPage, force: Boolean): ProgressDeferred<Uri, Float> {
-		var task = tasks[page.id]?.takeIf { it.isValid() }
+		var task = synchronized(tasks) {
+			tasks[page.id]
+		}?.takeIf { it.isValid() }
 		if (force) {
 			task?.cancel()
 		} else if (task?.isCancelled == false) {
@@ -191,7 +208,7 @@ class PageLoader @Inject constructor(
 			runInterruptible(Dispatchers.IO) {
 				ZipFile(uri.schemeSpecificPart).use { zip ->
 					val entry = zip.getEntry(uri.fragment)
-					context.ensureRamAtLeast(entry.size * 2)
+					context.ensureRamAtLeast(estimateDecodeBytes(entry.size.coerceAtLeast(0L)))
 					zip.getInputStream(entry).use {
 						BitmapDecoderCompat.decode(it, MimeTypes.getMimeTypeFromExtension(entry.name))
 					}
@@ -202,7 +219,7 @@ class PageLoader @Inject constructor(
 		} else {
 			val file = uri.toFile()
 			runInterruptible(Dispatchers.IO) {
-				context.ensureRamAtLeast(file.length() * 2)
+				context.ensureRamAtLeast(file.estimateDecodeMemoryBytes())
 				BitmapDecoderCompat.decode(file)
 			}.use { image ->
 				image.compressToPNG(file)
@@ -222,7 +239,9 @@ class PageLoader @Inject constructor(
 	}
 
 	suspend fun invalidate(clearCache: Boolean) {
-		tasks.clear()
+		synchronized(tasks) {
+			tasks.clear()
+		}
 		loaderScope.cancelChildrenAndJoin()
 		if (clearCache) {
 			cache.clear()
@@ -283,7 +302,10 @@ class PageLoader @Inject constructor(
 		val pageUrl = getPageUrl(page)
 		check(pageUrl.isNotBlank()) { "Cannot obtain full image url for $page" }
 		if (!skipCache) {
-			cache.get(pageUrl)?.let { return it.toUri() }
+			cache.get(pageUrl)?.let { file ->
+				recordLoadedPageFootprint(file)
+				return file.toUri()
+			}
 		}
 		val uri = pageUrl.toUri()
 		return when {
@@ -293,23 +315,79 @@ class PageLoader @Inject constructor(
 				uri.buildUpon().scheme(URI_SCHEME_ZIP).build()
 			}
 
-			uri.isFileUri() -> uri
+			uri.isFileUri() -> uri.also {
+				recordLoadedPageFootprint(it.toFile())
+			}
 			else -> {
 				if (isPrefetch) {
-					downloadSlowdownDispatcher.delay(page.source)
+					val slowdownDelayMs = downloadSlowdownDispatcher.getDelayMs(page.source)
+					if (slowdownDelayMs > 0L) {
+						delay(slowdownDelayMs)
+					}
 				}
 				val request = createPageRequest(pageUrl, page.source)
 				imageProxyInterceptor.interceptPageRequest(request, okHttp).ensureSuccess().use { response ->
 					response.requireBody().withProgress(progress).use {
 						cache.set(pageUrl, it.source(), it.contentType()?.toMimeType())
 					}
+				}.also { file ->
+					recordLoadedPageFootprint(file)
 				}.toUri()
 			}
 		}
 	}
 
 	private fun isLowRam(): Boolean {
-		return context.ramAvailable <= FileSize.MEGABYTES.convert(PREFETCH_MIN_RAM_MB, FileSize.BYTES)
+		return isLowRam(context.ramAvailable)
+	}
+
+	private fun getPrefetchQueueLimit(): Int {
+		val availableRam = context.ramAvailable
+		if (context.isPowerSaveMode() || isLowRam(availableRam)) {
+			return 0
+		}
+		val baseLimit = when {
+			availableRam >= FileSize.MEGABYTES.convert(PREFETCH_HIGH_RAM_MB, FileSize.BYTES) -> PREFETCH_LIMIT_HIGH
+			availableRam >= FileSize.MEGABYTES.convert(PREFETCH_DEFAULT_RAM_MB, FileSize.BYTES) -> PREFETCH_LIMIT_DEFAULT
+			else -> PREFETCH_LIMIT_LOW
+		}
+		return when {
+			lastPageDecodeBytes >= megabytes(PREFETCH_HUGE_PAGE_MB) -> minOf(baseLimit, PREFETCH_LIMIT_HUGE_PAGE)
+			lastPageDecodeBytes >= megabytes(PREFETCH_LARGE_PAGE_MB) -> minOf(baseLimit, PREFETCH_LIMIT_LARGE_PAGE)
+			else -> baseLimit
+		}
+	}
+
+	private fun isLowRam(availableRam: Long): Boolean {
+		return availableRam <= FileSize.MEGABYTES.convert(PREFETCH_MIN_RAM_MB, FileSize.BYTES)
+	}
+
+	private fun recordLoadedPageFootprint(file: File) {
+		val estimate = file.estimateDecodeMemoryBytes()
+		if (estimate > 0L) {
+			lastPageDecodeBytes = estimate
+		}
+	}
+
+	private fun File.estimateDecodeMemoryBytes(): Long {
+		val nativeEstimate = if (nativeImageProbe.isAvailable) {
+			nativeImageProbe.probe(this)?.estimatedMemoryBytes
+		} else {
+			null
+		}
+		return nativeEstimate?.takeIf { it > 0L } ?: estimateDecodeBytes(length())
+	}
+
+	private fun estimateDecodeBytes(encodedBytes: Long): Long {
+		val normalizedBytes = encodedBytes.coerceAtLeast(0L)
+		val scaledBytes = if (normalizedBytes > Long.MAX_VALUE / IMAGE_DECODE_FALLBACK_MULTIPLIER) {
+			Long.MAX_VALUE
+		} else {
+			normalizedBytes * IMAGE_DECODE_FALLBACK_MULTIPLIER
+		}
+		return scaledBytes
+			.coerceAtLeast(megabytes(IMAGE_DECODE_MIN_MB))
+			.coerceAtMost(megabytes(IMAGE_DECODE_MAX_MB))
 	}
 
 	private fun Image.toImageSource(): ImageSource = if (this is BitmapImage) {
@@ -335,8 +413,23 @@ class PageLoader @Inject constructor(
 	companion object {
 
 		private const val PROGRESS_UNDEFINED = -1f
+		private const val PREFETCH_LIMIT_LOW = 3
 		private const val PREFETCH_LIMIT_DEFAULT = 6
+		private const val PREFETCH_LIMIT_HIGH = 10
 		private const val PREFETCH_MIN_RAM_MB = 80L
+		private const val PREFETCH_DEFAULT_RAM_MB = 160L
+		private const val PREFETCH_HIGH_RAM_MB = 512L
+		private const val PREFETCH_LARGE_PAGE_MB = 32L
+		private const val PREFETCH_HUGE_PAGE_MB = 64L
+		private const val PREFETCH_LIMIT_LARGE_PAGE = 2
+		private const val PREFETCH_LIMIT_HUGE_PAGE = 1
+		private const val IMAGE_DECODE_FALLBACK_MULTIPLIER = 2L
+		private const val IMAGE_DECODE_MIN_MB = 8L
+		private const val IMAGE_DECODE_MAX_MB = 256L
+
+		private fun megabytes(value: Long): Long {
+			return FileSize.MEGABYTES.convert(value, FileSize.BYTES)
+		}
 
 		fun createPageRequest(pageUrl: String, mangaSource: MangaSource) = Request.Builder()
 			.url(pageUrl)

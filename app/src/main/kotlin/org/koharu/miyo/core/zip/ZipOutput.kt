@@ -4,11 +4,13 @@ import androidx.annotation.WorkerThread
 import androidx.collection.ArraySet
 import okio.Closeable
 import org.jetbrains.annotations.Blocking
+import org.koharu.miyo.core.nativeio.NativeZipWriter
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import org.koharu.miyo.core.util.ext.withChildren
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -22,15 +24,32 @@ class ZipOutput(
 	private val entryNames = ArraySet<String>()
 	private var cachedOutput: ZipOutputStream? = null
 	private var append: Boolean = false
+	private val nativeWriter = NativeZipWriter()
+	private val nativeEnabled by lazy(LazyThreadSafetyMode.PUBLICATION) {
+		nativeWriter.isAvailable
+	}
+	private var nativeHandle = 0L
 
 	@Blocking
-	fun put(name: String, file: File): Boolean = withOutput { output ->
-		output.appendFile(file, name)
+	fun put(name: String, file: File): Boolean {
+		return if (nativeEnabled) {
+			appendFileNative(file, name)
+		} else {
+			withOutput { output ->
+				output.appendFile(file, name)
+			}
+		}
 	}
 
 	@Blocking
-	fun put(name: String, content: String): Boolean = withOutput { output ->
-		output.appendText(content, name)
+	fun put(name: String, content: String): Boolean {
+		return if (nativeEnabled) {
+			appendTextNative(content, name)
+		} else {
+			withOutput { output ->
+				output.appendText(content, name)
+			}
+		}
 	}
 
 	@Blocking
@@ -41,9 +60,13 @@ class ZipOutput(
 			ZipEntry("$name/")
 		}
 		return if (entryNames.add(entry.name)) {
-			withOutput { output ->
-				output.putNextEntry(entry)
-				output.closeEntry()
+			if (nativeEnabled) {
+				checkNative(nativeWriter.addDirectory(getNativeHandle(), entry.name), entry.name)
+			} else {
+				withOutput { output ->
+					output.putNextEntry(entry)
+					output.closeEntry()
+				}
 			}
 			true
 		} else {
@@ -53,6 +76,9 @@ class ZipOutput(
 
 	@Blocking
 	fun copyEntryFrom(other: ZipFile, entry: ZipEntry): Boolean {
+		if (nativeEnabled) {
+			return copyEntryFromNative(other, entry)
+		}
 		return if (entryNames.add(entry.name)) {
 			val zipEntry = ZipEntry(entry.name)
 			withOutput { output ->
@@ -72,14 +98,93 @@ class ZipOutput(
 	}
 
 	@Blocking
-	fun finish() = withOutput { output ->
-		output.finish()
+	fun finish() {
+		if (nativeEnabled) {
+			checkNative(nativeWriter.finishZip(getNativeHandle()), file.name)
+		} else {
+			withOutput { output ->
+				output.finish()
+			}
+		}
 	}
 
 	@Synchronized
 	override fun close() {
+		if (nativeHandle != 0L) {
+			nativeWriter.closeZip(nativeHandle)
+			nativeHandle = 0L
+		}
 		cachedOutput?.closeSafe()
 		cachedOutput = null
+	}
+
+	@WorkerThread
+	private fun appendFileNative(fileToZip: File, name: String): Boolean {
+		if (fileToZip.isDirectory) {
+			val entry = if (name.endsWith("/")) name else "$name/"
+			if (!entryNames.add(entry)) {
+				return false
+			}
+			checkNative(nativeWriter.addDirectory(getNativeHandle(), entry), entry)
+			fileToZip.withChildren { children ->
+				children.forEach { childFile ->
+					appendFileNative(childFile, "$name/${childFile.name}")
+				}
+			}
+		} else {
+			if (!entryNames.add(name)) {
+				return false
+			}
+			checkNative(nativeWriter.appendFileFromDisk(getNativeHandle(), name, fileToZip), name)
+		}
+		return true
+	}
+
+	@WorkerThread
+	private fun appendTextNative(content: String, name: String): Boolean {
+		if (!entryNames.add(name)) {
+			return false
+		}
+		checkNative(nativeWriter.appendFileFromMemory(getNativeHandle(), name, content.toByteArray()), name)
+		return true
+	}
+
+	@WorkerThread
+	private fun copyEntryFromNative(other: ZipFile, entry: ZipEntry): Boolean {
+		if (entry.isDirectory) {
+			return addDirectory(entry.name)
+		}
+		val tempDir = file.parentFile ?: file.absoluteFile.parentFile
+		val temp = if (tempDir != null) {
+			File.createTempFile("zip-entry-", ".tmp", tempDir)
+		} else {
+			File.createTempFile("zip-entry-", ".tmp")
+		}
+		return try {
+			other.getInputStream(entry).use { input ->
+				FileOutputStream(temp).use { output ->
+					input.copyTo(output)
+				}
+			}
+			appendFileNative(temp, entry.name)
+		} finally {
+			temp.delete()
+		}
+	}
+
+	@Synchronized
+	private fun getNativeHandle(): Long {
+		if (nativeHandle == 0L) {
+			nativeHandle = nativeWriter.openZip(file, append = false)
+			check(nativeHandle != 0L) { "Cannot open native ZIP output for ${file.absolutePath}" }
+		}
+		return nativeHandle
+	}
+
+	private fun checkNative(result: Boolean, entryName: String) {
+		if (!result) {
+			throw IOException("Cannot write ZIP entry $entryName")
+		}
 	}
 
 	@WorkerThread

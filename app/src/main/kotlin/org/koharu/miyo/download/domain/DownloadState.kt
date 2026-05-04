@@ -19,6 +19,7 @@ data class DownloadState(
 	val currentPage: Int = 0,
 	val eta: Long = -1L,
 	val isStuck: Boolean = false,
+	val doctorMessage: String? = null,
 	val localManga: LocalManga? = null,
 	val downloadedChapters: Int = 0,
 	val timestamp: Long = System.currentTimeMillis(),
@@ -42,6 +43,7 @@ data class DownloadState(
 		.putInt(DATA_PROGRESS, progress)
 		.putLong(DATA_ETA, eta)
 		.putBoolean(DATA_STUCK, isStuck)
+		.putString(DATA_DOCTOR_MESSAGE, doctorMessage)
 		.putLong(DATA_TIMESTAMP, timestamp)
 		.putString(DATA_ERROR, errorMessage)
 		.putInt(DATA_CHAPTERS, downloadedChapters)
@@ -57,6 +59,7 @@ data class DownloadState(
 		private const val DATA_CHAPTERS = "chapter_cnt"
 		private const val DATA_ETA = "eta"
 		private const val DATA_STUCK = "stuck"
+		private const val DATA_DOCTOR_MESSAGE = "doctor_message"
 		const val DATA_TIMESTAMP = "timestamp"
 		private const val DATA_ERROR = "error"
 		private const val DATA_INDETERMINATE = "indeterminate"
@@ -77,6 +80,8 @@ data class DownloadState(
 		fun getEta(data: Data): Long = data.getLong(DATA_ETA, -1L)
 
 		fun isStuck(data: Data): Boolean = data.getBoolean(DATA_STUCK, false)
+
+		fun getDoctorMessage(data: Data): String? = data.getString(DATA_DOCTOR_MESSAGE)
 
 		fun getTimestamp(data: Data): Instant = Instant.ofEpochMilli(data.getLong(DATA_TIMESTAMP, 0L))
 

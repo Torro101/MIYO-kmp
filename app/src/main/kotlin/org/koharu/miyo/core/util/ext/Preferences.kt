@@ -19,7 +19,15 @@ fun ListPreference.setDefaultValueCompat(defaultValue: String) {
 }
 
 fun MultiSelectListPreference.setDefaultValueCompat(defaultValue: Set<String>) {
-	setDefaultValue(defaultValue) // FIXME not working
+	setDefaultValue(defaultValue)
+	val preferenceKey = key
+	if (
+		preferenceKey != null &&
+		values.isEmpty() &&
+		preferenceManager.sharedPreferences?.contains(preferenceKey) != true
+	) {
+		values = defaultValue
+	}
 }
 
 fun <E : Enum<E>> SharedPreferences.getEnumValue(key: String, enumClass: Class<E>): E? {
