@@ -15,7 +15,7 @@ import org.draken.usagi.R
 import org.draken.usagi.core.ui.AlertDialogFragment
 import org.draken.usagi.core.ui.widgets.SegmentedBarView
 import org.draken.usagi.core.util.FileSize
-import org.draken.usagi.core.util.UsagiColors
+import org.draken.usagi.core.util.MiyoColors
 import org.draken.usagi.core.util.ext.getQuantityStringSafe
 import org.draken.usagi.core.util.ext.observe
 import org.draken.usagi.core.util.ext.observeEvent
@@ -86,7 +86,7 @@ class LocalInfoDialog : AlertDialogFragment<DialogLocalInfoBinding>(), View.OnCl
 		val total = size + available
 		val segment = SegmentedBarView.Segment(
 			percent = (size.toDouble() / total.toDouble()).toFloat(),
-			color = UsagiColors.segmentColor(view.context, appcompatR.attr.colorPrimary),
+			color = MiyoColors.segmentColor(view.context, appcompatR.attr.colorPrimary),
 		)
 		requireViewBinding().labelUsed.text = view.context.getString(
 			R.string.memory_usage_pattern,

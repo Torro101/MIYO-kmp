@@ -59,7 +59,7 @@
 
 					<com.google.android.material.chip.Chip
 						android:id="@+id/chip_backup"
-						style="@style/Widget.Usagi.Chip.Assist"
+						style="@style/Widget.Miyo.Chip.Assist"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:text="@string/restore_backup"
@@ -67,7 +67,7 @@
 
 					<com.google.android.material.chip.Chip
 						android:id="@+id/chip_sync"
-						style="@style/Widget.Usagi.Chip.Assist"
+						style="@style/Widget.Miyo.Chip.Assist"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:text="@string/sync_auth"

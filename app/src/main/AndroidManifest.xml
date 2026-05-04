@@ -49,7 +49,7 @@
 	</queries>
 
 	<application
-		android:name="org.draken.usagi.UsagiApp"
+		android:name="org.draken.usagi.MiyoApp"
 		android:allowBackup="true"
 		android:backupAgent="org.draken.usagi.backups.domain.AppBackupAgent"
 		android:dataExtractionRules="@xml/backup_rules"
@@ -66,7 +66,7 @@
 		android:requestLegacyExternalStorage="true"
 		android:roundIcon="@mipmap/ic_launcher_round"
 		android:supportsRtl="true"
-		android:theme="@style/Theme.Usagi"
+		android:theme="@style/Theme.Miyo"
 		tools:ignore="UnusedAttribute">
 
 		<activity
@@ -105,7 +105,7 @@
 				<category android:name="android.intent.category.BROWSABLE" />
 
 				<data android:scheme="kotatsu" />
-				<data android:scheme="usagi" />
+				<data android:scheme="miyo" />
 				<data android:host="manga" />
 				<data android:host="kotatsu.app" />
 				<data android:host="yumemi.moe" />
@@ -165,7 +165,7 @@
 				<category android:name="android.intent.category.BROWSABLE" />
 
 				<data android:scheme="kotatsu" />
-				<data android:scheme="usagi" />
+				<data android:scheme="miyo" />
 				<data android:host="about" />
 				<data android:host="sync-settings" />
 			</intent-filter>
@@ -268,7 +268,7 @@
 				<category android:name="android.intent.category.BROWSABLE" />
 
 				<data android:scheme="kotatsu" />
-				<data android:scheme="usagi" />
+				<data android:scheme="miyo" />
 				<data android:host="shikimori-auth" />
 				<data android:host="anilist-auth" />
 				<data android:host="mal-auth" />
@@ -288,7 +288,7 @@
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<data android:scheme="kotatsu+kitsu" />
-				<data android:scheme="usagi+kitsu" />
+				<data android:scheme="miyo+kitsu" />
 			</intent-filter>
 		</activity>
 		<activity
@@ -445,7 +445,7 @@
 			android:name="org.draken.usagi.core.exceptions.resolve.CaptchaHandler$DiscardReceiver"
 			android:exported="false">
 			<intent-filter>
-				<action android:name="org.draken.usagi.CAPTCHA_DISCARD" />
+				<action android:name="org.koharu.miyo.CAPTCHA_DISCARD" />
 			</intent-filter>
 		</receiver>
 		<receiver
@@ -1572,7 +1572,6 @@
 				<data android:host="readmanga.me" />
 				<data android:host="seimanga.me" />
 				<data android:host="selfmanga.live" />
-				<data android:host="web.usagi.one" />
 				<data android:host="xxxx.henchan.pro" />
 				<data android:host="xxl.hentaichan.live" />
 				<data android:host="xxx.henchan.pro" />

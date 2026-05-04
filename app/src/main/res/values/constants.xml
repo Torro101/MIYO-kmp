@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="url_telegram_web" translatable="false">https://t.me/UsagiApp</string>
-	<string name="url_telegram" translatable="false">tg://resolve?domain=UsagiApp</string>
-	<string name="url_weblate" translatable="false">https://hosted.weblate.org/engage/usagi</string>
+	<string name="url_telegram_web" translatable="false">https://t.me/MiyoApp</string>
+	<string name="url_telegram" translatable="false">tg://resolve?domain=MiyoApp</string>
+	<string name="url_weblate" translatable="false">https://hosted.weblate.org/engage/miyo</string>
 	<string name="url_user_manual" translatable="false">https://yumemi.moe/manuals/guides/getting-started/</string>
 	<string name="url_error_report" translatable="false">https://bugs.yumemi.moe/report</string>
 	<string name="shikimori_clientId" translatable="false">Mw6F0tPEOgyV7F9U9Twg50Q8SndMY7hzIOfXg0AX_XU</string>

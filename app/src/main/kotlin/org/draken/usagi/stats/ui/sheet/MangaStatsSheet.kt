@@ -12,7 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.draken.usagi.R
 import org.draken.usagi.core.nav.router
 import org.draken.usagi.core.ui.sheet.BaseAdaptiveSheet
-import org.draken.usagi.core.util.UsagiColors
+import org.draken.usagi.core.util.MiyoColors
 import org.draken.usagi.core.util.ext.consume
 import org.draken.usagi.core.util.ext.observe
 import org.draken.usagi.core.util.ext.textAndVisible
@@ -32,7 +32,7 @@ class MangaStatsSheet : BaseAdaptiveSheet<SheetStatsMangaBinding>(), View.OnClic
 	override fun onViewBindingCreated(binding: SheetStatsMangaBinding, savedInstanceState: Bundle?) {
 		super.onViewBindingCreated(binding, savedInstanceState)
 		binding.textViewTitle.text = viewModel.manga.title
-		binding.chartView.barColor = UsagiColors.ofManga(binding.root.context, viewModel.manga)
+		binding.chartView.barColor = MiyoColors.ofManga(binding.root.context, viewModel.manga)
 		viewModel.stats.observe(viewLifecycleOwner, ::onStatsChanged)
 		viewModel.startDate.observe(viewLifecycleOwner) {
 			binding.textViewStart.textAndVisible = it?.format(binding.root.context)

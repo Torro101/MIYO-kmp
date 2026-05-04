@@ -1,5 +1,5 @@
 name: 🐞 Bug report
-description: Report a bug in Usagi
+description: Report a bug in Miyo
 labels: [bug]
 body:
 
@@ -25,10 +25,10 @@ body:
           required: false
 
     - type: input
-      id: usagi-version
+      id: miyo-version
       attributes:
-          label: Usagi version
-          description: You can find your Usagi version in **Settings → About**.
+          label: Miyo version
+          description: You can find your Miyo version in **Settings → About**.
           placeholder: |
               Example: "0.0.1"
       validations:
@@ -59,7 +59,7 @@ body:
       attributes:
           label: Acknowledgements
           options:
-              - label: This is not a duplicate of an existing issue. Please look through the list of [open issues](https://github.com/UsagiApp/Usagi/issues) before creating a new one.
+              - label: This is not a duplicate of an existing issue. Please look through the list of [open issues](https://github.com/asanlamma-ux/MIYO/issues) before creating a new one.
                 required: true
               - label: This is not an issue with a specific plugin / source / extension. Otherwise, you must close this issue immediately because we **do not** accept support for issues related to it.
                 required: true

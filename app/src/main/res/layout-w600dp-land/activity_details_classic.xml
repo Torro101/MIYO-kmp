@@ -94,13 +94,13 @@
 						app:layout_constraintStart_toStartOf="parent"
 						app:layout_constraintTop_toTopOf="parent"
 						app:layout_constraintWidth_percent="0.3"
-						app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Usagi.Cover"
+						app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Miyo.Cover"
 						tools:background="@tools:sample/backgrounds/scenic[5]"
 						tools:ignore="ContentDescription,UnusedAttribute" />
 
 					<TextView
 						android:id="@+id/textView_nsfw_16"
-						style="@style/Widget.Usagi.TextView.Badge"
+						style="@style/Widget.Miyo.TextView.Badge"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_margin="@dimen/card_indicator_offset"
@@ -113,7 +113,7 @@
 
 					<TextView
 						android:id="@+id/textView_nsfw_18"
-						style="@style/Widget.Usagi.TextView.Badge"
+						style="@style/Widget.Miyo.TextView.Badge"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_margin="@dimen/card_indicator_offset"
@@ -286,7 +286,7 @@
 
 					<Button
 						android:id="@+id/button_description_more"
-						style="@style/Widget.Usagi.Button.More"
+						style="@style/Widget.Miyo.Button.More"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginEnd="8dp"
@@ -341,7 +341,7 @@
 
 					<Button
 						android:id="@+id/button_scrobbling_more"
-						style="@style/Widget.Usagi.Button.More"
+						style="@style/Widget.Miyo.Button.More"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginEnd="8dp"
@@ -409,7 +409,7 @@
 
 					<Button
 						android:id="@+id/button_related_more"
-						style="@style/Widget.Usagi.Button.More"
+						style="@style/Widget.Miyo.Button.More"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginEnd="8dp"

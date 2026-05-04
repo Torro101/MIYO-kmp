@@ -15,7 +15,7 @@ object NativeYuvConverter {
         get() {
             if (nativeAvailable == null) {
                 nativeAvailable = runCatching {
-                    System.loadLibrary("usagi-native")
+                    System.loadLibrary("miyo-native")
                     true
                 }.getOrDefault(false)
             }

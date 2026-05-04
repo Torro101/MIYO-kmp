@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import org.draken.usagi.R
 import org.draken.usagi.core.ui.widgets.SegmentedBarView
 import org.draken.usagi.core.util.FileSize
-import org.draken.usagi.core.util.UsagiColors
+import org.draken.usagi.core.util.MiyoColors
 import org.draken.usagi.databinding.PreferenceMemoryUsageBinding
 
 class StorageUsagePreference @JvmOverloads constructor(
@@ -34,15 +34,15 @@ class StorageUsagePreference @JvmOverloads constructor(
 		val binding = PreferenceMemoryUsageBinding.bind(holder.itemView)
 		val storageSegment = SegmentedBarView.Segment(
 			usage?.savedManga?.percent ?: 0f,
-			UsagiColors.segmentColorRandom(context, Color.BLUE),
+			MiyoColors.segmentColorRandom(context, Color.BLUE),
 		)
 		val pagesSegment = SegmentedBarView.Segment(
 			usage?.pagesCache?.percent ?: 0f,
-			UsagiColors.segmentColorRandom(context, Color.GREEN),
+			MiyoColors.segmentColorRandom(context, Color.GREEN),
 		)
 		val otherSegment = SegmentedBarView.Segment(
 			usage?.otherCache?.percent ?: 0f,
-			UsagiColors.segmentColorRandom(context, Color.GRAY),
+			MiyoColors.segmentColorRandom(context, Color.GRAY),
 		)
 
 		with(binding) {

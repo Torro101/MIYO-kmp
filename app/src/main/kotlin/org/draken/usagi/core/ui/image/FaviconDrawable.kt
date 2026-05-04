@@ -20,7 +20,7 @@ import coil3.request.ImageRequest
 import com.google.android.material.color.MaterialColors
 import org.draken.usagi.R
 import org.draken.usagi.core.model.getTitle
-import org.draken.usagi.core.util.UsagiColors
+import org.draken.usagi.core.util.MiyoColors
 import org.draken.usagi.core.util.ext.hasFocusStateSpecified
 import org.draken.usagi.core.util.ext.mangaSourceKey
 
@@ -57,7 +57,7 @@ open class FaviconDrawable(
 		}
 		paint.textAlign = Paint.Align.CENTER
 		paint.isFakeBoldText = true
-		colorForeground = UsagiColors.random(name)
+		colorForeground = MiyoColors.random(name)
 		currentForegroundColor = MaterialColors.harmonize(colorForeground, colorBackground.defaultColor)
 		onStateChange(state)
 	}

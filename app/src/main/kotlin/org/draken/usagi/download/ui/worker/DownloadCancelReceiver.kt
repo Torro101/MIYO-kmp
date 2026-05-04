@@ -53,7 +53,7 @@ class DownloadCancelReceiver : BroadcastReceiver() {
 
 	companion object {
 
-		private const val ACTION_CANCEL = "org.draken.usagi.download.CANCEL"
+		private const val ACTION_CANCEL = "org.koharu.miyo.download.CANCEL"
 		private const val EXTRA_UUID = "uuid"
 		private const val EXTRA_SILENT = "silent"
 		private const val SCHEME = "workuid"

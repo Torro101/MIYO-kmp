@@ -23,7 +23,7 @@ jobs:
                },
                {
                  "type": "body",
-                 "regex": ".*\\* (Usagi version|Android version|Device): \\?.*",
+                 "regex": ".*\\* (Miyo version|Android version|Device): \\?.*",
                  "message": "Requested information in the template was not filled out."
                }
              ]

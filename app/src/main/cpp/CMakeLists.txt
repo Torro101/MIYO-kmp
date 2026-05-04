@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1)
-project("usagi-native")
+project("miyo-native")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Release)
@@ -70,7 +70,7 @@ else()
 endif()
 
 # Our JNI bridge library
-add_library(usagi-native SHARED
+add_library(miyo-native SHARED
     native-init.cpp
     native_image_probe.cpp
     native_zip_writer.cpp
@@ -79,28 +79,28 @@ add_library(usagi-native SHARED
 
 # Conditionally add JPEG bridge
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo/jpeglib.h")
-    target_sources(usagi-native PRIVATE jpeg-bridge.cpp)
+    target_sources(miyo-native PRIVATE jpeg-bridge.cpp)
 else()
     # Provide stubs for JNI method registration
-    target_sources(usagi-native PRIVATE jpeg-stubs.cpp)
+    target_sources(miyo-native PRIVATE jpeg-stubs.cpp)
 endif()
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libjpeg-turbo/jpeglib.h")
-    target_link_libraries(usagi-native libjpeg-turbo)
+    target_link_libraries(miyo-native libjpeg-turbo)
 endif()
 
-target_link_libraries(usagi-native
+target_link_libraries(miyo-native
     jnigraphics
     log
     z
 )
 
-target_include_directories(usagi-native PRIVATE
+target_include_directories(miyo-native PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # Android-specific flags
-target_compile_options(usagi-native PRIVATE
+target_compile_options(miyo-native PRIVATE
     -O2
     -fvisibility=hidden
     -Wall -Wextra
@@ -108,7 +108,7 @@ target_compile_options(usagi-native PRIVATE
 
 # Strip symbols in release
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set_target_properties(usagi-native PROPERTIES
+    set_target_properties(miyo-native PROPERTIES
         LINK_FLAGS "-Wl,--gc-sections -Wl,--strip-all"
     )
 endif()

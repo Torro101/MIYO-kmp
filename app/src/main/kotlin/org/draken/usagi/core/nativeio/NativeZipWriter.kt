@@ -9,7 +9,7 @@ class NativeZipWriter @Inject constructor() {
 
     val isAvailable: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
         try {
-            System.loadLibrary("usagi-native")
+            System.loadLibrary("miyo-native")
             true
         } catch (e: UnsatisfiedLinkError) {
             false

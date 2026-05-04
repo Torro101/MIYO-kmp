@@ -2,50 +2,50 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
 	<!-- Base application theme. -->
-	<style name="Base.Theme.Usagi" parent="Theme.Material3.DayNight.NoActionBar">
+	<style name="Base.Theme.Miyo" parent="Theme.Material3.DayNight.NoActionBar">
 
 		<!-- Theme Colors -->
-		<item name="colorPrimary">@color/usagi_primary</item>
-		<item name="colorPrimaryContainer">@color/usagi_primaryContainer</item>
-		<item name="colorOnPrimary">@color/usagi_onPrimary</item>
-		<item name="colorOnPrimaryContainer">@color/usagi_onPrimaryContainer</item>
-		<item name="colorPrimaryInverse">@color/usagi_inversePrimary</item>
-		<item name="colorSecondary">@color/usagi_secondary</item>
-		<item name="colorSecondaryContainer">@color/usagi_secondaryContainer</item>
-		<item name="colorOnSecondary">@color/usagi_onSecondary</item>
-		<item name="colorOnSecondaryContainer">@color/usagi_onSecondaryContainer</item>
-		<item name="colorTertiary">@color/usagi_tertiary</item>
-		<item name="colorTertiaryContainer">@color/usagi_tertiaryContainer</item>
-		<item name="colorOnTertiary">@color/usagi_onTertiary</item>
-		<item name="colorOnTertiaryContainer">@color/usagi_onTertiaryContainer</item>
-		<item name="colorSurface">@color/usagi_surface</item>
-		<item name="colorSurfaceDim">@color/usagi_surfaceDim</item>
-		<item name="colorSurfaceBright">@color/usagi_surfaceBright</item>
-		<item name="colorSurfaceContainerLowest">@color/usagi_surfaceContainerLowest</item>
-		<item name="colorSurfaceContainerLow">@color/usagi_surfaceContainerLow</item>
-		<item name="colorSurfaceContainer">@color/usagi_surfaceContainer</item>
-		<item name="colorSurfaceContainerHigh">@color/usagi_surfaceContainerHigh</item>
-		<item name="colorSurfaceContainerHighest">@color/usagi_surfaceContainerHighest</item>
-		<item name="colorSurfaceVariant">@color/usagi_surfaceVariant</item>
-		<item name="colorOnSurface">@color/usagi_onSurface</item>
-		<item name="colorOnSurfaceVariant">@color/usagi_onSurfaceVariant</item>
-		<item name="colorSurfaceInverse">@color/usagi_inverseSurface</item>
-		<item name="colorOnSurfaceInverse">@color/usagi_inverseOnSurface</item>
-		<item name="colorOnBackground">@color/usagi_onSurface</item>
+		<item name="colorPrimary">@color/miyo_primary</item>
+		<item name="colorPrimaryContainer">@color/miyo_primaryContainer</item>
+		<item name="colorOnPrimary">@color/miyo_onPrimary</item>
+		<item name="colorOnPrimaryContainer">@color/miyo_onPrimaryContainer</item>
+		<item name="colorPrimaryInverse">@color/miyo_inversePrimary</item>
+		<item name="colorSecondary">@color/miyo_secondary</item>
+		<item name="colorSecondaryContainer">@color/miyo_secondaryContainer</item>
+		<item name="colorOnSecondary">@color/miyo_onSecondary</item>
+		<item name="colorOnSecondaryContainer">@color/miyo_onSecondaryContainer</item>
+		<item name="colorTertiary">@color/miyo_tertiary</item>
+		<item name="colorTertiaryContainer">@color/miyo_tertiaryContainer</item>
+		<item name="colorOnTertiary">@color/miyo_onTertiary</item>
+		<item name="colorOnTertiaryContainer">@color/miyo_onTertiaryContainer</item>
+		<item name="colorSurface">@color/miyo_surface</item>
+		<item name="colorSurfaceDim">@color/miyo_surfaceDim</item>
+		<item name="colorSurfaceBright">@color/miyo_surfaceBright</item>
+		<item name="colorSurfaceContainerLowest">@color/miyo_surfaceContainerLowest</item>
+		<item name="colorSurfaceContainerLow">@color/miyo_surfaceContainerLow</item>
+		<item name="colorSurfaceContainer">@color/miyo_surfaceContainer</item>
+		<item name="colorSurfaceContainerHigh">@color/miyo_surfaceContainerHigh</item>
+		<item name="colorSurfaceContainerHighest">@color/miyo_surfaceContainerHighest</item>
+		<item name="colorSurfaceVariant">@color/miyo_surfaceVariant</item>
+		<item name="colorOnSurface">@color/miyo_onSurface</item>
+		<item name="colorOnSurfaceVariant">@color/miyo_onSurfaceVariant</item>
+		<item name="colorSurfaceInverse">@color/miyo_inverseSurface</item>
+		<item name="colorOnSurfaceInverse">@color/miyo_inverseOnSurface</item>
+		<item name="colorOnBackground">@color/miyo_onSurface</item>
 		<item name="colorError">@color/error</item>
 		<item name="colorErrorContainer">@color/errorContainer</item>
 		<item name="colorOnError">@color/onError</item>
 		<item name="colorOnErrorContainer">@color/onErrorContainer</item>
-		<item name="colorOutline">@color/usagi_outline</item>
-		<item name="colorOutlineVariant">@color/usagi_outline</item>
-		<item name="colorControlNormal">@color/usagi_onSurface</item>
-		<item name="colorControlActivated">@color/usagi_primary</item>
+		<item name="colorOutline">@color/miyo_outline</item>
+		<item name="colorOutlineVariant">@color/miyo_outline</item>
+		<item name="colorControlNormal">@color/miyo_onSurface</item>
+		<item name="colorControlActivated">@color/miyo_primary</item>
 		<item name="colorControlHighlight">@color/selector_overlay</item>
-		<item name="android:colorControlNormal">@color/usagi_onSurface</item>
-		<item name="android:colorControlActivated">@color/usagi_primary</item>
+		<item name="android:colorControlNormal">@color/miyo_onSurface</item>
+		<item name="android:colorControlActivated">@color/miyo_primary</item>
 		<item name="android:colorControlHighlight">@color/selector_overlay</item>
-		<item name="android:textColorPrimary">@color/usagi_onSurface</item>
-		<item name="android:textColorSecondary">@color/usagi_onSurfaceVariant</item>
+		<item name="android:textColorPrimary">@color/miyo_onSurface</item>
+		<item name="android:textColorSecondary">@color/miyo_onSurfaceVariant</item>
 
 		<!-- Drawables (icons) -->
 		<item name="actionModeCloseDrawable">@drawable/abc_ic_clear_material</item>
@@ -61,39 +61,39 @@
 		<item name="windowActionModeOverlay">true</item>
 
 		<!-- System components styles -->
-		<item name="android:alertDialogTheme">@style/ThemeOverlay.Usagi.AlertDialog</item>
-		<item name="alertDialogTheme">@style/ThemeOverlay.Usagi.AlertDialog</item>
-		<item name="bottomSheetDialogTheme">@style/ThemeOverlay.Usagi.BottomSheetDialog</item>
-		<item name="sideSheetDialogTheme">@style/ThemeOverlay.Usagi.SideSheetDialog</item>
-		<item name="recyclerViewStyle">@style/Widget.Usagi.RecyclerView</item>
-		<item name="android:dropDownSpinnerStyle">@style/Widget.Usagi.Spinner.DropDown</item>
+		<item name="android:alertDialogTheme">@style/ThemeOverlay.Miyo.AlertDialog</item>
+		<item name="alertDialogTheme">@style/ThemeOverlay.Miyo.AlertDialog</item>
+		<item name="bottomSheetDialogTheme">@style/ThemeOverlay.Miyo.BottomSheetDialog</item>
+		<item name="sideSheetDialogTheme">@style/ThemeOverlay.Miyo.SideSheetDialog</item>
+		<item name="recyclerViewStyle">@style/Widget.Miyo.RecyclerView</item>
+		<item name="android:dropDownSpinnerStyle">@style/Widget.Miyo.Spinner.DropDown</item>
 		<item name="switchPreferenceCompatStyle">@style/Preference.SwitchPreferenceCompat.M3</item>
-		<item name="circularProgressIndicatorStyle">@style/Widget.Usagi.CircularProgressIndicator</item>
-		<item name="linearProgressIndicatorStyle">@style/Widget.Usagi.LinearProgressIndicator</item>
-		<item name="bottomSheetDragHandleStyle">@style/Widget.Usagi.BottomSheet.DragHandle</item>
-		<item name="preferenceTheme">@style/PreferenceThemeOverlay.Usagi</item>
+		<item name="circularProgressIndicatorStyle">@style/Widget.Miyo.CircularProgressIndicator</item>
+		<item name="linearProgressIndicatorStyle">@style/Widget.Miyo.LinearProgressIndicator</item>
+		<item name="bottomSheetDragHandleStyle">@style/Widget.Miyo.BottomSheet.DragHandle</item>
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay.Miyo</item>
 		<!-- Fix crash in A15 -->
 		<item name="actionButtonStyle">@style/Widget.AppCompat.ActionButton</item>
 
 		<!-- Custom views -->
-		<item name="fastScrollerStyle">@style/Widget.Usagi.FastScroller</item>
-		<item name="listItemTextViewStyle">@style/Widget.Usagi.ListItemTextView</item>
-		<item name="dotIndicatorStyle">@style/Widget.Usagi.DotIndicator</item>
-		<item name="badgeViewStyle">@style/Widget.Usagi.BadgeView</item>
-		<item name="coverImageViewStyle">@style/Widget.Usagi.ImageView.Cover</item>
+		<item name="fastScrollerStyle">@style/Widget.Miyo.FastScroller</item>
+		<item name="listItemTextViewStyle">@style/Widget.Miyo.ListItemTextView</item>
+		<item name="dotIndicatorStyle">@style/Widget.Miyo.DotIndicator</item>
+		<item name="badgeViewStyle">@style/Widget.Miyo.BadgeView</item>
+		<item name="coverImageViewStyle">@style/Widget.Miyo.ImageView.Cover</item>
 	</style>
 
 	<!--== Default Theme ==-->
-	<style name="Theme.Usagi" parent="Base.Theme.Usagi" />
+	<style name="Theme.Miyo" parent="Base.Theme.Miyo" />
 
 	<!-- Base ThemeOverlay -->
-	<style name="ThemeOverlay.Usagi" parent="ThemeOverlay.Material3.Light" />
+	<style name="ThemeOverlay.Miyo" parent="ThemeOverlay.Material3.Light" />
 
 	<!-- Monet theme only support S+ -->
-	<style name="ThemeOverlay.Usagi.Monet" parent="ThemeOverlay.Material3.DynamicColors.Light" />
+	<style name="ThemeOverlay.Miyo.Monet" parent="ThemeOverlay.Material3.DynamicColors.Light" />
 
 	<!-- Expressive Monet theme -->
-	<style name="ThemeOverlay.Usagi.Expressive" parent="ThemeOverlay.Material3Expressive.DynamicColors.DayNight">
+	<style name="ThemeOverlay.Miyo.Expressive" parent="ThemeOverlay.Material3Expressive.DynamicColors.DayNight">
 		<item name="alertDialogTheme">@style/ThemeOverlay.Material3Expressive.Dialog.Alert</item>
 		<item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3Expressive.MaterialAlertDialog</item>
 
@@ -155,12 +155,12 @@
 	</style>
 
 	<!-- Changes only for night -->
-	<style name="ThemeOverlay.Usagi.Amoled" parent="" />
+	<style name="ThemeOverlay.Miyo.Amoled" parent="" />
 
 	<!-- App Widgets -->
 
-	<style name="Theme.Usagi.AppWidgetContainer" parent="@style/Theme.MaterialComponents.Light">
-		<item name="android:colorBackground">@color/usagi_background</item>
-		<item name="android:panelColorBackground">@color/usagi_primaryContainer</item>
+	<style name="Theme.Miyo.AppWidgetContainer" parent="@style/Theme.MaterialComponents.Light">
+		<item name="android:colorBackground">@color/miyo_background</item>
+		<item name="android:panelColorBackground">@color/miyo_primaryContainer</item>
 	</style>
 </resources>

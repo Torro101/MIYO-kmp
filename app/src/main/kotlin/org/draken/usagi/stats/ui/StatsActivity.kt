@@ -27,7 +27,7 @@ import org.draken.usagi.core.ui.BaseListAdapter
 import org.draken.usagi.core.ui.dialog.buildAlertDialog
 import org.draken.usagi.core.ui.list.OnListItemClickListener
 import org.draken.usagi.core.ui.util.ReversibleActionObserver
-import org.draken.usagi.core.util.UsagiColors
+import org.draken.usagi.core.util.MiyoColors
 import org.draken.usagi.core.util.ext.end
 import org.draken.usagi.core.util.ext.observe
 import org.draken.usagi.core.util.ext.observeEvent
@@ -81,7 +81,7 @@ class StatsActivity : BaseActivity<ActivityStatsBinding>(),
 						value = (v.duration / 1000).toInt(),
 						label = v.manga?.title ?: getString(R.string.other_manga),
 						percent = (v.duration.toDouble() / sum).toFloat(),
-						color = UsagiColors.ofManga(this, v.manga),
+						color = MiyoColors.ofManga(this, v.manga),
 						tag = v.manga,
 					)
 				},
@@ -185,7 +185,7 @@ class StatsActivity : BaseActivity<ActivityStatsBinding>(),
 		val checkedIds = viewModel.selectedCategories.value
 		for (category in categories) {
 			val chip = Chip(this)
-			val drawable = ChipDrawable.createFromAttributes(this, null, 0, R.style.Widget_Usagi_Chip_Filter)
+			val drawable = ChipDrawable.createFromAttributes(this, null, 0, R.style.Widget_Miyo_Chip_Filter)
 			chip.setChipDrawable(drawable)
 			chip.text = category.title
 			chip.tag = category

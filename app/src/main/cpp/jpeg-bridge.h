@@ -1,5 +1,5 @@
-#ifndef USAGI_JPEG_BRIDGE_H
-#define USAGI_JPEG_BRIDGE_H
+#ifndef MIYO_JPEG_BRIDGE_H
+#define MIYO_JPEG_BRIDGE_H
 
 #include <jni.h>
 #include <android/bitmap.h>
@@ -21,4 +21,4 @@ int decodeJpegToBitmap(JNIEnv* env, const uint8_t* jpegData, size_t jpegSize,
 int probeJpegDimensions(const uint8_t* jpegData, size_t jpegSize,
                         int* outWidth, int* outHeight);
 
-#endif // USAGI_JPEG_BRIDGE_H
+#endif // MIYO_JPEG_BRIDGE_H

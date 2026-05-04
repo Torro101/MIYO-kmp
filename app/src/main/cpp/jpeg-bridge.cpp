@@ -8,7 +8,7 @@ extern "C" {
 #include "jpeglib.h"
 }
 
-#define LOG_TAG "usagi-jpeg"
+#define LOG_TAG "miyo-jpeg"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 struct JpegErrorMgr {

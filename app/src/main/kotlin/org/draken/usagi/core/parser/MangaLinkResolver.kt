@@ -118,7 +118,7 @@ class MangaLinkResolver @Inject constructor(
 	companion object {
 
 		fun isValidLink(str: String): Boolean {
-			return str.isHttpUrl() || str.startsWith("kotatsu://", ignoreCase = true) || str.startsWith("usagi://", ignoreCase = true)
+			return str.isHttpUrl() || str.startsWith("kotatsu://", ignoreCase = true) || str.startsWith("miyo://", ignoreCase = true)
 		}
 	}
 }

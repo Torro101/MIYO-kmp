@@ -5,12 +5,12 @@
 
 #if defined(__ARM_NEON) || defined(__ARM_NEON__)
 #include <arm_neon.h>
-#define USAGI_HAS_NEON 1
+#define MIYO_HAS_NEON 1
 #else
-#define USAGI_HAS_NEON 0
+#define MIYO_HAS_NEON 0
 #endif
 
-#define LOG_TAG "usagi-yuv"
+#define LOG_TAG "miyo-yuv"
 
 /**
  * NEON-accelerated YUV NV21 to RGB conversion.
@@ -42,7 +42,7 @@ static void yuvToRgbScalar(const uint8_t* yPlane, const uint8_t* uvPlane,
     }
 }
 
-#if USAGI_HAS_NEON
+#if MIYO_HAS_NEON
 static void yuvToRgbNeon(const uint8_t* yPlane, const uint8_t* uvPlane,
                           int width, int height, int stride,
                           uint8_t* rgbaDest, int rgbaStride) {
@@ -94,7 +94,7 @@ static void yuvToRgbNeon(const uint8_t* yPlane, const uint8_t* uvPlane,
         }
     }
 }
-#endif // USAGI_HAS_NEON
+#endif // MIYO_HAS_NEON
 
 extern "C" {
 
@@ -105,7 +105,7 @@ Java_org_draken_usagi_core_image_NativeYuvConverter_nativeNv21ToRgba(
     jint width, jint height, jint stride,
     jobject rgbaBitmap) {
 
-#if USAGI_HAS_NEON
+#if MIYO_HAS_NEON
     // Use NEON path
     auto* yPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(yBuffer));
     auto* uvPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(uvBuffer));

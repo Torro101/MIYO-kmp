@@ -30,10 +30,10 @@ class PausingReceiver(
 
 	companion object {
 
-		private const val ACTION_PAUSE = "org.draken.usagi.download.PAUSE"
-		private const val ACTION_RESUME = "org.draken.usagi.download.RESUME"
-		private const val ACTION_SKIP = "org.draken.usagi.download.SKIP"
-		private const val ACTION_SKIP_ALL = "org.draken.usagi.download.SKIP_ALL"
+		private const val ACTION_PAUSE = "org.koharu.miyo.download.PAUSE"
+		private const val ACTION_RESUME = "org.koharu.miyo.download.RESUME"
+		private const val ACTION_SKIP = "org.koharu.miyo.download.SKIP"
+		private const val ACTION_SKIP_ALL = "org.koharu.miyo.download.SKIP_ALL"
 		private const val EXTRA_UUID = "uuid"
 		private const val SCHEME = "workuid"
 

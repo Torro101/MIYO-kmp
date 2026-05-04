@@ -12,7 +12,7 @@ class StaticItemSizeResolver(
 ) : ItemSizeResolver {
 
 	private var widthThreshold: Int = -1
-	private var textAppearanceResId = R.style.TextAppearance_Usagi_GridTitle
+	private var textAppearanceResId = R.style.TextAppearance_Miyo_GridTitle
 
 	override fun attachToView(
 		view: View,
@@ -22,9 +22,9 @@ class StaticItemSizeResolver(
 		if (widthThreshold == -1) {
 			widthThreshold = view.resources.getDimensionPixelSize(R.dimen.small_grid_width)
 			textAppearanceResId = if (cellWidth < widthThreshold) {
-				R.style.TextAppearance_Usagi_GridTitle_Small
+				R.style.TextAppearance_Miyo_GridTitle_Small
 			} else {
-				R.style.TextAppearance_Usagi_GridTitle
+				R.style.TextAppearance_Miyo_GridTitle
 			}
 		}
 		if (textView != null) {

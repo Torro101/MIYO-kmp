@@ -1,21 +1,21 @@
 <div align="center">
 
 <a href="#">
-    <img src="./.github/assets/icon.png" alt="Usagi" title="Usagi" width=25%>
+    <img src="./.github/assets/icon.png" alt="Miyo" title="Miyo" width=25%>
 </a>
 
-**[Usagi](https://github.com/UsagiApp/Usagi) is a free and open-source manga reader for Android.**
+**[Miyo](https://github.com/asanlamma-ux/MIYO) is a free and open-source manga reader for Android.**
 
-![Android 5.0](https://img.shields.io/badge/android-5.0+-brightgreen) [![weblate](https://hosted.weblate.org/widgets/usagi/-/strings/svg-badge.svg)](https://hosted.weblate.org/engage/usagi/) [![Discord](https://img.shields.io/discord/1484655684879519885?color=5865f2&label=discord)](https://discord.gg/4AHskjwtj4) [![Telegram](https://img.shields.io/badge/chat-telegram-60ACFF?)](https://t.me/usagiapp)
+![Android 5.0](https://img.shields.io/badge/android-5.0+-brightgreen) [![weblate](https://hosted.weblate.org/widgets/miyo/-/strings/svg-badge.svg)](https://hosted.weblate.org/engage/miyo/) [![Discord](https://img.shields.io/discord/1484655684879519885?color=5865f2&label=discord)](https://discord.gg/4AHskjwtj4) [![Telegram](https://img.shields.io/badge/chat-telegram-60ACFF?)](https://t.me/miyoapp)
 
 ### Features
 
 <details>
-  <summary>Usagi's unique features</summary>
+  <summary>Miyo's unique features</summary>
 
 <div align="left">
 
-#### All features from Usagi, include:
+#### All features from Miyo, include:
 
 * Bypass internet firewalls with tunnels built into the app, expanding access to content.
 * Integrate more new user interface styles (Modern, Classic, etc.)
@@ -58,17 +58,17 @@
 
   <br>
 
-  <a href="https://github.com/UsagiApp/Usagi">
+  <a href="https://github.com/asanlamma-ux/MIYO">
     <picture>
-      <source srcset="https://github-readme-stats.vercel.app/api/pin/?username=UsagiApp&repo=Usagi&bg_color=0d1117&text_color=1976d2&title_color=1976d2&icon_color=0877d2&border_radius=10&description_lines_count=2&show_owner=true" media="(prefers-color-scheme: dark)">
-      <img src="https://github-readme-stats.vercel.app/api/pin/?username=UsagiApp&repo=Usagi&text_color=1976d2&title_color=1976d2&icon_color=0877d2&border_radius=10&description_lines_count=2&show_owner=true" alt="Usagi GitHub Repository">
+      <source srcset="https://github-readme-stats.vercel.app/api/pin/?username=asanlamma-ux&repo=MIYO&bg_color=0d1117&text_color=1976d2&title_color=1976d2&icon_color=0877d2&border_radius=10&description_lines_count=2&show_owner=true" media="(prefers-color-scheme: dark)">
+      <img src="https://github-readme-stats.vercel.app/api/pin/?username=asanlamma-ux&repo=MIYO&text_color=1976d2&title_color=1976d2&icon_color=0877d2&border_radius=10&description_lines_count=2&show_owner=true" alt="Miyo GitHub Repository">
     </picture>
   </a>
   
   <br>
 
   **📌 Pull requests are welcome, if you want:
-  See [CONTRIBUTING.md](https://github.com/UsagiApp/Usagi/blob/devel/CONTRIBUTING.md) for the guidelines**
+  See [CONTRIBUTING.md](https://github.com/asanlamma-ux/MIYO/blob/main/CONTRIBUTING.md) for the guidelines**
 
 </details>
 
@@ -76,12 +76,12 @@
   <summary>Translate this app</summary>
 
   <br></br>
-  <a href="https://hosted.weblate.org/engage/usagi/">
-    <img src="https://hosted.weblate.org/widget/usagi/horizontal-auto.png" alt="Translation status" />
+  <a href="https://hosted.weblate.org/engage/miyo/">
+    <img src="https://hosted.weblate.org/widget/miyo/horizontal-auto.png" alt="Translation status" />
   </a>
   
   **📌 If you would like to help improve these or add new languages,
-please head over to the [Weblate project page](https://hosted.weblate.org/engage/usagi/)**
+please head over to the [Weblate project page](https://hosted.weblate.org/engage/miyo/)**
 
 </details>
 
