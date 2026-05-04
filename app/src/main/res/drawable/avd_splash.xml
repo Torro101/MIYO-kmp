@@ -12,15 +12,23 @@
 		android:animation="@animator/miyo_splash_aura" />
 
 	<target
-		android:name="embers"
+		android:name="sparks"
 		android:animation="@animator/miyo_splash_embers" />
 
 	<target
-		android:name="ember_top"
+		android:name="spark_top"
 		android:animation="@animator/miyo_splash_ember_fade" />
 
 	<target
-		android:name="ember_left"
+		android:name="spark_left"
+		android:animation="@animator/miyo_splash_ember_fade" />
+
+	<target
+		android:name="spark_low"
+		android:animation="@animator/miyo_splash_ember_fade" />
+
+	<target
+		android:name="spark_tiny"
 		android:animation="@animator/miyo_splash_ember_fade" />
 
 </animated-vector>
