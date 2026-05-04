@@ -31,7 +31,8 @@ def buildConfigString = { value ->
 	return "\"${escaped}\""
 }
 
-def appDisplayName = propertyOrDefault('app.displayName', 'Usagi')
+def appApplicationId = propertyOrDefault('app.applicationId', 'org.koharu.miyo')
+def appDisplayName = propertyOrDefault('app.displayName', 'Miyo')
 def appUpdatesRepo = propertyOrDefault('app.updatesRepo', 'asanlamma-ux/Usagi-Clone')
 def appSourceUrl = propertyOrDefault('app.sourceUrl', "https://github.com/${appUpdatesRepo}")
 def appIconUrl = propertyOrDefault(
@@ -49,7 +50,7 @@ android {
 	namespace = 'org.draken.usagi'
 
 	defaultConfig {
-		applicationId = 'org.draken.usagi'
+		applicationId = appApplicationId
 		minSdk = 21
 		targetSdk = 36
 		versionCode = 9
@@ -67,6 +68,9 @@ android {
 		resValue 'string', 'url_github', appSourceUrl
 		resValue 'string', 'github_updates_repo', appUpdatesRepo
 		resValue 'string', 'app_icon_url', appIconUrl
+		resValue 'string', 'account_type_sync', "${appApplicationId}.sync"
+		resValue 'string', 'sync_authority_history', "${appApplicationId}.history"
+		resValue 'string', 'sync_authority_favourites', "${appApplicationId}.favourites"
 		resValue 'string', 'tg_backup_bot_token', localProperties.getProperty('tg_backup_bot_token', '')
 		buildConfigField 'String', 'UPDATES_REPO', buildConfigString(appUpdatesRepo)
 		buildConfigField 'String', 'RELEASE_CERT_SHA256', buildConfigString(appReleaseCertSha256)
