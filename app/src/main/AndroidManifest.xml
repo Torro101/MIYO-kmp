@@ -178,16 +178,10 @@
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
-				<data android:scheme="content" android:mimeType="application/java-archive" />
-				<data android:scheme="file" android:mimeType="application/java-archive" />
-				<data android:scheme="content" android:mimeType="application/x-java-archive" />
-				<data android:scheme="file" android:mimeType="application/x-java-archive" />
-				<data android:scheme="content" android:mimeType="application/vnd.android.package-archive" />
-				<data android:scheme="file" android:mimeType="application/vnd.android.package-archive" />
-				<data android:scheme="content" android:mimeType="application/octet-stream" android:pathPattern=".*\\.jar" />
-				<data android:scheme="file" android:mimeType="application/octet-stream" android:pathPattern=".*\\.jar" />
-				<data android:scheme="content" android:mimeType="application/octet-stream" android:pathPattern=".*\\.JAR" />
-				<data android:scheme="file" android:mimeType="application/octet-stream" android:pathPattern=".*\\.JAR" />
+				<data android:mimeType="application/java-archive" />
+				<data android:mimeType="application/x-java-archive" />
+				<data android:mimeType="application/vnd.android.package-archive" />
+				<data android:mimeType="application/octet-stream" />
 			</intent-filter>
 			<intent-filter>
 				<action android:name="android.intent.action.SEND" />

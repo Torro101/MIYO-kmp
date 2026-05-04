@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koitharu.kotatsu.parsers.model.Manga
-import java.util.PriorityQueue
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,14 +13,15 @@ import javax.inject.Singleton
 @Singleton
 class SmartDownloadQueue @Inject constructor() {
 
-	private val queue = PriorityQueue<QueueEntry>(compareBy<QueueEntry> {
+	private val queue = ArrayList<QueueEntry>()
+	private val queueComparator = compareBy<QueueEntry> {
 		when (it.priority) {
 			Priority.READING_NOW -> 0
 			Priority.FAVORITE_RECENT -> 1
 			Priority.FAVORITE_OTHER -> 2
 			Priority.DEFAULT -> 3
 		}
-	}.thenByDescending { it.addedAtMs })
+	}.thenByDescending { it.addedAtMs }
 
 	private val _currentReading = MutableStateFlow<Long?>(null)
 	val currentReading: Flow<Long?> = _currentReading.asStateFlow()
@@ -41,11 +41,13 @@ class SmartDownloadQueue @Inject constructor() {
 	}
 
 	suspend fun dequeue(): QueueEntry? = mutex.withLock {
-		queue.poll()
+		val index = queue.nextIndexOrNull() ?: return@withLock null
+		queue.removeAt(index)
 	}
 
 	suspend fun peek(): QueueEntry? = mutex.withLock {
-		queue.peek()
+		val index = queue.nextIndexOrNull() ?: return@withLock null
+		queue[index]
 	}
 
 	suspend fun remove(mangaId: Long) = mutex.withLock {
@@ -65,7 +67,18 @@ class SmartDownloadQueue @Inject constructor() {
 	}
 
 	suspend fun getPendingIds(): List<Long> = mutex.withLock {
-		queue.map { it.mangaId }
+		queue.sortedWith(queueComparator).map { it.mangaId }
+	}
+
+	private fun List<QueueEntry>.nextIndexOrNull(): Int? {
+		if (isEmpty()) return null
+		var bestIndex = 0
+		for (i in 1 until size) {
+			if (queueComparator.compare(this[i], this[bestIndex]) < 0) {
+				bestIndex = i
+			}
+		}
+		return bestIndex
 	}
 
 	data class QueueEntry(

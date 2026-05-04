@@ -63,14 +63,14 @@ class AlternativesUseCase @Inject constructor(
 
 	private fun MangaSource.priority(ref: MangaSource): Int {
 		var res = 0
-        if (locale == ref.locale) {
-            res += 4
-        } else if (locale.toLocale() == Locale.getDefault()) {
-            res += 2
-        }
-        if (contentType == ref.contentType) {
-            res++
-        }
+		if (locale == ref.locale) {
+			res += 4
+		} else if (locale.toLocale() == Locale.getDefault()) {
+			res += 2
+		}
+		if (contentType == ref.contentType) {
+			res++
+		}
 		return res
 	}
 }

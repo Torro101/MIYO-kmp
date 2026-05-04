@@ -152,9 +152,9 @@ class AppRouter private constructor(
     }
 
     fun openDetails(link: Uri) {
-		val context = contextOrNull() ?: return
+        val context = contextOrNull() ?: return
         startActivity(
-			Intent(context, detailsActivityClassInstance())
+            Intent(context, detailsActivityClassInstance())
                 .setData(link),
         )
     }

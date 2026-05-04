@@ -2,6 +2,8 @@ package org.draken.usagi.local.data
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
+import androidx.annotation.RequiresApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.draken.usagi.core.util.ext.printStackTraceDebug
@@ -35,12 +37,13 @@ object ImageReEncoder {
                 ?: return@withContext null
 
             val outFile = File(destDir, source.nameWithoutExtension + ".webp")
-            val success = bitmap.compress(
-                Bitmap.CompressFormat.WEBP_LOSSY,
-                WEBP_QUALITY,
-                FileOutputStream(outFile),
-            )
-            bitmap.recycle()
+            val success = try {
+                FileOutputStream(outFile).use { output ->
+                    bitmap.compress(webpCompressFormat(), WEBP_QUALITY, output)
+                }
+            } finally {
+                bitmap.recycle()
+            }
 
             if (!success) {
                 outFile.delete()
@@ -59,4 +62,18 @@ object ImageReEncoder {
             null
         }
     }
+
+    private fun webpCompressFormat(): Bitmap.CompressFormat {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            webpLossyCompressFormat()
+        } else {
+            legacyWebpCompressFormat()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun webpLossyCompressFormat(): Bitmap.CompressFormat = Bitmap.CompressFormat.WEBP_LOSSY
+
+    @Suppress("DEPRECATION")
+    private fun legacyWebpCompressFormat(): Bitmap.CompressFormat = Bitmap.CompressFormat.WEBP
 }

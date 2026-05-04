@@ -61,9 +61,13 @@ class PluginActivity : AppCompatActivity() {
 
 	private fun isSupported(uri: Uri): Boolean {
 		val type = intent.type?.lowercase(Locale.ROOT)
-		if (type in SUPPORTED_MIME_TYPES) {
+		if (type != null && type != OCTET_STREAM_MIME_TYPE && type in SUPPORTED_MIME_TYPES) {
 			return true
 		}
+		return hasJarExtension(uri)
+	}
+
+	private fun hasJarExtension(uri: Uri): Boolean {
 		val name = DocumentFile.fromSingleUri(this, uri)?.name
 			?: uri.lastPathSegment
 			?: return false
@@ -90,11 +94,12 @@ class PluginActivity : AppCompatActivity() {
 	}
 
 	private companion object {
+		const val OCTET_STREAM_MIME_TYPE = "application/octet-stream"
 		val SUPPORTED_MIME_TYPES = setOf(
 			"application/java-archive",
 			"application/x-java-archive",
 			"application/vnd.android.package-archive",
-			"application/octet-stream",
+			OCTET_STREAM_MIME_TYPE,
 		)
 	}
 }
