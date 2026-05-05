@@ -99,8 +99,11 @@ abstract class BasePageHolder<B : ViewBinding>(
 
 	fun bind(data: ReaderPage) {
 		boundData = data
-		viewModel.onBind(data.toMangaPage())
+		val isLoadStarted = viewModel.onBind(data.toMangaPage())
 		onBind(data)
+		if (!isLoadStarted && viewModel.state.value is PageState.Shown && !ssiv.isReady) {
+			reloadImage()
+		}
 	}
 
 	@CallSuper

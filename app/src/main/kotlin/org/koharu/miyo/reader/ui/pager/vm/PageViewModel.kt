@@ -39,20 +39,30 @@ class PageViewModel(
 	private val scope = loader.loaderScope + Dispatchers.Main.immediate
 	private var job: Job? = null
 	private var cachedBounds: Rect? = null
+	private var currentPage: MangaPage? = null
+	private var lastProgress = PROGRESS_INITIAL
 
 	val state = MutableStateFlow<PageState>(PageState.Empty)
 
 	fun isLoading() = job?.isActive == true
 
-	fun onBind(page: MangaPage) {
+	fun onBind(page: MangaPage): Boolean {
+		if (currentPage.isSamePageAs(page) && state.value !is PageState.Empty) {
+			return false
+		}
+		currentPage = page
+		lastProgress = PROGRESS_INITIAL
 		val prevJob = job
 		job = scope.launch(Dispatchers.Default) {
 			prevJob?.cancelAndJoin()
 			doLoad(page, force = false)
 		}
+		return true
 	}
 
 	fun retry(page: MangaPage, isFromUser: Boolean) {
+		currentPage = page
+		lastProgress = PROGRESS_INITIAL
 		val prevJob = job
 		job = scope.launch {
 			prevJob?.cancelAndJoin()
@@ -76,12 +86,16 @@ class PageViewModel(
 	fun onRecycle() {
 		state.value = PageState.Empty
 		cachedBounds = null
+		currentPage = null
+		lastProgress = PROGRESS_INITIAL
 		job?.cancel()
 	}
 
 	fun evictFromMemory() {
 		state.value = PageState.Empty
 		cachedBounds = null
+		currentPage = null
+		lastProgress = PROGRESS_INITIAL
 		job?.cancel()
 	}
 
@@ -138,7 +152,7 @@ class PageViewModel(
 
 	@WorkerThread
 	private suspend fun doLoad(data: MangaPage, force: Boolean) = coroutineScope {
-		state.value = PageState.Loading(null, -1)
+		state.value = PageState.Loading(null, lastProgress)
 		val previewJob = launch {
 			val preview = loader.loadPreview(data) ?: return@launch
 			state.update {
@@ -156,6 +170,7 @@ class PageViewModel(
 			} else {
 				null
 			}
+			lastProgress = PROGRESS_COMPLETE
 			state.value = PageState.Loaded(uri.toImageSource(cachedBounds), isConverted = false)
 		} catch (e: CancellationException) {
 			throw e
@@ -172,7 +187,11 @@ class PageViewModel(
 	private fun observeProgress(scope: CoroutineScope, progress: Flow<Float>) = progress
 		.throttle(250)
 		.onEach {
-			val progressValue = (100 * it).toInt()
+			if (it < 0f) {
+				return@onEach
+			}
+			val progressValue = (100 * it).toInt().coerceIn(PROGRESS_INITIAL, PROGRESS_COMPLETE)
+			lastProgress = progressValue
 			state.update { currentState ->
 				if (currentState is PageState.Loading) {
 					currentState.copy(progress = progressValue)
@@ -189,5 +208,18 @@ class PageViewModel(
 		} else {
 			source
 		}
+	}
+
+	private fun MangaPage?.isSamePageAs(other: MangaPage): Boolean {
+		val current = this ?: return false
+		return current.id == other.id &&
+			current.url == other.url &&
+			current.source == other.source
+	}
+
+	private companion object {
+
+		const val PROGRESS_INITIAL = 0
+		const val PROGRESS_COMPLETE = 100
 	}
 }
