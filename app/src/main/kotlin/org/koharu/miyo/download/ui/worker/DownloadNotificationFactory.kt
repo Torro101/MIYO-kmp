@@ -23,6 +23,7 @@ import kotlinx.coroutines.sync.withLock
 import org.koharu.miyo.R
 import org.koharu.miyo.core.ErrorReporterReceiver
 import org.koharu.miyo.core.LocalizedAppContext
+import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.model.isNsfw
 import org.koharu.miyo.core.nav.AppRouter
@@ -111,6 +112,18 @@ class DownloadNotificationFactory @AssistedInject constructor(
 			PausingReceiver.createSkipPendingIntent(context, uuid),
 		)
 	}
+
+	private fun actionSolve(exception: CloudFlareProtectedException) = NotificationCompat.Action(
+		R.drawable.ic_bot,
+		context.getString(R.string.captcha_solve),
+		PendingIntentCompat.getActivity(
+			context,
+			exception.source.hashCode(),
+			AppRouter.cloudFlareResolveIntent(context, exception),
+			PendingIntent.FLAG_CANCEL_CURRENT,
+			false,
+		),
+	)
 
 	init {
 		createChannels()
@@ -203,6 +216,9 @@ class DownloadNotificationFactory @AssistedInject constructor(
 				builder.setSmallIcon(R.drawable.ic_stat_paused)
 				builder.addAction(actionCancel)
 				if (state.errorMessage != null) {
+					(state.error as? CloudFlareProtectedException)?.let {
+						builder.addAction(actionSolve(it))
+					}
 					builder.addAction(actionRetry)
 					builder.addAction(actionSkip)
 				} else {
@@ -221,6 +237,9 @@ class DownloadNotificationFactory @AssistedInject constructor(
 				builder.setShowWhen(true)
 				builder.setWhen(System.currentTimeMillis())
 				builder.setStyle(NotificationCompat.BigTextStyle().bigText(state.errorMessage))
+				(state.error as? CloudFlareProtectedException)?.let {
+					builder.addAction(actionSolve(it))
+				}
 				if (state.error.isReportable()) {
 					ErrorReporterReceiver.getPendingIntent(context, state.error)?.let { reportIntent ->
 						builder.addAction(

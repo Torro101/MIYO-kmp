@@ -45,8 +45,10 @@ import okio.buffer
 import okio.sink
 import okio.use
 import org.koharu.miyo.R
+import org.koharu.miyo.core.exceptions.CloudFlareException
 import org.koharu.miyo.core.exceptions.NoDataReceivedException
 import org.koharu.miyo.core.exceptions.UnsupportedFileException
+import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler
 import org.koharu.miyo.core.image.BitmapDecoderCompat
 import org.koharu.miyo.core.model.ids
 import org.koharu.miyo.core.model.isLocal
@@ -130,6 +132,7 @@ class DownloadWorker @AssistedInject constructor(
 	private val analytics: DownloadAnalytics,
 	private val smartQueue: SmartDownloadQueue,
 	private val nativeImageProbe: NativeImageProbe,
+	private val captchaHandler: CaptchaHandler,
 	notificationFactoryFactory: DownloadNotificationFactory.Factory,
 ) : CoroutineWorker(appContext, params) {
 
@@ -412,6 +415,14 @@ class DownloadWorker @AssistedInject constructor(
 			try {
 				return block()
 			} catch (e: IOException) {
+				if (e is CloudFlareException) {
+					if (captchaHandler.handle(e)) {
+						countDown = MAX_FAILSAFE_ATTEMPTS
+						publishState(currentState.copy(isStuck = false, doctorMessage = null))
+						continue@failsafe
+					}
+					countDown = 0
+				}
 				val retryDelay = if (e is TooManyRequestExceptions) {
 					e.getRetryDelay()
 				} else {
