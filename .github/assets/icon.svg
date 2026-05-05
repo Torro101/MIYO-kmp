@@ -1,13 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="Miyo will-o-wisp mark">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-label="Miyo slime mascot mark">
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      #slime { transform-origin: 54px 64px; animation: pop .58s cubic-bezier(.18,1.35,.3,1) both; }
+      #bubbles { transform-origin: 54px 54px; animation: bubble .58s cubic-bezier(.18,1.1,.28,1) both; }
+      @keyframes pop { 0% { transform: scale(.72) translateY(8px); opacity: .72; } 70% { transform: scale(1.04) translateY(-1px); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+      @keyframes bubble { 0% { transform: translateY(10px); opacity: 0; } 70% { opacity: 1; } 100% { transform: translateY(-5px); opacity: .92; } }
+    }
+  </style>
   <rect width="108" height="108" rx="24" fill="#081217"/>
-  <g transform="scale(4.5)">
-    <path fill="#35D6FF" fill-opacity=".26" d="M12 1.6c3.8 2.2 8.8 6.7 8.8 11.8 0 5.3-3.8 8.8-8.8 8.8-5.3 0-8.7-3.4-8.7-8 0-3.1 1.9-5 3.7-7.1 1.6-1.9 2.4-3.6 2.4-5.2 1.1.4 2 1.2 2.7 2.4.6-.9.6-1.9-.1-2.7Z"/>
-    <path fill="#7CEBFF" d="M12.2 2.9c2.9 2 6.5 5.3 6.8 9.8.3 4.8-3.2 7.8-6.9 7.8-4 0-6.9-2.7-6.9-6.5 0-2.5 1.8-4.2 3.4-6.1 1.4-1.6 2.1-3 2-4.5.7.4 1.3 1.2 1.7 2.2.6-1 .7-2-.1-2.7Z"/>
-    <path fill="#E8FDFF" fill-opacity=".84" d="M11.4 6.9c1.8 1.5 4.3 3.6 4.5 6.3.2 3.2-2 5-4.3 5-2.5 0-4.4-1.7-4.4-4.3 0-1.9 1.7-3.3 2.7-4.9.6-.9.9-1.7.8-2.5.2.1.5.2.7.4Z"/>
-    <path fill="#FFD166" d="M9 12.4c.72 0 1.25.65 1.25 1.75S9.72 15.9 9 15.9s-1.25-.65-1.25-1.75S8.28 12.4 9 12.4ZM14.5 12.35c.72 0 1.25.7 1.25 1.8s-.53 1.8-1.25 1.8-1.25-.7-1.25-1.8.53-1.8 1.25-1.8Z"/>
-    <path fill="#FFD166" d="M18.6 4.6 20.1 5.5 18.4 6 17.8 7.6 17.2 6 15.6 5.5 17.2 5.1Z"/>
-    <path fill="#35D6FF" fill-opacity=".72" d="M4.2 9.2 5.4 10.1 4 10.6 3.3 12 2.9 10.4 1.6 9.8 3.2 9.7Z"/>
-    <path fill="#FFD166" fill-opacity=".9" d="M17.2 17.2 18.7 18.2 17.1 18.7 16.4 20.2 15.9 18.6 14.5 18 16 17.7Z"/>
-    <path fill="#35D6FF" fill-opacity=".62" d="M6.6 4.8 7.5 5.4 6.6 5.8 6.2 6.7 5.8 5.8 5 5.3 6 5.2Z"/>
+  <g id="slime" transform="scale(4.5)">
+    <path fill="#18AFCF" fill-opacity=".24" d="M12 3.3c4.9 0 8.8 3.9 8.8 9.4 0 5.1-3.7 8.5-8.8 8.5s-8.8-3.4-8.8-8.5c0-5.5 3.9-9.4 8.8-9.4Z"/>
+    <path fill="#65DFF7" d="M12 4.2c4.2 0 7.5 3.6 7.5 8.5 0 4.4-3.1 7.1-7.5 7.1s-7.5-2.7-7.5-7.1c0-4.9 3.3-8.5 7.5-8.5Z"/>
+    <path fill="#DDFBFF" fill-opacity=".58" d="M7.1 9.4c1.1-2.6 3.4-3.7 5.5-3.8-1.8 1.4-2.8 3.2-3.4 5.4-.4 1.4-2.7.2-2.1-1.6Z"/>
+    <path fill="#DDFBFF" fill-opacity=".28" d="M5.2 14.9c1.6 1.9 3.9 2.8 6.8 2.8s5.2-.9 6.8-2.8c-.8 3.1-3.4 4.9-6.8 4.9s-6-1.8-6.8-4.9Z"/>
+    <path fill="#102A33" d="M8.5 10.7c.7 0 1.2.7 1.2 1.6s-.5 1.6-1.2 1.6-1.2-.7-1.2-1.6.5-1.6 1.2-1.6Zm7 0c.7 0 1.2.7 1.2 1.6s-.5 1.6-1.2 1.6-1.2-.7-1.2-1.6.5-1.6 1.2-1.6Z"/>
+    <path fill="none" stroke="#102A33" stroke-linecap="round" stroke-width=".55" d="M10.1 15.1c.5.6 1.1.9 1.9.9s1.4-.3 1.9-.9"/>
+  </g>
+  <g id="bubbles" transform="scale(4.5)">
+    <circle cx="5.1" cy="6.9" r="1.3" fill="#A6F4FF" fill-opacity=".62"/>
+    <circle cx="18.9" cy="7" r="1.1" fill="#A6F4FF" fill-opacity=".5"/>
+    <circle cx="12" cy="2.9" r="1.1" fill="#A6F4FF" fill-opacity=".42"/>
   </g>
 </svg>

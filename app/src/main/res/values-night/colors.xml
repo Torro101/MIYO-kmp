@@ -8,10 +8,11 @@
 	<color name="warning">#FB8C00</color>
 	<color name="launcher_background">#081217</color>
 	<color name="miyo_splash_background">#081217</color>
-	<color name="miyo_wisp_aura">#35D6FF</color>
-	<color name="miyo_wisp_body">#76EAFF</color>
-	<color name="miyo_wisp_core">#DDFDFF</color>
-	<color name="miyo_wisp_ember">#FFD166</color>
+	<color name="miyo_slime_shadow">#18AFCF</color>
+	<color name="miyo_slime_body">#65DFF7</color>
+	<color name="miyo_slime_core">#DDFBFF</color>
+	<color name="miyo_slime_eye">#102A33</color>
+	<color name="miyo_slime_bubble">#A6F4FF</color>
 	<color name="common_green">#81C784</color>
 	<color name="common_yellow">#FFF176</color>
 	<color name="common_red">#E57373</color>

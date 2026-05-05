@@ -142,7 +142,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), AppBarOwner, BottomNav
 		}
 
 		viewModel.onOpenReader.observeEvent(this, this::onOpenReader)
-		viewModel.onError.observeEvent(this, SnackbarErrorObserver(viewBinding.container, null))
+		viewModel.onError.observeEvent(
+			this,
+			SnackbarErrorObserver(viewBinding.container, null, exceptionResolver, null),
+		)
 		viewModel.isLoading.observe(this, this::onLoadingStateChanged)
 		viewModel.isResumeEnabled.observe(this, this::onResumeEnabledChanged)
 		viewModel.feedCounter.observe(this, ::onFeedCounterChanged)
@@ -391,7 +394,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), AppBarOwner, BottomNav
 			}.observe(this, adapter)
 		searchSuggestionViewModel.onError.observeEvent(
 			this,
-			SnackbarErrorObserver(viewBinding.recyclerViewSearch, null),
+			SnackbarErrorObserver(viewBinding.recyclerViewSearch, null, exceptionResolver, null),
 		)
 		ItemTouchHelper(SearchSuggestionItemCallback(this))
 			.attachToRecyclerView(viewBinding.recyclerViewSearch)

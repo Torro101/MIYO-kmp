@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animated-vector
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:drawable="@drawable/ic_miyo_wisp_splash">
+	android:drawable="@drawable/ic_miyo_slime_splash">
 
 	<target
-		android:name="wisp_motion"
+		android:name="slime_motion"
 		android:animation="@animator/miyo_splash_motion" />
 
 	<target
-		android:name="wisp_aura"
+		android:name="slime_aura"
 		android:animation="@animator/miyo_splash_aura" />
 
 	<target
-		android:name="sparks"
-		android:animation="@animator/miyo_splash_embers" />
+		android:name="bubbles"
+		android:animation="@animator/miyo_splash_bubbles" />
 
 	<target
-		android:name="spark_top"
-		android:animation="@animator/miyo_splash_ember_fade" />
+		android:name="bubble_left"
+		android:animation="@animator/miyo_splash_bubble_fade" />
 
 	<target
-		android:name="spark_left"
-		android:animation="@animator/miyo_splash_ember_fade" />
+		android:name="bubble_right"
+		android:animation="@animator/miyo_splash_bubble_fade" />
 
 	<target
-		android:name="spark_low"
-		android:animation="@animator/miyo_splash_ember_fade" />
-
-	<target
-		android:name="spark_tiny"
-		android:animation="@animator/miyo_splash_ember_fade" />
+		android:name="bubble_top"
+		android:animation="@animator/miyo_splash_bubble_fade" />
 
 </animated-vector>

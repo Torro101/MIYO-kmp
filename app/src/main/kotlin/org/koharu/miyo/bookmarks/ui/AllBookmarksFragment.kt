@@ -106,7 +106,7 @@ class AllBookmarksFragment :
 		}
 		viewModel.onError.observeEvent(
 			viewLifecycleOwner,
-			SnackbarErrorObserver(binding.recyclerView, this),
+			SnackbarErrorObserver(binding.recyclerView, this, exceptionResolver, null),
 		)
 		viewModel.onActionDone.observeEvent(viewLifecycleOwner, ReversibleActionObserver(binding.recyclerView))
 	}

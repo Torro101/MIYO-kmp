@@ -36,7 +36,10 @@ class StorageAndNetworkSettingsFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(listView, this))
+        viewModel.onError.observeEvent(
+            viewLifecycleOwner,
+            SnackbarErrorObserver(listView, this, exceptionResolver, null),
+        )
         settings.subscribe(this)
         findPreference<StorageUsagePreference>(AppSettings.KEY_STORAGE_USAGE)?.let { pref ->
             viewModel.storageUsage.observe(viewLifecycleOwner, pref)

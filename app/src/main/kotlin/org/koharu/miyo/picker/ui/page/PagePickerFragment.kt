@@ -75,7 +75,10 @@ class PagePickerFragment :
 		}
 		viewModel.thumbnails.observe(viewLifecycleOwner, ::onThumbnailsChanged)
 		viewModel.isNoChapters.observe(viewLifecycleOwner, ::onNoChaptersChanged)
-		viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(binding.recyclerView, this))
+		viewModel.onError.observeEvent(
+			viewLifecycleOwner,
+			SnackbarErrorObserver(binding.recyclerView, this, exceptionResolver, null),
+		)
 		viewModel.isLoading.observe(viewLifecycleOwner) { binding.progressBar.showOrHide(it) }
 		viewModel.isLoadingDown.observe(viewLifecycleOwner) { binding.progressBarBottom.showOrHide(it) }
 		viewModel.manga.observe(viewLifecycleOwner, Lifecycle.State.RESUMED) {

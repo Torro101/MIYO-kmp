@@ -84,6 +84,11 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			true
 		}
 
+		R.id.action_done -> {
+			onCheckPassed()
+			true
+		}
+
 		else -> super.onOptionsItemSelected(item)
 	}
 

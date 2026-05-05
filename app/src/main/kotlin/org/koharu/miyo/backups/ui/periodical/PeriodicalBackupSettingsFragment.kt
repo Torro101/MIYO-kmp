@@ -47,7 +47,10 @@ class PeriodicalBackupSettingsFragment : BasePreferenceFragment(R.string.periodi
 		super.onViewCreated(view, savedInstanceState)
 		viewModel.lastBackupDate.observe(viewLifecycleOwner, ::bindLastBackupInfo)
 		viewModel.backupsDirectory.observe(viewLifecycleOwner, ::bindOutputSummary)
-		viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(listView, this))
+		viewModel.onError.observeEvent(
+			viewLifecycleOwner,
+			SnackbarErrorObserver(listView, this, exceptionResolver, null),
+		)
 		viewModel.isTelegramCheckLoading.observe(viewLifecycleOwner) {
 			findPreference<Preference>(AppSettings.KEY_BACKUP_TG_TEST)?.isEnabled = !it
 		}

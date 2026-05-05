@@ -49,7 +49,10 @@ class ScrobblerConfigActivity : BaseActivity<ActivityScrobblerConfigBinding>(),
 		viewModel.content.observe(this, listAdapter)
 		viewModel.user.observe(this, this::onUserChanged)
 		viewModel.isLoading.observe(this, this::onLoadingStateChanged)
-		viewModel.onError.observeEvent(this, SnackbarErrorObserver(viewBinding.recyclerView, null))
+		viewModel.onError.observeEvent(
+			this,
+			SnackbarErrorObserver(viewBinding.recyclerView, null, exceptionResolver, null),
+		)
 		viewModel.onLoggedOut.observeEvent(this) {
 			finishAfterTransition()
 		}

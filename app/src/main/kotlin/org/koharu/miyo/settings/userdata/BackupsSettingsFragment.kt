@@ -50,7 +50,10 @@ class BackupsSettingsFragment : BasePreferenceFragment(R.string.backup_restore),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindPeriodicalBackupSummary()
-        viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(listView, this))
+        viewModel.onError.observeEvent(
+            viewLifecycleOwner,
+            SnackbarErrorObserver(listView, this, exceptionResolver, null),
+        )
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {

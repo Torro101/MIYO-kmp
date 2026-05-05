@@ -129,7 +129,10 @@ class PagesFragment :
 		parentViewModel.emptyReason.observe(viewLifecycleOwner, ::onNoChaptersChanged)
 		viewModel.thumbnails.observe(viewLifecycleOwner, ::onThumbnailsChanged)
 		viewModel.onPageSaved.observeEvent(this, PagesSavedObserver(binding.recyclerView))
-		viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(binding.recyclerView, this))
+		viewModel.onError.observeEvent(
+			viewLifecycleOwner,
+			SnackbarErrorObserver(binding.recyclerView, this, exceptionResolver, null),
+		)
 		combine(
 			viewModel.isLoading,
 			viewModel.thumbnails,

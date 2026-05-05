@@ -34,7 +34,7 @@
 				android:singleLine="true"
 				android:text="@string/welcome"
 				android:textAppearance="?textAppearanceTitleLarge"
-				app:drawableStartCompat="@drawable/ic_miyo_wisp" />
+				app:drawableStartCompat="@drawable/ic_miyo_slime" />
 
 			<TextView
 				android:id="@+id/textView_hint"

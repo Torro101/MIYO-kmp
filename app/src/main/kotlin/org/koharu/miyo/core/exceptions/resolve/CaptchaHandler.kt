@@ -2,6 +2,7 @@ package org.koharu.miyo.core.exceptions.resolve
 
 import android.Manifest
 import android.app.Notification
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -228,6 +229,17 @@ class CaptchaHandler @Inject constructor(
 				),
 			)
 			.setContentIntent(PendingIntentCompat.getActivity(context, 0, intent, 0, false))
+		notification.addAction(
+			R.drawable.ic_bot,
+			context.getString(R.string.captcha_solve),
+			PendingIntentCompat.getActivity(
+				context,
+				exception.source.hashCode(),
+				intent,
+				PendingIntent.FLAG_UPDATE_CURRENT,
+				false,
+			),
+		)
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 			val actionIntent = PendingIntentCompat.getActivity(
 				context, SETTINGS_ACTION_CODE,

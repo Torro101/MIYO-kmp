@@ -60,7 +60,10 @@ class DataCleanupSettingsFragment : BasePreferenceFragment(R.string.data_removal
                 findPreference<Preference>(prefKey)?.isEnabled = prefKey !in keys
             }
         }
-        viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(listView, this))
+        viewModel.onError.observeEvent(
+            viewLifecycleOwner,
+            SnackbarErrorObserver(listView, this, exceptionResolver, null),
+        )
         viewModel.onActionDone.observeEvent(viewLifecycleOwner, ReversibleActionObserver(listView))
         viewModel.onChaptersCleanedUp.observeEvent(viewLifecycleOwner, ::onChaptersCleanedUp)
     }

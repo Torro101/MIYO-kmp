@@ -61,7 +61,10 @@ class AlternativesActivity : BaseActivity<ActivityAlternativesBinding>(),
 			adapter = listAdapter
 		}
 
-		viewModel.onError.observeEvent(this, SnackbarErrorObserver(viewBinding.recyclerView, null))
+		viewModel.onError.observeEvent(
+			this,
+			SnackbarErrorObserver(viewBinding.recyclerView, null, exceptionResolver, null),
+		)
 		viewModel.list.observe(this, listAdapter)
 		viewModel.onMigrated.observeEvent(this) {
 			Toast.makeText(this, R.string.migration_completed, Toast.LENGTH_SHORT).show()

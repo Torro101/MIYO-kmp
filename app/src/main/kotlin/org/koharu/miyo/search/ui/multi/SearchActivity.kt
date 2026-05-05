@@ -97,7 +97,10 @@ class SearchActivity :
 		addMenuProvider(SearchMenuProvider(this, viewModel))
 
 		viewModel.list.observe(this, adapter)
-		viewModel.onError.observeEvent(this, SnackbarErrorObserver(viewBinding.recyclerView, null))
+		viewModel.onError.observeEvent(
+			this,
+			SnackbarErrorObserver(viewBinding.recyclerView, null, exceptionResolver, null),
+		)
 	}
 
 	override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {

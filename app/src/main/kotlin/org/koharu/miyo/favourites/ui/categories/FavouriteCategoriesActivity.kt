@@ -68,7 +68,10 @@ class FavouriteCategoriesActivity :
 		}
 
 		viewModel.content.observe(this, ::onCategoriesChanged)
-		viewModel.onError.observeEvent(this, SnackbarErrorObserver(viewBinding.recyclerView, null))
+		viewModel.onError.observeEvent(
+			this,
+			SnackbarErrorObserver(viewBinding.recyclerView, null, exceptionResolver, null),
+		)
 	}
 
 	override fun onApplyWindowInsets(

@@ -8,4 +8,10 @@
 		android:title="@string/try_again"
 		app:showAsAction="never" />
 
+	<item
+		android:id="@+id/action_done"
+		android:icon="@drawable/ic_check"
+		android:title="@string/done"
+		app:showAsAction="ifRoom" />
+
 </menu>

@@ -82,7 +82,10 @@ class ExploreFragment :
 		}
 		addMenuProvider(ExploreMenuProvider(router))
 		viewModel.content.observe(viewLifecycleOwner, checkNotNull(exploreAdapter))
-		viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(binding.recyclerView, this))
+		viewModel.onError.observeEvent(
+			viewLifecycleOwner,
+			SnackbarErrorObserver(binding.recyclerView, this, exceptionResolver, null),
+		)
 		viewModel.onOpenManga.observeEvent(viewLifecycleOwner, ::onOpenManga)
 		viewModel.onActionDone.observeEvent(viewLifecycleOwner, ReversibleActionObserver(binding.recyclerView))
 		viewModel.isGrid.observe(viewLifecycleOwner, ::onGridModeChanged)

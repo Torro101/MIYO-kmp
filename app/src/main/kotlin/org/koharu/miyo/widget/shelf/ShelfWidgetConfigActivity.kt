@@ -52,7 +52,10 @@ class ShelfWidgetConfigActivity :
 		viewBinding.switchBackground.isChecked = config.hasBackground
 
 		viewModel.content.observe(this, adapter)
-		viewModel.onError.observeEvent(this, SnackbarErrorObserver(viewBinding.recyclerView, null))
+		viewModel.onError.observeEvent(
+			this,
+			SnackbarErrorObserver(viewBinding.recyclerView, null, exceptionResolver, null),
+		)
 	}
 
 	override fun onApplyWindowInsets(v: View, insets: WindowInsetsCompat): WindowInsetsCompat {

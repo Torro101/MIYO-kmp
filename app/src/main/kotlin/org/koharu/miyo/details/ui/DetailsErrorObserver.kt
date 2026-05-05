@@ -27,7 +27,11 @@ class DetailsErrorObserver(
 ) {
 
 	override suspend fun emit(value: Throwable) {
-		val snackbar = Snackbar.make(host, value.getDisplayMessage(host.context.resources), Snackbar.LENGTH_SHORT)
+		val snackbar = Snackbar.make(
+			host,
+			value.getDisplayMessage(host.context.resources),
+			if (canResolve(value)) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_SHORT,
+		)
 		snackbar.setAnchorView(bottomSheet)
 		if (value is NotFoundException || value is UnsupportedSourceException) {
 			snackbar.duration = Snackbar.LENGTH_INDEFINITE

@@ -71,7 +71,10 @@ class ImageActivity : BaseActivity<ActivityImageBinding>(),
 		)
 		menuMediator = PopupMenuMediator(menuProvider)
 		viewModel.isLoading.observe(this, ::onLoadingStateChanged)
-		viewModel.onError.observeEvent(this, SnackbarErrorObserver(viewBinding.root, null))
+		viewModel.onError.observeEvent(
+			this,
+			SnackbarErrorObserver(viewBinding.root, null, exceptionResolver, null),
+		)
 		viewModel.onImageSaved.observeEvent(this, ::onImageSaved)
 		loadImage()
 	}

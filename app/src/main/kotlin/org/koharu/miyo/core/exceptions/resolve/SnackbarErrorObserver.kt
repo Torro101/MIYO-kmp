@@ -24,7 +24,11 @@ class SnackbarErrorObserver(
 	) : this(host, fragment, null, null)
 
 	override suspend fun emit(value: Throwable) {
-		val snackbar = Snackbar.make(host, value.getDisplayMessage(host.context.resources), Snackbar.LENGTH_SHORT)
+		val snackbar = Snackbar.make(
+			host,
+			value.getDisplayMessage(host.context.resources),
+			if (canResolve(value)) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_SHORT,
+		)
 		when (activity) {
 			is BottomNavOwner -> snackbar.anchorView = activity.bottomNav
 			is BottomSheetOwner -> snackbar.anchorView = activity.bottomSheet

@@ -1,7 +1,9 @@
 package org.koharu.miyo.browser
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Looper
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -31,6 +33,15 @@ open class BrowserClient(
 	override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
 		super.onPageStarted(view, url, favicon)
 		callback.onLoadingStateChanged(isLoading = true)
+	}
+
+	@Deprecated("Deprecated in Java")
+	override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+		return shouldOverrideUrlLoadingInternal(view, url)
+	}
+
+	override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+		return shouldOverrideUrlLoadingInternal(view, request?.url?.toString())
 	}
 
 	override fun onPageCommitVisible(view: WebView, url: String) {
@@ -68,6 +79,55 @@ open class BrowserClient(
 	private fun emptyResponse(): WebResourceResponse =
 		WebResourceResponse("text/plain", "utf-8", ByteArrayInputStream(byteArrayOf()))
 
+	private fun shouldOverrideUrlLoadingInternal(view: WebView?, url: String?): Boolean {
+		if (url.isNullOrBlank() || url.isWebViewSafeUrl()) {
+			return false
+		}
+		val webFallbackUrl = url.toIntentWebFallbackUrl()
+		if (webFallbackUrl != null) {
+			view?.loadUrl(webFallbackUrl)
+			return true
+		}
+		url.tryOpenExternal(view)
+		return true
+	}
+
+	private fun String.isWebViewSafeUrl(): Boolean = when (substringBefore(':', "").lowercase()) {
+		"http", "https", "about", "data", "file", "javascript", "blob" -> true
+		else -> false
+	}
+
+	private fun String.isWebUrl(): Boolean {
+		return startsWith("https://", ignoreCase = true) || startsWith("http://", ignoreCase = true)
+	}
+
+	private fun String.toIntentWebFallbackUrl(): String? {
+		if (!startsWith("intent:", ignoreCase = true)) {
+			return null
+		}
+		return runCatching {
+			val intent = Intent.parseUri(this, Intent.URI_INTENT_SCHEME)
+			intent.getStringExtra(BROWSER_FALLBACK_URL)?.takeIf { it.isWebUrl() }
+				?: intent.dataString?.takeIf { it.isWebUrl() }
+		}.getOrNull()
+	}
+
+	private fun String.tryOpenExternal(view: WebView?): Boolean {
+		val context = view?.context ?: return false
+		return runCatching {
+			val intent = if (startsWith("intent:", ignoreCase = true)) {
+				Intent.parseUri(this, Intent.URI_INTENT_SCHEME)
+			} else {
+				Intent(Intent.ACTION_VIEW, Uri.parse(this))
+			}.apply {
+				addCategory(Intent.CATEGORY_BROWSABLE)
+				component = null
+				selector = null
+			}
+			context.startActivity(intent)
+		}.isSuccess
+	}
+
 	@SuppressLint("WrongThread")
 	@AnyThread
 	private fun WebView.getUrlSafe(): String? = if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -76,5 +136,10 @@ open class BrowserClient(
 		runBlocking(Dispatchers.Main.immediate) {
 			url
 		}
+	}
+
+	private companion object {
+
+		const val BROWSER_FALLBACK_URL = "browser_fallback_url"
 	}
 }

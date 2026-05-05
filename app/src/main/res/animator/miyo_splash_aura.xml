@@ -4,6 +4,6 @@
 	android:duration="450"
 	android:interpolator="@android:interpolator/fast_out_slow_in"
 	android:propertyName="fillAlpha"
-	android:valueFrom="0.08"
-	android:valueTo="0.28"
+	android:valueFrom="0.04"
+	android:valueTo="0.3"
 	android:valueType="floatType" />
