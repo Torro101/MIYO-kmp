@@ -1,6 +1,7 @@
 package org.koharu.miyo.core.network.webview
 
 import android.graphics.Bitmap
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
 import org.koitharu.kotatsu.parsers.network.CloudFlareHelper
@@ -21,6 +22,20 @@ class CaptchaContinuationClient(
 	override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
 		super.onPageStarted(view, url, favicon)
 		checkClearance(view)
+	}
+
+	@Deprecated("Deprecated in Java")
+	override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+		return CaptchaNavigationGuard.shouldBlockMainFrameNavigation(url, targetUrl) ||
+			super.shouldOverrideUrlLoading(view, url)
+	}
+
+	override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+		val isMainFrame = request?.isForMainFrame ?: true
+		if (isMainFrame && CaptchaNavigationGuard.shouldBlockMainFrameNavigation(request?.url?.toString(), targetUrl)) {
+			return true
+		}
+		return super.shouldOverrideUrlLoading(view, request)
 	}
 
 	private fun checkClearance(view: WebView?) {

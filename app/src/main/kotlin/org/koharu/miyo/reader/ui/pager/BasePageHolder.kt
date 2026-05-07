@@ -93,8 +93,7 @@ abstract class BasePageHolder<B : ViewBinding>(
 	}
 
 	fun reloadImage() {
-		val source = (viewModel.state.value as? PageState.Shown)?.source ?: return
-		ssiv.setImage(source)
+		viewModel.restoreShownImage()
 	}
 
 	fun bind(data: ReaderPage) {
@@ -121,6 +120,8 @@ abstract class BasePageHolder<B : ViewBinding>(
 		ssiv.applyDownSampling(isForeground = true)
 		if (viewModel.state.value is PageState.Error && !viewModel.isLoading()) {
 			boundData?.let { viewModel.retry(it.toMangaPage(), isFromUser = false) }
+		} else if (viewModel.state.value is PageState.Shown && !ssiv.isReady) {
+			reloadImage()
 		}
 	}
 
@@ -151,6 +152,7 @@ abstract class BasePageHolder<B : ViewBinding>(
 			ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL,
 			ComponentCallbacks2.TRIM_MEMORY_MODERATE -> {
 				ssiv.recycle()
+				reloadImage()
 			}
 			ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
 			ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {

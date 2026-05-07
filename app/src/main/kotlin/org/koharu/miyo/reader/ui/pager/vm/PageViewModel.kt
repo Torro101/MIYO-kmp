@@ -109,20 +109,37 @@ class PageViewModel(
 		}
 	}
 
+	fun restoreShownImage(): Boolean {
+		val shownState = state.value as? PageState.Shown ?: return false
+		state.value = PageState.Loaded(shownState.source, shownState.isConverted)
+		return true
+	}
+
 	override fun onImageLoadError(e: Throwable) {
 		e.printStackTraceDebug()
 
 		state.update { currentState ->
-			if (currentState is PageState.Loaded) {
-				val uri = (currentState.source as? ImageSource.Uri)?.uri
-				if (!currentState.isConverted && uri != null && e is IOException) {
-					tryConvert(uri, e)
-					PageState.Converting()
-				} else {
-					PageState.Error(e)
+			val source: ImageSource
+			val isConverted: Boolean
+			when (currentState) {
+				is PageState.Loaded -> {
+					source = currentState.source
+					isConverted = currentState.isConverted
 				}
+
+				is PageState.Shown -> {
+					source = currentState.source
+					isConverted = currentState.isConverted
+				}
+
+				else -> return@update currentState
+			}
+			val uri = (source as? ImageSource.Uri)?.uri
+			if (!isConverted && uri != null && e is IOException) {
+				tryConvert(uri, e)
+				PageState.Converting()
 			} else {
-				currentState
+				PageState.Error(e)
 			}
 		}
 	}
