@@ -13,19 +13,20 @@ class CloudFlareInterceptor : Interceptor {
 	override fun intercept(chain: Interceptor.Chain): Response {
 		val request = chain.request()
 		val response = chain.proceed(request)
+		val protectedRequest = response.request
 		return when (CloudFlareHelper.checkResponseForProtection(response)) {
 			CloudFlareHelper.PROTECTION_BLOCKED -> response.closeThrowing(
 				CloudFlareBlockedException(
-					url = request.url.toString(),
-					source = request.tag(MangaSource::class.java),
+					url = protectedRequest.url.toString(),
+					source = protectedRequest.tag(MangaSource::class.java) ?: request.tag(MangaSource::class.java),
 				),
 			)
 
 			CloudFlareHelper.PROTECTION_CAPTCHA -> response.closeThrowing(
 				CloudFlareProtectedException(
-					url = request.url.toString(),
-					source = request.tag(MangaSource::class.java),
-					headers = request.headers,
+					url = protectedRequest.url.toString(),
+					source = protectedRequest.tag(MangaSource::class.java) ?: request.tag(MangaSource::class.java),
+					headers = protectedRequest.headers,
 				),
 			)
 

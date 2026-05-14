@@ -45,9 +45,9 @@ import okio.buffer
 import okio.sink
 import okio.use
 import org.koharu.miyo.R
-import org.koharu.miyo.core.exceptions.CloudFlareException
 import org.koharu.miyo.core.exceptions.NoDataReceivedException
 import org.koharu.miyo.core.exceptions.UnsupportedFileException
+import org.koharu.miyo.core.exceptions.findCloudFlareCause
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler
 import org.koharu.miyo.core.image.BitmapDecoderCompat
 import org.koharu.miyo.core.model.ids
@@ -415,8 +415,9 @@ class DownloadWorker @AssistedInject constructor(
 			try {
 				return block()
 			} catch (e: IOException) {
-				if (e is CloudFlareException) {
-					if (captchaHandler.handle(e)) {
+				val cloudFlareException = e.findCloudFlareCause()
+				if (cloudFlareException != null) {
+					if (captchaHandler.handle(cloudFlareException)) {
 						countDown = MAX_FAILSAFE_ATTEMPTS
 						publishState(currentState.copy(isStuck = false, doctorMessage = null))
 						continue@failsafe

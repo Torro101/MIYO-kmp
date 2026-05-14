@@ -270,5 +270,6 @@ private tailrec fun Throwable.resolvableCause(): Throwable = when (this) {
     is CancellationException -> cause?.resolvableCause() ?: this
     is CaughtException -> cause.resolvableCause()
     is WrapperIOException -> cause.resolvableCause()
+    is java.io.IOException -> cause?.resolvableCause() ?: this
     else -> this
 }

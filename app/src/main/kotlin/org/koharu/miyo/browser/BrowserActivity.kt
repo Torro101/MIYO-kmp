@@ -24,7 +24,11 @@ class BrowserActivity : BaseBrowserActivity() {
 
 	override fun onCreate2(savedInstanceState: Bundle?, source: MangaSource, repository: ParserMangaRepository?) {
 		setDisplayHomeAsUp(isEnabled = true, showUpAsClose = true)
-		viewBinding.webView.webViewClient = BrowserClient(this, adBlock)
+		val url = intent?.dataString
+		val navigationGuardTargetUrl = url.takeIf {
+			intent?.getBooleanExtra(AppRouter.KEY_IS_INTERACTIVE_ACTION, false) == true
+		}
+		viewBinding.webView.webViewClient = BrowserClient(this, adBlock, navigationGuardTargetUrl)
 		lifecycleScope.launch {
 			try {
 				proxyProvider.applyWebViewConfig()
@@ -33,7 +37,6 @@ class BrowserActivity : BaseBrowserActivity() {
 				Snackbar.make(viewBinding.webView, e.getDisplayMessage(resources), Snackbar.LENGTH_LONG).show()
 			}
 			if (savedInstanceState == null) {
-				val url = intent?.dataString
 				if (url.isNullOrEmpty()) {
 					finishAfterTransition()
 				} else {
@@ -79,7 +82,7 @@ class BrowserActivity : BaseBrowserActivity() {
 			url = input.url,
 			source = org.koharu.miyo.core.model.MangaSource(input.sourceName),
 			title = null,
-		)
+		).putExtra(AppRouter.KEY_IS_INTERACTIVE_ACTION, true)
 
 		override fun parseResult(resultCode: Int, intent: Intent?): Unit = Unit
 	}

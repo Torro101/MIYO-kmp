@@ -43,7 +43,7 @@ import kotlinx.coroutines.withContext
 import org.koharu.miyo.BuildConfig
 import org.koharu.miyo.R
 import org.koharu.miyo.core.db.MangaDatabase
-import org.koharu.miyo.core.exceptions.CloudFlareException
+import org.koharu.miyo.core.exceptions.findCloudFlareCause
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler
 import org.koharu.miyo.core.model.ids
 import org.koharu.miyo.core.nav.AppRouter
@@ -152,8 +152,8 @@ class TrackWorker @AssistedInject constructor(
 			when (it) {
 				is MangaUpdates.Failure -> {
 					val e = it.error
-					if (e is CloudFlareException) {
-						captchaHandler.handle(e)
+					e.findCloudFlareCause()?.let { error ->
+						captchaHandler.handle(error)
 					}
 				}
 

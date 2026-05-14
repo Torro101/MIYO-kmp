@@ -41,6 +41,7 @@ import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.exceptions.CloudFlareException
 import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
+import org.koharu.miyo.core.exceptions.findCloudFlareCause
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.model.UnknownMangaSource
 import org.koharu.miyo.core.model.getTitle
@@ -84,8 +85,8 @@ class CaptchaHandler @Inject constructor(
 
 	override fun onError(request: ImageRequest, result: ErrorResult) {
 		super.onError(request, result)
-		val e = result.throwable
-		if (e is CloudFlareException) {
+		val e = result.throwable.findCloudFlareCause()
+		if (e != null) {
 			val notify = request.extras[suppressCaptchaKey] != true
 			val retryRequest = ImageRequest.Builder(request, context)
 				.lifecycle(ProcessLifecycleOwner.get().lifecycle)

@@ -75,6 +75,7 @@ import org.koitharu.kotatsu.parsers.util.requireBody
 import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
 import org.koharu.miyo.reader.ui.pager.ReaderPage
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.zip.ZipFile
@@ -205,9 +206,13 @@ class PageLoader @Inject constructor(
 	@CheckResult
 	suspend fun convertBimap(uri: Uri): Uri = convertLock.withLock {
 		if (uri.isZipUri()) {
+			cache.get(uri.toString())?.takeIf { it.isNotEmpty() }?.let {
+				return@withLock it.toUri()
+			}
 			runInterruptible(Dispatchers.IO) {
 				ZipFile(uri.schemeSpecificPart).use { zip ->
-					val entry = zip.getEntry(uri.fragment)
+					val entryName = uri.fragment ?: throw FileNotFoundException(uri.toString())
+					val entry = zip.getEntry(entryName) ?: throw FileNotFoundException("$uri#$entryName")
 					context.ensureRamAtLeast(estimateDecodeBytes(entry.size.coerceAtLeast(0L)))
 					zip.getInputStream(entry).use {
 						BitmapDecoderCompat.decode(it, MimeTypes.getMimeTypeFromExtension(entry.name))

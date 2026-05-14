@@ -739,6 +739,9 @@ class AppRouter private constructor(
                 exception.headers[CommonHeaders.USER_AGENT]?.let {
                     putExtra(KEY_USER_AGENT, it)
                 }
+                exception.headers[CommonHeaders.REFERER]?.let {
+                    putExtra(KEY_REFERER, it)
+                }
             }
 
         fun browserIntent(
@@ -851,6 +854,8 @@ class AppRouter private constructor(
         const val KEY_TITLE = "title"
         const val KEY_URL = "url"
         const val KEY_USER_AGENT = "user_agent"
+        const val KEY_REFERER = "referer"
+        const val KEY_IS_INTERACTIVE_ACTION = "is_interactive_action"
 
         const val ACTION_HISTORY = "${BuildConfig.APPLICATION_ID}.action.MANAGE_HISTORY"
         const val ACTION_MANAGE_DOWNLOADS = "${BuildConfig.APPLICATION_ID}.action.MANAGE_DOWNLOADS"

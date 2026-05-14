@@ -22,6 +22,7 @@ import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.nav.AppRouter
+import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
 import org.koharu.miyo.core.parser.ParserMangaRepository
 import org.koharu.miyo.core.util.ext.getDisplayMessage
@@ -62,7 +63,7 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			}
 			if (savedInstanceState == null) {
 				onTitleChanged(getString(R.string.loading_), url)
-				viewBinding.webView.loadUrl(url)
+				viewBinding.webView.loadUrl(url, getInitialHeaders())
 			}
 		}
 	}
@@ -135,8 +136,17 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			val targetUrl = intent?.dataString?.toHttpUrlOrNull()
 			if (targetUrl != null) {
 				clearCfCookies(targetUrl)
-				viewBinding.webView.loadUrl(targetUrl.toString())
+				viewBinding.webView.loadUrl(targetUrl.toString(), getInitialHeaders())
 			}
+		}
+	}
+
+	private fun getInitialHeaders(): Map<String, String> {
+		val referer = intent?.getStringExtra(AppRouter.KEY_REFERER)
+		return if (referer.isNullOrEmpty()) {
+			emptyMap()
+		} else {
+			mapOf(CommonHeaders.REFERER to referer)
 		}
 	}
 

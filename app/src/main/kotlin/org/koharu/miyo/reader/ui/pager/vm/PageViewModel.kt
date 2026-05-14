@@ -21,7 +21,9 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import okio.IOException
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
+import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.os.NetworkState
+import org.koharu.miyo.core.util.ext.isZipUri
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import org.koharu.miyo.core.util.ext.throttle
 import org.koitharu.kotatsu.parsers.model.MangaPage
@@ -135,14 +137,16 @@ class PageViewModel(
 				else -> return@update currentState
 			}
 			val uri = (source as? ImageSource.Uri)?.uri
-			if (!isConverted && uri != null && e is IOException) {
-				tryConvert(uri, e)
+			if (!isConverted && uri != null && (uri.isZipUri() || e is IOException)) {
+				tryConvert(uri, e.asException())
 				PageState.Converting()
 			} else {
 				PageState.Error(e)
 			}
 		}
 	}
+
+	private fun Throwable.asException(): Exception = this as? Exception ?: IOException(this)
 
 	private fun tryConvert(uri: Uri, e: Exception) {
 		val prevJob = job
@@ -182,19 +186,25 @@ class PageViewModel(
 			val uri = task.await()
 			progressObserver.cancelAndJoin()
 			previewJob.cancel()
+			val displayUri = if (uri.isZipUri()) {
+				state.value = PageState.Converting()
+				loader.convertBimap(uri)
+			} else {
+				uri
+			}
 			cachedBounds = if (settingsProducer.value.isPagesCropEnabled(isWebtoon)) {
-				loader.getTrimmedBounds(uri)
+				loader.getTrimmedBounds(displayUri)
 			} else {
 				null
 			}
 			lastProgress = PROGRESS_COMPLETE
-			state.value = PageState.Loaded(uri.toImageSource(cachedBounds), isConverted = false)
+			state.value = PageState.Loaded(displayUri.toImageSource(cachedBounds), isConverted = displayUri != uri)
 		} catch (e: CancellationException) {
 			throw e
 		} catch (e: Throwable) {
 			e.printStackTraceDebug()
 			state.value = PageState.Error(e)
-			if (e is IOException && !networkState.value) {
+			if (e is IOException && data.source != LocalMangaSource && !networkState.value) {
 				networkState.awaitForConnection()
 				retry(data, isFromUser = false)
 			}

@@ -13,12 +13,14 @@ import androidx.annotation.AnyThread
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.koharu.miyo.core.network.webview.CaptchaNavigationGuard
 import org.koharu.miyo.core.network.webview.adblock.AdBlock
 import java.io.ByteArrayInputStream
 
 open class BrowserClient(
 	private val callback: BrowserCallback,
 	private val adBlock: AdBlock?,
+	private val navigationGuardTargetUrl: String? = null,
 ) : WebViewClient() {
 
 	/**
@@ -37,11 +39,15 @@ open class BrowserClient(
 
 	@Deprecated("Deprecated in Java")
 	override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-		return shouldOverrideUrlLoadingInternal(view, url)
+		return shouldOverrideUrlLoadingInternal(view, url, isMainFrame = true)
 	}
 
 	override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-		return shouldOverrideUrlLoadingInternal(view, request?.url?.toString())
+		return shouldOverrideUrlLoadingInternal(
+			view = view,
+			url = request?.url?.toString(),
+			isMainFrame = request?.isForMainFrame ?: true,
+		)
 	}
 
 	override fun onPageCommitVisible(view: WebView, url: String) {
@@ -79,7 +85,13 @@ open class BrowserClient(
 	private fun emptyResponse(): WebResourceResponse =
 		WebResourceResponse("text/plain", "utf-8", ByteArrayInputStream(byteArrayOf()))
 
-	private fun shouldOverrideUrlLoadingInternal(view: WebView?, url: String?): Boolean {
+	private fun shouldOverrideUrlLoadingInternal(view: WebView?, url: String?, isMainFrame: Boolean): Boolean {
+		if (isMainFrame && navigationGuardTargetUrl != null &&
+			CaptchaNavigationGuard.shouldBlockMainFrameNavigation(url, navigationGuardTargetUrl)
+		) {
+			callback.onLoadingStateChanged(isLoading = false)
+			return true
+		}
 		if (url.isNullOrBlank() || url.isWebViewSafeUrl()) {
 			return false
 		}

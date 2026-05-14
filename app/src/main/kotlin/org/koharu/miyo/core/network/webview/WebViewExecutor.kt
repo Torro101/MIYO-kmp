@@ -14,6 +14,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.koharu.miyo.core.exceptions.CloudFlareException
+import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
 import org.koharu.miyo.core.network.proxy.ProxyProvider
@@ -87,7 +88,7 @@ class WebViewExecutor @Inject constructor(
 								targetUrl = exception.url,
 								continuation = cont,
 							)
-							webView.loadUrl(exception.url)
+							webView.loadUrl(exception.url, exception.initialHeaders())
 						}
 					}
 				} finally {
@@ -121,6 +122,15 @@ class WebViewExecutor @Inject constructor(
 	private fun MangaSource.getUserAgent(): String? {
 		val repository = mangaRepositoryFactoryProvider.get().create(this) as? ParserMangaRepository
 		return repository?.getRequestHeaders()?.get(CommonHeaders.USER_AGENT)
+	}
+
+	private fun CloudFlareException.initialHeaders(): Map<String, String> {
+		val referer = (this as? CloudFlareProtectedException)?.headers?.get(CommonHeaders.REFERER)
+		return if (referer.isNullOrEmpty()) {
+			emptyMap()
+		} else {
+			mapOf(CommonHeaders.REFERER to referer)
+		}
 	}
 
 	@MainThread

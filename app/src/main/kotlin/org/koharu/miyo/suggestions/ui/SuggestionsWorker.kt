@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import org.koharu.miyo.R
-import org.koharu.miyo.core.exceptions.CloudFlareException
+import org.koharu.miyo.core.exceptions.findCloudFlareCause
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler
 import org.koharu.miyo.core.model.distinctById
 import org.koharu.miyo.core.model.getLocale
@@ -284,8 +284,8 @@ class SuggestionsWorker @AssistedInject constructor(
 		list.shuffle()
 		list.take(MAX_SOURCE_RESULTS)
 	}.onFailure { e ->
-		if (e is CloudFlareException) {
-			captchaHandler.handle(e)
+		e.findCloudFlareCause()?.let {
+			captchaHandler.handle(it)
 		}
 		e.printStackTraceDebug()
 	}.getOrDefault(emptyList())

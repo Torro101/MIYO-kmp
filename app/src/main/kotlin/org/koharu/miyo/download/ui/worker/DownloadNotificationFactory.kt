@@ -24,6 +24,7 @@ import org.koharu.miyo.R
 import org.koharu.miyo.core.ErrorReporterReceiver
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
+import org.koharu.miyo.core.exceptions.findCloudFlareProtectedCause
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.model.isNsfw
 import org.koharu.miyo.core.nav.AppRouter
@@ -216,7 +217,7 @@ class DownloadNotificationFactory @AssistedInject constructor(
 				builder.setSmallIcon(R.drawable.ic_stat_paused)
 				builder.addAction(actionCancel)
 				if (state.errorMessage != null) {
-					(state.error as? CloudFlareProtectedException)?.let {
+					state.error.findCloudFlareProtectedCause()?.let {
 						builder.addAction(actionSolve(it))
 					}
 					builder.addAction(actionRetry)
@@ -237,7 +238,7 @@ class DownloadNotificationFactory @AssistedInject constructor(
 				builder.setShowWhen(true)
 				builder.setWhen(System.currentTimeMillis())
 				builder.setStyle(NotificationCompat.BigTextStyle().bigText(state.errorMessage))
-				(state.error as? CloudFlareProtectedException)?.let {
+				state.error.findCloudFlareProtectedCause()?.let {
 					builder.addAction(actionSolve(it))
 				}
 				if (state.error.isReportable()) {
