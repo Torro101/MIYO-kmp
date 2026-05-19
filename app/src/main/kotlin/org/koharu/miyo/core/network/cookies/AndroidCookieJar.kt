@@ -1,5 +1,6 @@
 package org.koharu.miyo.core.network.cookies
 
+import android.content.Context
 import android.webkit.CookieManager
 import androidx.annotation.WorkerThread
 import androidx.core.util.Predicate
@@ -8,15 +9,22 @@ import okhttp3.HttpUrl
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class AndroidCookieJar : MutableCookieJar {
+class AndroidCookieJar(
+	context: Context,
+) : MutableCookieJar {
 
 	private val cookieManager = CookieManager.getInstance()
+	private val persistentJar = PreferencesCookieJar(context, persistSessionCookies = true)
 
 	@WorkerThread
 	override fun loadForRequest(url: HttpUrl): List<Cookie> {
-		val rawCookie = cookieManager.getCookie(url.toString()) ?: return emptyList()
-		return rawCookie.split(';').mapNotNull {
-			Cookie.parse(url, it)
+		val persistedCookies = persistentJar.loadForRequest(url)
+		if (persistedCookies.isNotEmpty()) {
+			saveToWebView(url, persistedCookies)
+		}
+		val webViewCookies = getWebViewCookies(url)
+		return (webViewCookies + persistedCookies).distinctBy {
+			"${it.name};${it.domain};${it.path}"
 		}
 	}
 
@@ -25,10 +33,9 @@ class AndroidCookieJar : MutableCookieJar {
 		if (cookies.isEmpty()) {
 			return
 		}
-		val urlString = url.toString()
-		for (cookie in cookies) {
-			cookieManager.setCookie(urlString, cookie.toString())
-		}
+		persistentJar.saveFromResponse(url, cookies)
+		saveToWebView(url, cookies)
+		flush()
 	}
 
 	override fun removeCookies(url: HttpUrl, predicate: Predicate<Cookie>?) {
@@ -46,9 +53,71 @@ class AndroidCookieJar : MutableCookieJar {
 				.build()
 			cookieManager.setCookie(urlString, nc.toString())
 		}
+		persistentJar.removeCookies(url, predicate)
+		flush()
 	}
 
-	override suspend fun clear() = suspendCoroutine<Boolean> { continuation ->
-		cookieManager.removeAllCookies(continuation::resume)
+	@WorkerThread
+	override fun saveFromWebView(url: HttpUrl): Boolean {
+		val cookies = getWebViewCookies(url)
+		if (cookies.isEmpty()) {
+			return false
+		}
+		persistentJar.saveFromResponse(url, cookies)
+		flush()
+		return true
+	}
+
+	override fun flush() {
+		cookieManager.flush()
+		persistentJar.flush()
+	}
+
+	override suspend fun clear(): Boolean {
+		val removed = suspendCoroutine<Boolean> { continuation ->
+			cookieManager.removeAllCookies(continuation::resume)
+		}
+		persistentJar.clear()
+		flush()
+		return removed
+	}
+
+	private fun saveToWebView(url: HttpUrl, cookies: List<Cookie>) {
+		val urlString = url.toString()
+		for (cookie in cookies) {
+			cookieManager.setCookie(urlString, cookie.toString())
+		}
+	}
+
+	private fun getWebViewCookies(url: HttpUrl): List<Cookie> {
+		val rawCookie = cookieManager.getCookie(url.toString()) ?: return emptyList()
+		return rawCookie.split(';').mapNotNull {
+			parseWebViewCookie(url, it)
+		}
+	}
+
+	private fun parseWebViewCookie(url: HttpUrl, rawCookie: String): Cookie? {
+		val separator = rawCookie.indexOf('=')
+		if (separator <= 0) {
+			return null
+		}
+		val name = rawCookie.substring(0, separator).trim()
+		val value = rawCookie.substring(separator + 1).trim()
+		if (name.isEmpty()) {
+			return null
+		}
+		return runCatching {
+			Cookie.Builder()
+				.name(name)
+				.value(value)
+				.hostOnlyDomain(url.host)
+				.path("/")
+				.apply {
+					if (url.isHttps) {
+						secure()
+					}
+				}
+				.build()
+		}.getOrNull()
 	}
 }

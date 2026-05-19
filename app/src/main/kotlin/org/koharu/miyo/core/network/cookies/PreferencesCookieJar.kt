@@ -15,6 +15,7 @@ private const val PREFS_NAME = "cookies"
 
 class PreferencesCookieJar(
 	context: Context,
+	private val persistSessionCookies: Boolean = false,
 ) : MutableCookieJar {
 
 	private val cache = ArrayMap<String, CookieWrapper>()
@@ -49,7 +50,7 @@ class PreferencesCookieJar(
 			for (cookie in wrapped) {
 				val key = cookie.key()
 				cache[key] = cookie
-				if (cookie.cookie.persistent) {
+				if (cookie.cookie.persistent || persistSessionCookies) {
 					putString(key, cookie.encode())
 				}
 			}
@@ -73,6 +74,10 @@ class PreferencesCookieJar(
 			removePersistent(toRemove)
 		}
 	}
+
+	override fun saveFromWebView(url: HttpUrl): Boolean = false
+
+	override fun flush() = Unit
 
 	override suspend fun clear(): Boolean {
 		cache.clear()

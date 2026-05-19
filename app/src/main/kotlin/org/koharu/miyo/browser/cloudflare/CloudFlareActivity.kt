@@ -91,6 +91,7 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 	}
 
 	override fun finish() {
+		cookieJar.flush()
 		setResult(pendingResult)
 		super.finish()
 	}
@@ -99,11 +100,13 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 
 	override fun onPageLoaded() {
 		viewBinding.progressBar.isInvisible = true
+		persistVisibleCookiesAsync()
 	}
 
 	override fun onCheckPassed() {
 		pendingResult = RESULT_OK
 		lifecycleScope.launch {
+			persistVisibleCookies()
 			val source = intent?.getStringExtra(AppRouter.KEY_SOURCE)
 			if (source != null) {
 				runCatchingCancellable {
@@ -114,6 +117,11 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			}
 			finishAfterTransition()
 		}
+	}
+
+	override fun onPause() {
+		persistVisibleCookiesAsync()
+		super.onPause()
 	}
 
 	override fun onTitleChanged(title: CharSequence, subtitle: CharSequence?) {
@@ -146,6 +154,41 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 		cookieJar.removeCookies(url) { cookie ->
 			CloudFlareHelper.isCloudFlareCookie(cookie.name)
 		}
+	}
+
+	private fun persistVisibleCookiesAsync() {
+		val urls = currentCaptchaCookieUrls()
+		if (urls.isEmpty()) {
+			return
+		}
+		lifecycleScope.launch(Dispatchers.Default) {
+			saveCookies(urls)
+		}
+	}
+
+	private suspend fun persistVisibleCookies() {
+		val urls = currentCaptchaCookieUrls()
+		if (urls.isEmpty()) {
+			return
+		}
+		runInterruptible(Dispatchers.Default) {
+			saveCookies(urls)
+		}
+	}
+
+	private fun saveCookies(urls: Collection<HttpUrl>) {
+		for (url in urls) {
+			cookieJar.saveFromWebView(url)
+		}
+		cookieJar.flush()
+	}
+
+	private fun currentCaptchaCookieUrls(): List<HttpUrl> {
+		return listOfNotNull(
+			viewBinding.webView.url?.toHttpUrlOrNull(),
+			intent?.dataString?.toHttpUrlOrNull(),
+			intent?.getStringExtra(AppRouter.KEY_REFERER)?.toHttpUrlOrNull(),
+		).distinctBy { it.host }
 	}
 
 	class Contract : ActivityResultContract<CloudFlareProtectedException, Boolean>() {

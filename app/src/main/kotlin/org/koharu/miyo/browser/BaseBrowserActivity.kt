@@ -5,10 +5,16 @@ import android.view.View
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.network.CommonHeaders
+import org.koharu.miyo.core.network.cookies.MutableCookieJar
 import org.koharu.miyo.core.network.proxy.ProxyProvider
 import org.koharu.miyo.core.network.webview.adblock.AdBlock
 import org.koharu.miyo.core.parser.MangaRepository
@@ -32,6 +38,9 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 
 	@Inject
 	lateinit var adBlock: AdBlock
+
+	@Inject
+	lateinit var webViewCookieJar: MutableCookieJar
 
 	private lateinit var onBackPressedCallback: WebViewBackPressedCallback
 
@@ -79,6 +88,7 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 	}
 
 	override fun onPause() {
+		persistWebViewCookiesAsync()
 		viewBinding.webView.onPause()
 		super.onPause()
 	}
@@ -91,6 +101,7 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 	override fun onDestroy() {
 		super.onDestroy()
 		if (hasViewBinding()) {
+			webViewCookieJar.flush()
 			viewBinding.webView.stopLoading()
 			viewBinding.webView.destroy()
 		}
@@ -98,6 +109,9 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 
 	override fun onLoadingStateChanged(isLoading: Boolean) {
 		viewBinding.progressBar.isVisible = isLoading
+		if (!isLoading) {
+			persistWebViewCookiesAsync()
+		}
 	}
 
 	override fun onTitleChanged(title: CharSequence, subtitle: CharSequence?) {
@@ -107,5 +121,25 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 
 	override fun onHistoryChanged() {
 		onBackPressedCallback.onHistoryChanged()
+	}
+
+	protected fun persistWebViewCookiesAsync() {
+		val urls = currentCookieUrls()
+		if (urls.isEmpty()) {
+			return
+		}
+		lifecycleScope.launch(Dispatchers.Default) {
+			for (url in urls) {
+				webViewCookieJar.saveFromWebView(url)
+			}
+			webViewCookieJar.flush()
+		}
+	}
+
+	protected fun currentCookieUrls(): List<HttpUrl> {
+		return listOfNotNull(
+			viewBinding.webView.url?.toHttpUrlOrNull(),
+			intent?.dataString?.toHttpUrlOrNull(),
+		).distinctBy { it.host }
 	}
 }

@@ -17,5 +17,10 @@ interface MutableCookieJar : CookieJar {
 	@WorkerThread
 	fun removeCookies(url: HttpUrl, predicate: Predicate<Cookie>?)
 
+	@WorkerThread
+	fun saveFromWebView(url: HttpUrl): Boolean
+
+	fun flush()
+
 	suspend fun clear(): Boolean
 }

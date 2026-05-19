@@ -8,11 +8,13 @@ import android.webkit.WebViewClient
 import androidx.annotation.MainThread
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.koharu.miyo.core.exceptions.CloudFlareException
 import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
 import org.koharu.miyo.core.network.CommonHeaders
@@ -91,6 +93,7 @@ class WebViewExecutor @Inject constructor(
 							webView.loadUrl(exception.url, exception.initialHeaders())
 						}
 					}
+					persistCookies(exception)
 				} finally {
 					webView.reset()
 				}
@@ -130,6 +133,26 @@ class WebViewExecutor @Inject constructor(
 			emptyMap()
 		} else {
 			mapOf(CommonHeaders.REFERER to referer)
+		}
+	}
+
+	private suspend fun persistCookies(exception: CloudFlareException) {
+		val urls = buildList {
+			exception.url.toHttpUrlOrNull()?.let(::add)
+			(exception as? CloudFlareProtectedException)
+				?.headers
+				?.get(CommonHeaders.REFERER)
+				?.toHttpUrlOrNull()
+				?.let(::add)
+		}.distinctBy { it.host }
+		if (urls.isEmpty()) {
+			return
+		}
+		runInterruptible(Dispatchers.Default) {
+			for (url in urls) {
+				cookieJar.saveFromWebView(url)
+			}
+			cookieJar.flush()
 		}
 	}
 

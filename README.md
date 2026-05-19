@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./.github/assets/icon.png" alt="Miyo app icon" width="160">
+  <img src="./.github/assets/icon.svg" alt="Miyo mascot" width="160">
 
   # Miyo
 
