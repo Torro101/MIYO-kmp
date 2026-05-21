@@ -32,8 +32,10 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okio.source
 import okio.use
 import org.jetbrains.annotations.Blocking
 import org.koharu.miyo.core.LocalizedAppContext
@@ -208,9 +210,28 @@ class PageLoader @Inject constructor(
 	}
 
 	@CheckResult
+	suspend fun materializeZipEntry(uri: Uri): Uri {
+		check(uri.isZipUri()) { "Expected ZIP uri: $uri" }
+		val cacheKey = rawZipCacheKey(uri)
+		cache.get(cacheKey)?.takeIf { it.isNotEmpty() }?.let {
+			return it.toUri()
+		}
+		return withContext(Dispatchers.IO) {
+			ZipFile(uri.schemeSpecificPart).use { zip ->
+				val entryName = uri.fragment ?: throw FileNotFoundException(uri.toString())
+				val entry = zip.getEntry(entryName) ?: throw FileNotFoundException("$uri#$entryName")
+				zip.getInputStream(entry).source().use { source ->
+					cache.set(cacheKey, source, MimeTypes.getMimeTypeFromExtension(entry.name)).toUri()
+				}
+			}
+		}
+	}
+
+	@CheckResult
 	suspend fun convertBimap(uri: Uri): Uri = convertLock.withLock {
 		if (uri.isZipUri()) {
-			cache.get(uri.toString())?.takeIf { it.isNotEmpty() }?.let {
+			val cacheKey = convertedZipCacheKey(uri)
+			cache.get(cacheKey)?.takeIf { it.isNotEmpty() }?.let {
 				return@withLock it.toUri()
 			}
 			runInterruptible(Dispatchers.IO) {
@@ -223,7 +244,7 @@ class PageLoader @Inject constructor(
 					}
 				}
 			}.use { image ->
-				cache.set(uri.toString(), image).toUri()
+				cache.set(cacheKey, image).toUri()
 			}
 		} else {
 			val file = uri.toFile()
@@ -324,7 +345,7 @@ class PageLoader @Inject constructor(
 				} else { // legacy uri
 					uri.buildUpon().scheme(URI_SCHEME_ZIP).build()
 				}
-				convertBimap(normalizedUri).also {
+				materializeZipEntry(normalizedUri).also {
 					recordLoadedPageFootprint(it.toFile())
 				}
 			}
@@ -458,6 +479,10 @@ class PageLoader @Inject constructor(
 		private fun megabytes(value: Long): Long {
 			return FileSize.MEGABYTES.convert(value, FileSize.BYTES)
 		}
+
+		private fun rawZipCacheKey(uri: Uri) = "zip-entry:$uri"
+
+		private fun convertedZipCacheKey(uri: Uri) = "zip-converted:$uri"
 
 		fun createPageRequest(pageUrl: String, mangaSource: MangaSource) = Request.Builder()
 			.url(pageUrl)

@@ -119,6 +119,8 @@ abstract class BasePageHolder<B : ViewBinding>(
 		ssiv.applyDownSampling(isForeground = true)
 		if (viewModel.state.value is PageState.Error && !viewModel.isLoading()) {
 			boundData?.let { viewModel.retry(it.toMangaPage(), isFromUser = false) }
+		} else if (viewModel.state.value is PageState.Empty) {
+			boundData?.let { viewModel.onBind(it.toMangaPage()) }
 		} else if (viewModel.state.value is PageState.Shown && !ssiv.isReady) {
 			reloadImage()
 		}
@@ -156,7 +158,11 @@ abstract class BasePageHolder<B : ViewBinding>(
 			ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
 			ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
 				ssiv.recycle()
-				viewModel.evictFromMemory()
+				if (isResumed()) {
+					reloadImage()
+				} else if (viewModel.state.value !is PageState.Shown) {
+					viewModel.evictFromMemory()
+				}
 			}
 		}
 	}

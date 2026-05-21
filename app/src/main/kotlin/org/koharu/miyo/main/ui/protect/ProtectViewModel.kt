@@ -1,14 +1,15 @@
 package org.koharu.miyo.main.ui.protect
 
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import org.koharu.miyo.core.exceptions.WrongPasswordException
 import org.koharu.miyo.core.prefs.AppSettings
+import org.koharu.miyo.core.security.PasswordHasher
 import org.koharu.miyo.core.ui.BaseViewModel
 import org.koharu.miyo.core.util.ext.MutableEventFlow
 import org.koharu.miyo.core.util.ext.call
-import org.koitharu.kotatsu.parsers.util.md5
 import javax.inject.Inject
 
 private const val PASSWORD_COMPARE_DELAY = 1_000L
@@ -33,10 +34,12 @@ class ProtectViewModel @Inject constructor(
 		if (job?.isActive == true) {
 			return
 		}
-		job = launchLoadingJob {
-			val passwordHash = password.md5()
+		job = launchLoadingJob(Dispatchers.Default) {
 			val appPasswordHash = settings.appPassword
-			if (passwordHash == appPasswordHash) {
+			if (PasswordHasher.verify(password, appPasswordHash)) {
+				if (PasswordHasher.shouldUpgrade(appPasswordHash)) {
+					settings.appPassword = PasswordHasher.create(password)
+				}
 				unlock()
 			} else {
 				delay(PASSWORD_COMPARE_DELAY)

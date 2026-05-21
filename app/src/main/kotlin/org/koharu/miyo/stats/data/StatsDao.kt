@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.isActive
 import org.koharu.miyo.core.db.entity.MangaEntity
-import kotlin.collections.forEach
 
 @Dao
 abstract class StatsDao {
@@ -44,19 +43,23 @@ abstract class StatsDao {
 		favouriteCategories: Set<Long>
 	): Map<MangaEntity, Long> {
 		val conditions = ArrayList<String>()
+		val args = ArrayList<Any>()
 		conditions.add("(SELECT deleted_at FROM history WHERE history.manga_id = stats.manga_id) = 0")
-		conditions.add("stats.started_at >= $fromDate")
+		conditions.add("stats.started_at >= ?")
+		args.add(fromDate)
 		if (favouriteCategories.isNotEmpty()) {
-			val ids = favouriteCategories.joinToString(",")
-			conditions.add("stats.manga_id IN (SELECT manga_id FROM favourites WHERE category_id IN ($ids))")
+			val placeholders = favouriteCategories.joinToString(",") { "?" }
+			conditions.add("stats.manga_id IN (SELECT manga_id FROM favourites WHERE category_id IN ($placeholders))")
+			favouriteCategories.forEach(args::add)
 		}
 		if (isNsfw != null) {
-			val flag = if (isNsfw) 1 else 0
-			conditions.add("manga.nsfw = $flag")
+			conditions.add("manga.nsfw = ?")
+			args.add(if (isNsfw) 1 else 0)
 		}
 		val where = conditions.joinToString(separator = " AND ")
 		val query = SimpleSQLiteQuery(
 			"SELECT manga.*, SUM(duration) AS d FROM stats LEFT JOIN manga ON manga.manga_id = stats.manga_id WHERE $where GROUP BY manga.manga_id ORDER BY d DESC",
+			args.toTypedArray(),
 		)
 		return getDurationStatsImpl(query)
 	}

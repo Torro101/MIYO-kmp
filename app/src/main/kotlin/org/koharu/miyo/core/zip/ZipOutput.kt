@@ -32,32 +32,35 @@ class ZipOutput(
 
 	@Blocking
 	fun put(name: String, file: File): Boolean {
+		val entryName = requireSafeEntryName(name)
 		return if (nativeEnabled) {
-			appendFileNative(file, name)
+			appendFileNative(file, entryName)
 		} else {
 			withOutput { output ->
-				output.appendFile(file, name)
+				output.appendFile(file, entryName)
 			}
 		}
 	}
 
 	@Blocking
 	fun put(name: String, content: String): Boolean {
+		val entryName = requireSafeEntryName(name)
 		return if (nativeEnabled) {
-			appendTextNative(content, name)
+			appendTextNative(content, entryName)
 		} else {
 			withOutput { output ->
-				output.appendText(content, name)
+				output.appendText(content, entryName)
 			}
 		}
 	}
 
 	@Blocking
 	fun addDirectory(name: String): Boolean {
-		val entry = if (name.endsWith("/")) {
-			ZipEntry(name)
+		val safeName = requireSafeEntryName(name)
+		val entry = if (safeName.endsWith("/")) {
+			ZipEntry(safeName)
 		} else {
-			ZipEntry("$name/")
+			ZipEntry("$safeName/")
 		}
 		return if (entryNames.add(entry.name)) {
 			if (nativeEnabled) {
@@ -76,11 +79,12 @@ class ZipOutput(
 
 	@Blocking
 	fun copyEntryFrom(other: ZipFile, entry: ZipEntry): Boolean {
+		val safeName = entry.name.toSafeZipEntryNameOrNull() ?: return false
 		if (nativeEnabled) {
-			return copyEntryFromNative(other, entry)
+			return copyEntryFromNative(other, entry, safeName)
 		}
-		return if (entryNames.add(entry.name)) {
-			val zipEntry = ZipEntry(entry.name)
+		return if (entryNames.add(safeName)) {
+			val zipEntry = ZipEntry(safeName)
 			withOutput { output ->
 				output.putNextEntry(zipEntry)
 				try {
@@ -150,9 +154,9 @@ class ZipOutput(
 	}
 
 	@WorkerThread
-	private fun copyEntryFromNative(other: ZipFile, entry: ZipEntry): Boolean {
+	private fun copyEntryFromNative(other: ZipFile, entry: ZipEntry, safeName: String): Boolean {
 		if (entry.isDirectory) {
-			return addDirectory(entry.name)
+			return addDirectory(safeName)
 		}
 		val tempDir = file.parentFile ?: file.absoluteFile.parentFile
 		val temp = if (tempDir != null) {
@@ -166,7 +170,7 @@ class ZipOutput(
 					input.copyTo(output)
 				}
 			}
-			appendFileNative(temp, entry.name)
+			appendFileNative(temp, safeName)
 		} finally {
 			temp.delete()
 		}
@@ -185,6 +189,26 @@ class ZipOutput(
 		if (!result) {
 			throw IOException("Cannot write ZIP entry $entryName")
 		}
+	}
+
+	private fun requireSafeEntryName(name: String): String {
+		return name.toSafeZipEntryNameOrNull() ?: throw IOException("Unsafe ZIP entry name: $name")
+	}
+
+	private fun String.toSafeZipEntryNameOrNull(): String? {
+		val normalized = replace('\\', '/')
+		if (normalized.isBlank() || normalized.startsWith("/") || normalized.startsWith("../")) {
+			return null
+		}
+		val segments = normalized.split('/').filter { it.isNotEmpty() }
+		if (segments.any { it == ".." }) {
+			return null
+		}
+		val first = segments.firstOrNull()
+		if (first?.length == 2 && first[1] == ':' && first[0].isLetter()) {
+			return null
+		}
+		return normalized
 	}
 
 	@WorkerThread

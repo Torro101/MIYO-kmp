@@ -211,11 +211,16 @@ fun WebView.configureForParser(userAgentOverride: String?) = with(settings) {
 	javaScriptEnabled = true
 	domStorageEnabled = true
 	mediaPlaybackRequiresUserGesture = false
+	javaScriptCanOpenWindowsAutomatically = false
+	setSupportMultipleWindows(false)
 	if (WebViewFeature.isFeatureSupported(WebViewFeature.MUTE_AUDIO)) {
 		WebViewCompat.setAudioMuted(this@configureForParser, true)
 	}
 	databaseEnabled = true
+	allowFileAccess = false
 	allowContentAccess = false
+	allowFileAccessFromFileURLs = false
+	allowUniversalAccessFromFileURLs = false
 	if (userAgentOverride != null) {
 		userAgentString = userAgentOverride
 	}

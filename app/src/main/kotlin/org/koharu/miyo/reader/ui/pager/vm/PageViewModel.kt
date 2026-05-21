@@ -139,8 +139,10 @@ class PageViewModel(
 				else -> return@update currentState
 			}
 			val uri = (source as? ImageSource.Uri)?.uri
-			if (!isConverted && uri != null && (uri.isZipUri() || e is IOException)) {
-				tryConvert(uri, e.asException())
+			val sourceArchiveUri = currentPage?.url?.toUri()?.takeIf { it.isZipUri() }
+			val conversionUri = sourceArchiveUri ?: uri
+			if (!isConverted && conversionUri != null && (conversionUri.isZipUri() || e is IOException)) {
+				tryConvert(conversionUri, e.asException())
 				PageState.Converting()
 			} else {
 				PageState.Error(e)
@@ -189,8 +191,7 @@ class PageViewModel(
 			progressObserver.cancelAndJoin()
 			previewJob.cancel()
 			val displayUri = if (uri.isZipUri()) {
-				state.value = PageState.Converting()
-				loader.convertBimap(uri)
+				loader.materializeZipEntry(uri)
 			} else {
 				uri
 			}
@@ -200,7 +201,7 @@ class PageViewModel(
 				null
 			}
 			lastProgress = PROGRESS_COMPLETE
-			state.value = PageState.Loaded(displayUri.toImageSource(cachedBounds), isConverted = displayUri != uri)
+			state.value = PageState.Loaded(displayUri.toImageSource(cachedBounds), isConverted = false)
 		} catch (e: CancellationException) {
 			throw e
 		} catch (e: Throwable) {

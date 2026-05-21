@@ -1,18 +1,13 @@
 package org.koharu.miyo.browser
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Looper
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.annotation.AnyThread
 import androidx.annotation.WorkerThread
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.koharu.miyo.core.network.webview.CaptchaNavigationGuard
 import org.koharu.miyo.core.network.webview.adblock.AdBlock
 import java.io.ByteArrayInputStream
@@ -23,17 +18,22 @@ open class BrowserClient(
 	private val navigationGuardTargetUrl: String? = null,
 ) : WebViewClient() {
 
+	@Volatile
+	private var currentPageUrl: String? = null
+
 	/**
 	 * https://stackoverflow.com/questions/57414530/illegalstateexception-reasonphrase-cant-be-empty-with-android-webview
 	 */
 
 	override fun onPageFinished(webView: WebView, url: String) {
 		super.onPageFinished(webView, url)
+		currentPageUrl = url
 		callback.onLoadingStateChanged(isLoading = false)
 	}
 
 	override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
 		super.onPageStarted(view, url, favicon)
+		currentPageUrl = url
 		callback.onLoadingStateChanged(isLoading = true)
 	}
 
@@ -52,6 +52,7 @@ open class BrowserClient(
 
 	override fun onPageCommitVisible(view: WebView, url: String) {
 		super.onPageCommitVisible(view, url)
+		currentPageUrl = url
 		callback.onTitleChanged(view.title.orEmpty(), url)
 	}
 
@@ -65,7 +66,7 @@ open class BrowserClient(
 	override fun shouldInterceptRequest(
 		view: WebView?,
 		url: String?
-	): WebResourceResponse? = if (url.isNullOrEmpty() || adBlock?.shouldLoadUrl(url, view?.getUrlSafe()) ?: true) {
+	): WebResourceResponse? = if (url.isNullOrEmpty() || adBlock?.shouldLoadUrl(url, currentPageUrl) ?: true) {
 		super.shouldInterceptRequest(view, url)
 	} else {
 		emptyResponse()
@@ -76,7 +77,7 @@ open class BrowserClient(
 		view: WebView?,
 		request: WebResourceRequest?
 	): WebResourceResponse? =
-		if (request == null || adBlock?.shouldLoadUrl(request.url.toString(), view?.getUrlSafe()) ?: true) {
+		if (request == null || adBlock?.shouldLoadUrl(request.url.toString(), currentPageUrl) ?: true) {
 			super.shouldInterceptRequest(view, request)
 		} else {
 			emptyResponse()
@@ -105,7 +106,7 @@ open class BrowserClient(
 	}
 
 	private fun String.isWebViewSafeUrl(): Boolean = when (substringBefore(':', "").lowercase()) {
-		"http", "https", "about", "data", "file", "javascript", "blob" -> true
+		"http", "https", "about", "data", "javascript", "blob" -> true
 		else -> false
 	}
 
@@ -138,16 +139,6 @@ open class BrowserClient(
 			}
 			context.startActivity(intent)
 		}.isSuccess
-	}
-
-	@SuppressLint("WrongThread")
-	@AnyThread
-	private fun WebView.getUrlSafe(): String? = if (Looper.myLooper() == Looper.getMainLooper()) {
-		url
-	} else {
-		runBlocking(Dispatchers.Main.immediate) {
-			url
-		}
 	}
 
 	private companion object {

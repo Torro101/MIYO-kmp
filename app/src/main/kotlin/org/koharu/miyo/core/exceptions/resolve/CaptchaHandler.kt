@@ -203,6 +203,7 @@ class CaptchaHandler @Inject constructor(
 
 	private suspend fun buildNotification(exception: CloudFlareProtectedException): Notification {
 		val intent = AppRouter.cloudFlareResolveIntent(context, exception)
+		val requestCode = requestCode(exception.source)
 		val discardIntent = Intent(ACTION_DISCARD)
 			.putExtra(AppRouter.KEY_SOURCE, exception.source.name)
 			.setData("source://${exception.source.name}".toUri())
@@ -214,7 +215,7 @@ class CaptchaHandler @Inject constructor(
 			.setGroup(GROUP_CAPTCHA)
 			.setOnlyAlertOnce(true)
 			.setAutoCancel(true)
-			.setDeleteIntent(PendingIntentCompat.getBroadcast(context, 0, discardIntent, 0, false))
+			.setDeleteIntent(PendingIntentCompat.getBroadcast(context, requestCode, discardIntent, PendingIntent.FLAG_UPDATE_CURRENT, false))
 			.setLargeIcon(getFavicon(exception.source))
 			.setVisibility(
 				if (exception.source.isNsfw()) {
@@ -229,13 +230,13 @@ class CaptchaHandler @Inject constructor(
 					exception.source.getTitle(context),
 				),
 			)
-			.setContentIntent(PendingIntentCompat.getActivity(context, 0, intent, 0, false))
+			.setContentIntent(PendingIntentCompat.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT, false))
 		notification.addAction(
 			R.drawable.ic_bot,
 			context.getString(R.string.captcha_solve),
 			PendingIntentCompat.getActivity(
 				context,
-				exception.source.hashCode(),
+				requestCode,
 				intent,
 				PendingIntent.FLAG_UPDATE_CURRENT,
 				false,
@@ -305,5 +306,7 @@ class CaptchaHandler @Inject constructor(
 		private const val SETTINGS_ACTION_CODE = 3
 		private const val ACTION_DISCARD = "org.koharu.miyo.CAPTCHA_DISCARD"
 		private const val RESOLVE_TIMEOUT = 20_000L
+
+		private fun requestCode(source: MangaSource) = source.name.hashCode()
 	}
 }

@@ -41,30 +41,35 @@ class PageFileCache(
     }
 
     suspend fun get(key: String): File? {
-        val file = File(directory, key.toSafeFileName())
+        val safeName = key.toSafeFileName()
+        val file = File(directory, safeName)
         if (!file.exists() || !file.isFile) return null
-        accessTimes[key] = System.currentTimeMillis()
+        accessTimes[safeName] = System.currentTimeMillis()
         file.setLastModified(System.currentTimeMillis())
         return file
     }
 
     suspend fun put(key: String, data: okio.Source, type: String? = null): File = mutex.withLock {
-        val file = File(directory, key.toSafeFileName())
+        val safeName = key.toSafeFileName()
+        val file = File(directory, safeName)
+        val previousSize = if (file.exists()) file.length() else 0L
         val sink = fileSystem.sink(file.absolutePath.toPath()).buffer()
         sink.use { it.writeAll(data) }
-        totalSize.addAndGet(file.length())
-        accessTimes[key] = System.currentTimeMillis()
+        totalSize.addAndGet(file.length() - previousSize)
+        accessTimes[safeName] = System.currentTimeMillis()
         evictIfNeeded()
         file
     }
 
     suspend fun putBytes(key: String, bytes: ByteArray): File = mutex.withLock {
-        val file = File(directory, key.toSafeFileName())
+        val safeName = key.toSafeFileName()
+        val file = File(directory, safeName)
+        val previousSize = if (file.exists()) file.length() else 0L
         withContext(Dispatchers.IO) {
             file.writeBytes(bytes)
         }
-        totalSize.addAndGet(file.length())
-        accessTimes[key] = System.currentTimeMillis()
+        totalSize.addAndGet(file.length() - previousSize)
+        accessTimes[safeName] = System.currentTimeMillis()
         evictIfNeeded()
         file
     }
@@ -78,13 +83,19 @@ class PageFileCache(
     }
 
     suspend fun remove(key: String) = mutex.withLock {
-        val file = File(directory, key.toSafeFileName())
+        val safeName = key.toSafeFileName()
+        val file = File(directory, safeName)
         if (file.exists()) {
-            totalSize.addAndGet(-file.length())
-        }
-        accessTimes.remove(key)
-        withContext(Dispatchers.IO) {
-            file.delete()
+            val fileSize = file.length()
+            val isDeleted = withContext(Dispatchers.IO) {
+                file.delete()
+            }
+            if (isDeleted || !file.exists()) {
+                totalSize.addAndGet(-fileSize)
+                accessTimes.remove(safeName)
+            }
+        } else {
+            accessTimes.remove(safeName)
         }
     }
 
@@ -97,8 +108,11 @@ class PageFileCache(
                 ?: break
             val file = File(directory, oldest.key)
             if (file.exists()) {
-                withContext(Dispatchers.IO) { file.delete() }
-                totalSize.addAndGet(-file.length())
+                val fileSize = file.length()
+                val isDeleted = withContext(Dispatchers.IO) { file.delete() }
+                if (isDeleted || !file.exists()) {
+                    totalSize.addAndGet(-fileSize)
+                }
             }
             accessTimes.remove(oldest.key)
         }

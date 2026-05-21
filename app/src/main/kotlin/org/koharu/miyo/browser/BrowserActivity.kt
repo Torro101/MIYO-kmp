@@ -62,6 +62,7 @@ class BrowserActivity : BaseBrowserActivity() {
 	override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
 		android.R.id.home -> {
 			viewBinding.webView.stopLoading()
+			setResult(RESULT_CANCELED)
 			finishAfterTransition()
 			true
 		}
@@ -75,6 +76,7 @@ class BrowserActivity : BaseBrowserActivity() {
 
 		R.id.action_done -> {
 			persistWebViewCookiesAsync()
+			setResult(RESULT_OK)
 			finishAfterTransition()
 			true
 		}
@@ -82,7 +84,7 @@ class BrowserActivity : BaseBrowserActivity() {
 		else -> super.onOptionsItemSelected(item)
 	}
 
-	class Contract : ActivityResultContract<InteractiveActionRequiredException, Unit>() {
+	class Contract : ActivityResultContract<InteractiveActionRequiredException, Boolean>() {
 		override fun createIntent(
 			context: Context,
 			input: InteractiveActionRequiredException
@@ -93,7 +95,7 @@ class BrowserActivity : BaseBrowserActivity() {
 			title = null,
 		).putExtra(AppRouter.KEY_IS_INTERACTIVE_ACTION, true)
 
-		override fun parseResult(resultCode: Int, intent: Intent?): Unit = Unit
+		override fun parseResult(resultCode: Int, intent: Intent?): Boolean = resultCode == RESULT_OK
 	}
 
 	companion object {

@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
 import org.koharu.miyo.core.prefs.AppSettings
+import org.koharu.miyo.core.security.PasswordHasher
 import org.koharu.miyo.core.ui.BaseViewModel
 import org.koharu.miyo.core.util.ext.MutableEventFlow
 import org.koharu.miyo.core.util.ext.call
 import org.koitharu.kotatsu.parsers.util.isNumeric
-import org.koitharu.kotatsu.parsers.util.md5
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,7 +39,7 @@ class ProtectSetupViewModel @Inject constructor(
 			onClearText.call(Unit)
 		} else {
 			if (firstPassword.value == password) {
-				settings.appPassword = password.md5()
+				settings.appPassword = PasswordHasher.create(password)
 				settings.isAppPasswordNumeric = password.isNumeric()
 				onPasswordSet.call(Unit)
 			} else {
