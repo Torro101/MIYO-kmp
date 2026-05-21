@@ -16,7 +16,11 @@ class CloudFlareClient(
 	private val targetUrl: String,
 ) : BrowserClient(callback, adBlock) {
 
-	private val oldClearance = getClearance()
+	private var oldClearance = getClearance()
+
+	fun resetClearanceBaseline() {
+		oldClearance = getClearance()
+	}
 
 	override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
 		super.onPageStarted(view, url, favicon)

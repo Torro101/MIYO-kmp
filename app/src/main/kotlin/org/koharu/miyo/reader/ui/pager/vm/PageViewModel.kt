@@ -3,6 +3,7 @@ package org.koharu.miyo.reader.ui.pager.vm
 import android.graphics.Rect
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import androidx.core.net.toUri
 import com.davemorrissey.labs.subscaleview.DefaultOnImageEventListener
 import com.davemorrissey.labs.subscaleview.ImageSource
 import kotlinx.coroutines.CancellationException
@@ -23,6 +24,7 @@ import okio.IOException
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.os.NetworkState
+import org.koharu.miyo.core.util.ext.isFileUri
 import org.koharu.miyo.core.util.ext.isZipUri
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import org.koharu.miyo.core.util.ext.throttle
@@ -204,7 +206,7 @@ class PageViewModel(
 		} catch (e: Throwable) {
 			e.printStackTraceDebug()
 			state.value = PageState.Error(e)
-			if (e is IOException && data.source != LocalMangaSource && !networkState.value) {
+			if (e is IOException && data.requiresNetwork() && !networkState.value) {
 				networkState.awaitForConnection()
 				retry(data, isFromUser = false)
 			}
@@ -242,6 +244,11 @@ class PageViewModel(
 		return current.id == other.id &&
 			current.url == other.url &&
 			current.source == other.source
+	}
+
+	private fun MangaPage.requiresNetwork(): Boolean {
+		val uri = url.toUri()
+		return source != LocalMangaSource && !uri.isFileUri() && !uri.isZipUri()
 	}
 
 	private companion object {

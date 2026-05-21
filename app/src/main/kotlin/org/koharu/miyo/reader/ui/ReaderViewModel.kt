@@ -374,13 +374,12 @@ class ReaderViewModel @Inject constructor(
                     loadPrevNextChapter(currentPages.first().chapterId, isNext = false)
                 }
             }
-            if (pageLoader.isPrefetchApplicable()) {
-                pageLoader.prefetch(
-                    currentPages.trySublist(
-                        fromIndex = resolvedUpperPos + 1,
-                        toIndex = resolvedUpperPos + 1 + PREFETCH_LIMIT,
-                    ),
-                )
+            val prefetchPages = currentPages.trySublist(
+                fromIndex = resolvedUpperPos + 1,
+                toIndex = resolvedUpperPos + 1 + PREFETCH_LIMIT,
+            )
+            if (pageLoader.isPrefetchApplicable(prefetchPages)) {
+                pageLoader.prefetch(prefetchPages)
             }
         }
     }

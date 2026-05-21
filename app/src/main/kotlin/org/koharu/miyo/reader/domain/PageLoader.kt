@@ -38,6 +38,7 @@ import okio.use
 import org.jetbrains.annotations.Blocking
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.image.BitmapDecoderCompat
+import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.nativeio.NativeImageProbe
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.MangaHttpClient
@@ -113,9 +114,12 @@ class PageLoader @Inject constructor(
 	@Volatile
 	private var lastPageDecodeBytes = 0L
 
-	fun isPrefetchApplicable(): Boolean {
-		return repository is CachingMangaRepository
-			&& settings.isPagesPreloadEnabled
+	fun isPrefetchApplicable(pages: List<ReaderPage>): Boolean {
+		val repo = repository
+		val hasLocalPages = repo?.source == LocalMangaSource || pages.any { it.isLocalPage() }
+		val canPrefetchSource = repo is CachingMangaRepository || hasLocalPages
+		return canPrefetchSource
+			&& (hasLocalPages || settings.isPagesPreloadEnabled)
 			&& !context.isPowerSaveMode()
 			&& !isLowRam()
 	}
@@ -304,7 +308,7 @@ class PageLoader @Inject constructor(
 		isPrefetch: Boolean,
 		skipCache: Boolean,
 	): Uri = semaphore.withPermit {
-		val pageUrl = getPageUrl(page)
+		val pageUrl = resolvePageUrl(page)
 		check(pageUrl.isNotBlank()) { "Cannot obtain full image url for $page" }
 		if (!skipCache) {
 			cache.get(pageUrl)?.let { file ->
@@ -314,10 +318,15 @@ class PageLoader @Inject constructor(
 		}
 		val uri = pageUrl.toUri()
 		return when {
-			uri.isZipUri() -> if (uri.scheme == URI_SCHEME_ZIP) {
-				uri
-			} else { // legacy uri
-				uri.buildUpon().scheme(URI_SCHEME_ZIP).build()
+			uri.isZipUri() -> {
+				val normalizedUri = if (uri.scheme == URI_SCHEME_ZIP) {
+					uri
+				} else { // legacy uri
+					uri.buildUpon().scheme(URI_SCHEME_ZIP).build()
+				}
+				convertBimap(normalizedUri).also {
+					recordLoadedPageFootprint(it.toFile())
+				}
 			}
 
 			uri.isFileUri() -> uri.also {
@@ -340,6 +349,20 @@ class PageLoader @Inject constructor(
 				}.toUri()
 			}
 		}
+	}
+
+	private suspend fun resolvePageUrl(page: MangaPage): String {
+		val directUri = page.url.toUri()
+		return if (directUri.isFileUri() || directUri.isZipUri()) {
+			page.url
+		} else {
+			getPageUrl(page)
+		}
+	}
+
+	private fun ReaderPage.isLocalPage(): Boolean {
+		val uri = url.toUri()
+		return source == LocalMangaSource || uri.isFileUri() || uri.isZipUri()
 	}
 
 	private fun isLowRam(): Boolean {

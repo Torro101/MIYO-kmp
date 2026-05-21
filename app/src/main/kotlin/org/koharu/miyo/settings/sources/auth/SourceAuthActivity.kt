@@ -58,6 +58,7 @@ class SourceAuthActivity : BaseBrowserActivity(), BrowserCallback {
 					source.getTitle(this@SourceAuthActivity),
 					getString(R.string.loading_),
 				)
+				prepareWebViewCookies(url)
 				viewBinding.webView.loadUrl(url)
 			}
 		}

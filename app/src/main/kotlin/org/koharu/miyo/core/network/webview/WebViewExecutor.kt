@@ -83,6 +83,7 @@ class WebViewExecutor @Inject constructor(
 					exception.source.getUserAgent()?.let {
 						webView.settings.userAgentString = it
 					}
+					seedCookies(exception)
 					withTimeout(timeout) {
 						suspendCancellableCoroutine { cont ->
 							webView.webViewClient = CaptchaContinuationClient(
@@ -134,6 +135,21 @@ class WebViewExecutor @Inject constructor(
 		} else {
 			mapOf(CommonHeaders.REFERER to referer)
 		}
+	}
+
+	private suspend fun seedCookies(exception: CloudFlareException) = runInterruptible(Dispatchers.Default) {
+		val urls = buildList {
+			exception.url.toHttpUrlOrNull()?.let(::add)
+			(exception as? CloudFlareProtectedException)
+				?.headers
+				?.get(CommonHeaders.REFERER)
+				?.toHttpUrlOrNull()
+				?.let(::add)
+		}.distinctBy { it.host }
+		for (url in urls) {
+			cookieJar.loadForRequest(url)
+		}
+		cookieJar.flush()
 	}
 
 	private suspend fun persistCookies(exception: CloudFlareException) {

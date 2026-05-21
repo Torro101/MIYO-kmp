@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.koharu.miyo.core.model.MangaSource
@@ -141,5 +142,13 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 			viewBinding.webView.url?.toHttpUrlOrNull(),
 			intent?.dataString?.toHttpUrlOrNull(),
 		).distinctBy { it.host }
+	}
+
+	protected suspend fun prepareWebViewCookies(url: String?) {
+		val httpUrl = url?.toHttpUrlOrNull() ?: return
+		runInterruptible(Dispatchers.Default) {
+			webViewCookieJar.loadForRequest(httpUrl)
+			webViewCookieJar.flush()
+		}
 	}
 }

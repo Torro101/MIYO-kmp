@@ -37,6 +37,7 @@ import javax.inject.Inject
 class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 
 	private var pendingResult = RESULT_CANCELED
+	private lateinit var cloudFlareClient: CloudFlareClient
 
 	@Inject
 	lateinit var cookieJar: MutableCookieJar
@@ -51,7 +52,8 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			finishAfterTransition()
 			return
 		}
-		viewBinding.webView.webViewClient = CloudFlareClient(cookieJar, this, adBlock, url)
+		cloudFlareClient = CloudFlareClient(cookieJar, this, adBlock, url)
+		viewBinding.webView.webViewClient = cloudFlareClient
 		lifecycleScope.launch {
 			try {
 				proxyProvider.applyWebViewConfig()
@@ -60,6 +62,8 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			}
 			if (savedInstanceState == null) {
 				onTitleChanged(getString(R.string.loading_), url)
+				prepareWebViewCookies(url)
+				cloudFlareClient.resetClearanceBaseline()
 				viewBinding.webView.loadUrl(url, getInitialHeaders())
 			}
 		}
@@ -136,6 +140,8 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			val targetUrl = intent?.dataString?.toHttpUrlOrNull()
 			if (targetUrl != null) {
 				clearCfCookies(targetUrl)
+				prepareWebViewCookies(targetUrl.toString())
+				cloudFlareClient.resetClearanceBaseline()
 				viewBinding.webView.loadUrl(targetUrl.toString(), getInitialHeaders())
 			}
 		}

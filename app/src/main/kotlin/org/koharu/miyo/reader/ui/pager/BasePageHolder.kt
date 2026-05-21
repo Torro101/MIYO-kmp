@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.view.View
 import androidx.annotation.CallSuper
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -169,7 +168,12 @@ abstract class BasePageHolder<B : ViewBinding>(
 
 	protected open fun onStateChanged(state: PageState) {
 		bindingInfo.layoutError.isVisible = state is PageState.Error
-		bindingInfo.layoutProgress.isGone = state.isFinalState()
+		bindingInfo.layoutProgress.isVisible = state !is PageState.Empty && !state.isFinalState()
+		if (state.isFinalState() || state is PageState.Empty) {
+			bindingInfo.progressBar.hide()
+		} else {
+			bindingInfo.progressBar.show()
+		}
 		val progress = (state as? PageState.Loading)?.progress ?: -1
 		if (progress in 0..100) {
 			bindingInfo.progressBar.isIndeterminate = false

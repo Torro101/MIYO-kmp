@@ -44,6 +44,7 @@ class BrowserActivity : BaseBrowserActivity() {
 						intent?.getStringExtra(AppRouter.KEY_TITLE) ?: getString(R.string.loading_),
 						url,
 					)
+					prepareWebViewCookies(url)
 					viewBinding.webView.loadUrl(url)
 				}
 			}
@@ -53,6 +54,8 @@ class BrowserActivity : BaseBrowserActivity() {
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
 		super.onCreateOptionsMenu(menu)
 		menuInflater.inflate(R.menu.opt_browser, menu)
+		menu.findItem(R.id.action_done)?.isVisible =
+			intent?.getBooleanExtra(AppRouter.KEY_IS_INTERACTIVE_ACTION, false) == true
 		return true
 	}
 
@@ -67,6 +70,12 @@ class BrowserActivity : BaseBrowserActivity() {
 			if (!router.openExternalBrowser(viewBinding.webView.url.orEmpty(), item.title)) {
 				Snackbar.make(viewBinding.webView, R.string.operation_not_supported, Snackbar.LENGTH_SHORT).show()
 			}
+			true
+		}
+
+		R.id.action_done -> {
+			persistWebViewCookiesAsync()
+			finishAfterTransition()
 			true
 		}
 
