@@ -24,6 +24,7 @@ import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
+import org.koharu.miyo.core.network.webview.CaptchaSessionVerifier
 import org.koharu.miyo.core.parser.ParserMangaRepository
 import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
@@ -45,6 +46,9 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 
 	@Inject
 	lateinit var captchaHandler: CaptchaHandler
+
+	@Inject
+	lateinit var captchaSessionVerifier: CaptchaSessionVerifier
 
 	override fun onCreate2(savedInstanceState: Bundle?, source: MangaSource, repository: ParserMangaRepository?) {
 		setDisplayHomeAsUp(isEnabled = true, showUpAsClose = true)
@@ -121,6 +125,22 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			}.onFailure {
 				it.printStackTraceDebug()
 			}
+			val verificationResult = runCatchingCancellable {
+				captchaSessionVerifier.verify(
+					url = intent?.dataString,
+					headers = getSessionVerificationHeaders(),
+					sourceName = intent?.getStringExtra(AppRouter.KEY_SOURCE),
+				)
+			}.onFailure {
+				it.printStackTraceDebug()
+			}.getOrDefault(CaptchaSessionVerifier.Result.UnverifiedNetworkError)
+			if (verificationResult == CaptchaSessionVerifier.Result.NeedsCaptcha) {
+				pendingResult = RESULT_CANCELED
+				isCompletingSuccessfully = false
+				Snackbar.make(viewBinding.webView, R.string.captcha_required_message, Snackbar.LENGTH_LONG).show()
+				restartCheck()
+				return@launch
+			}
 			val source = intent?.getStringExtra(AppRouter.KEY_SOURCE)
 			if (source != null) {
 				runCatchingCancellable {
@@ -166,10 +186,20 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 		}
 	}
 
+	private fun getSessionVerificationHeaders(): Map<String, String> = buildMap {
+		intent?.getStringExtra(AppRouter.KEY_REFERER)?.let {
+			put(CommonHeaders.REFERER, it)
+		}
+		intent?.getStringExtra(AppRouter.KEY_USER_AGENT)?.let {
+			put(CommonHeaders.USER_AGENT, it)
+		}
+	}
+
 	private suspend fun clearCfCookies(url: HttpUrl) = runInterruptible(Dispatchers.Default) {
 		cookieJar.removeCookies(url) { cookie ->
 			CloudFlareHelper.isCloudFlareCookie(cookie.name)
 		}
+		cookieJar.flush()
 	}
 
 	private fun persistVisibleCookiesAsync() {

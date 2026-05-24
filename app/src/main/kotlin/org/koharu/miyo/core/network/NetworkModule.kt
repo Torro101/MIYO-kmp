@@ -61,7 +61,7 @@ interface NetworkModule {
 		fun provideBaseHttpClient(
 			@ApplicationContext contextProvider: Provider<Context>,
 			cache: Cache,
-			cookieJar: CookieJar,
+			cookieJar: MutableCookieJar,
 			settings: AppSettings,
 			proxyProvider: ProxyProvider,
 		): OkHttpClient = OkHttpClient.Builder().apply {
@@ -81,7 +81,7 @@ interface NetworkModule {
 			}
 			cache(cache)
 			addInterceptor(GZipInterceptor())
-			addInterceptor(CloudFlareInterceptor())
+			addInterceptor(CloudFlareInterceptor(cookieJar))
 			addInterceptor(RateLimitInterceptor())
 			if (BuildConfig.DEBUG) {
 				addInterceptor(CurlLoggingInterceptor())
