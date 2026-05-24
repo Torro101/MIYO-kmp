@@ -18,12 +18,10 @@ class CloudFlareClient(
 ) : BrowserClient(callback, adBlock) {
 
 	private var oldClearance = getClearance()
-	private var hasSeenChallenge = false
 	private var isPassed = false
 
 	fun resetClearanceBaseline() {
 		oldClearance = getClearance()
-		hasSeenChallenge = false
 		isPassed = false
 	}
 
@@ -85,10 +83,7 @@ class CloudFlareClient(
 			}
 			val state = rawState.orEmpty()
 			val isChallenge = state.containsAny(CHALLENGE_MARKERS)
-			if (isChallenge) {
-				hasSeenChallenge = true
-			}
-			if (state.isChallengeSuccess() || (hasSeenChallenge && isTargetPage(pageUrl) && !isChallenge)) {
+			if (state.isChallengeSuccess() || (state.hasContent() && isTargetPage(pageUrl) && !isChallenge)) {
 				notifyCheckPassed()
 			}
 		}
@@ -117,7 +112,13 @@ class CloudFlareClient(
 			(contains("waiting for", ignoreCase = true) && contains("to respond", ignoreCase = true))
 	}
 
+	private fun String.hasContent(): Boolean {
+		return length > MIN_PAGE_STATE_LENGTH
+	}
+
 	private companion object {
+
+		private const val MIN_PAGE_STATE_LENGTH = 32
 
 		private const val PAGE_STATE_SCRIPT =
 			"(function(){return [document.title||'',document.body&&document.body.innerText||''].join('\\n');})()"

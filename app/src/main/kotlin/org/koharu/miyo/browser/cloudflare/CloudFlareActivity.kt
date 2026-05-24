@@ -125,7 +125,7 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			}.onFailure {
 				it.printStackTraceDebug()
 			}
-			val verificationResult = runCatchingCancellable {
+			runCatchingCancellable {
 				captchaSessionVerifier.verify(
 					url = intent?.dataString,
 					headers = getSessionVerificationHeaders(),
@@ -133,13 +133,6 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 				)
 			}.onFailure {
 				it.printStackTraceDebug()
-			}.getOrDefault(CaptchaSessionVerifier.Result.UnverifiedNetworkError)
-			if (verificationResult == CaptchaSessionVerifier.Result.NeedsCaptcha) {
-				pendingResult = RESULT_CANCELED
-				isCompletingSuccessfully = false
-				Snackbar.make(viewBinding.webView, R.string.captcha_required_message, Snackbar.LENGTH_LONG).show()
-				restartCheck()
-				return@launch
 			}
 			val source = intent?.getStringExtra(AppRouter.KEY_SOURCE)
 			if (source != null) {

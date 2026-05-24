@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.koharu.miyo.core.exceptions.CloudFlareException
+import org.koharu.miyo.core.network.CloudFlareInterceptor
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.MangaHttpClient
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
@@ -19,6 +19,12 @@ class CaptchaSessionVerifier @Inject constructor(
 	private val cookieJar: MutableCookieJar,
 ) {
 
+	private val verifierClient by lazy(LazyThreadSafetyMode.PUBLICATION) {
+		okHttpClient.newBuilder().apply {
+			interceptors().removeAll { it is CloudFlareInterceptor }
+		}.build()
+	}
+
 	suspend fun verify(
 		url: String?,
 		headers: Map<String, String>,
@@ -27,7 +33,7 @@ class CaptchaSessionVerifier @Inject constructor(
 		val httpUrl = url?.toHttpUrlOrNull() ?: return@runInterruptible Result.Verified
 		val cookies = cookieJar.loadForRequest(httpUrl)
 		if (cookies.none { CloudFlareHelper.isCloudFlareCookie(it.name) }) {
-			return@runInterruptible Result.NeedsCaptcha
+			return@runInterruptible Result.UnverifiedNetworkError
 		}
 		val request = Request.Builder()
 			.url(httpUrl)
@@ -47,12 +53,14 @@ class CaptchaSessionVerifier @Inject constructor(
 			}
 			.build()
 		try {
-			okHttpClient.newCall(request).execute().use {
-				Result.Verified
+			verifierClient.newCall(request).execute().use { response ->
+				when (CloudFlareHelper.checkResponseForProtection(response)) {
+					CloudFlareHelper.PROTECTION_BLOCKED,
+					CloudFlareHelper.PROTECTION_CAPTCHA -> Result.NeedsCaptcha
+
+					else -> Result.Verified
+				}
 			}
-		} catch (e: CloudFlareException) {
-			clearCloudFlareCookies(httpUrl)
-			Result.NeedsCaptcha
 		} catch (e: IOException) {
 			Result.UnverifiedNetworkError
 		}
