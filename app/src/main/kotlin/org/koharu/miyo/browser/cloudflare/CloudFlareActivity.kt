@@ -37,6 +37,7 @@ import javax.inject.Inject
 class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 
 	private var pendingResult = RESULT_CANCELED
+	private var isCompletingSuccessfully = false
 	private lateinit var cloudFlareClient: CloudFlareClient
 
 	@Inject
@@ -108,9 +109,18 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 	}
 
 	override fun onCheckPassed() {
+		if (isCompletingSuccessfully) {
+			return
+		}
+		isCompletingSuccessfully = true
 		pendingResult = RESULT_OK
+		viewBinding.webView.stopLoading()
 		lifecycleScope.launch {
-			persistVisibleCookies()
+			runCatchingCancellable {
+				persistVisibleCookies()
+			}.onFailure {
+				it.printStackTraceDebug()
+			}
 			val source = intent?.getStringExtra(AppRouter.KEY_SOURCE)
 			if (source != null) {
 				runCatchingCancellable {
