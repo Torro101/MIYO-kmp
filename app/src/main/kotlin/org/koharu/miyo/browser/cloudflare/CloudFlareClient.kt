@@ -3,7 +3,6 @@ package org.koharu.miyo.browser.cloudflare
 import android.graphics.Bitmap
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.koharu.miyo.browser.BrowserClient
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
 import org.koharu.miyo.core.network.webview.CaptchaNavigationGuard
@@ -33,14 +32,14 @@ class CloudFlareClient(
 	override fun onPageCommitVisible(view: WebView, url: String) {
 		super.onPageCommitVisible(view, url)
 		callback.onPageLoaded()
-		inspectChallengeState(view, url)
+		inspectChallengeState(view)
 	}
 
 	override fun onPageFinished(webView: WebView, url: String) {
 		super.onPageFinished(webView, url)
 		callback.onPageLoaded()
 		checkClearance()
-		inspectChallengeState(webView, url)
+		inspectChallengeState(webView)
 	}
 
 	@Deprecated("Deprecated in Java")
@@ -72,18 +71,16 @@ class CloudFlareClient(
 
 	private fun getClearance() = CloudFlareHelper.getClearanceCookie(cookieJar, targetUrl)
 
-	private fun inspectChallengeState(view: WebView, url: String?) {
+	private fun inspectChallengeState(view: WebView) {
 		if (isPassed) {
 			return
 		}
-		val pageUrl = url ?: view.url
 		view.evaluateJavascript(PAGE_STATE_SCRIPT) { rawState ->
 			if (isPassed) {
 				return@evaluateJavascript
 			}
 			val state = rawState.orEmpty()
-			val isChallenge = state.containsAny(CHALLENGE_MARKERS)
-			if (state.isChallengeSuccess() || (state.hasContent() && isTargetPage(pageUrl) && !isChallenge)) {
+			if (state.isChallengeSuccess()) {
 				notifyCheckPassed()
 			}
 		}
@@ -97,38 +94,14 @@ class CloudFlareClient(
 		callback.onCheckPassed()
 	}
 
-	private fun isTargetPage(url: String?): Boolean {
-		val host = url?.toHttpUrlOrNull()?.host ?: return false
-		val targetHost = targetUrl.toHttpUrlOrNull()?.host ?: return false
-		return host.equals(targetHost, ignoreCase = true) || host.endsWith(".$targetHost", ignoreCase = true)
-	}
-
-	private fun String.containsAny(markers: Array<String>): Boolean {
-		return markers.any { contains(it, ignoreCase = true) }
-	}
-
 	private fun String.isChallengeSuccess(): Boolean {
 		return contains("verification successful", ignoreCase = true) ||
 			(contains("waiting for", ignoreCase = true) && contains("to respond", ignoreCase = true))
 	}
 
-	private fun String.hasContent(): Boolean {
-		return length > MIN_PAGE_STATE_LENGTH
-	}
-
 	private companion object {
-
-		private const val MIN_PAGE_STATE_LENGTH = 32
 
 		private const val PAGE_STATE_SCRIPT =
 			"(function(){return [document.title||'',document.body&&document.body.innerText||''].join('\\n');})()"
-
-		private val CHALLENGE_MARKERS = arrayOf(
-			"just a moment",
-			"performing security verification",
-			"verifies you are not a bot",
-			"checking your browser",
-			"cloudflare",
-		)
 	}
 }

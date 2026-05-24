@@ -118,22 +118,30 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 		}
 		isCompletingSuccessfully = true
 		pendingResult = RESULT_OK
-		viewBinding.webView.stopLoading()
 		lifecycleScope.launch {
 			runCatchingCancellable {
 				persistVisibleCookies()
 			}.onFailure {
 				it.printStackTraceDebug()
 			}
-			runCatchingCancellable {
-				captchaSessionVerifier.verify(
-					url = intent?.dataString,
+			val scanResult = runCatchingCancellable {
+				captchaSessionVerifier.scan(
+					urls = currentCaptchaCookieUrls().map { it.toString() },
 					headers = getSessionVerificationHeaders(),
 					sourceName = intent?.getStringExtra(AppRouter.KEY_SOURCE),
-				)
+				).bestResult
 			}.onFailure {
 				it.printStackTraceDebug()
+			}.getOrNull()
+			if (scanResult == CaptchaSessionVerifier.Result.NeedsCaptcha ||
+				scanResult == CaptchaSessionVerifier.Result.MissingCaptchaCookie
+			) {
+				pendingResult = RESULT_CANCELED
+				isCompletingSuccessfully = false
+				Snackbar.make(viewBinding.webView, R.string.captcha_required_message, Snackbar.LENGTH_LONG).show()
+				return@launch
 			}
+			viewBinding.webView.stopLoading()
 			val source = intent?.getStringExtra(AppRouter.KEY_SOURCE)
 			if (source != null) {
 				runCatchingCancellable {
