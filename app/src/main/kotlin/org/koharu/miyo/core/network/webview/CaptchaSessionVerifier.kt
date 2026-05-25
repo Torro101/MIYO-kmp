@@ -137,11 +137,23 @@ class CaptchaSessionVerifier @Inject constructor(
 
 		val bestResult: Result
 			get() = when {
-				results.any { it.status == Status.Verified } -> Result.Verified
+				results.isEmpty() -> Result.UnverifiedNetworkError
 				results.any { it.status == Status.NeedsCaptcha } -> Result.NeedsCaptcha
 				results.any { it.status == Status.MissingCloudFlareCookie } -> Result.MissingCaptchaCookie
+				results.all { it.status == Status.Verified } -> Result.Verified
 				else -> Result.UnverifiedNetworkError
 			}
+
+		fun resultFor(url: String?): Result {
+			val target = url?.toHttpUrlOrNull() ?: return Result.UnverifiedNetworkError
+			return results.firstOrNull { result ->
+				result.url.toHttpUrlOrNull()?.sameRequestTarget(target) == true
+			}?.result ?: Result.UnverifiedNetworkError
+		}
+
+		private fun HttpUrl.sameRequestTarget(other: HttpUrl): Boolean {
+			return host == other.host && port == other.port && encodedPath == other.encodedPath
+		}
 	}
 
 	data class UrlResult(
@@ -152,7 +164,16 @@ class CaptchaSessionVerifier @Inject constructor(
 		val cookieCount: Int,
 		val hasCloudFlareCookie: Boolean,
 		val challengeMarkers: Set<String>,
-	)
+	) {
+
+		val result: Result
+			get() = when (status) {
+				Status.Verified -> Result.Verified
+				Status.NeedsCaptcha -> Result.NeedsCaptcha
+				Status.MissingCloudFlareCookie -> Result.MissingCaptchaCookie
+				Status.NetworkError -> Result.UnverifiedNetworkError
+			}
+	}
 
 	enum class Status {
 		Verified,
@@ -187,7 +208,6 @@ class CaptchaSessionVerifier @Inject constructor(
 		private val CHALLENGE_MARKERS = arrayOf(
 			"just a moment",
 			"performing security verification",
-			"verification successful",
 			"checking your browser",
 			"cf-chl",
 			"__cf_chl_tk",

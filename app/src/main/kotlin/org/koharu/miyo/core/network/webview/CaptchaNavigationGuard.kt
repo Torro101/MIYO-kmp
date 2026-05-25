@@ -6,10 +6,19 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 internal object CaptchaNavigationGuard {
 
 	fun shouldBlockMainFrameNavigation(url: String?, targetUrl: String): Boolean {
-		val destination = url?.navigationDestinationForHostCheck() ?: return false
-		val host = destination.toHttpUrlOrNull()?.host ?: return false
-		val targetHost = targetUrl.toHttpUrlOrNull()?.host ?: return false
-		return !host.matchesHost(targetHost) && !host.isTrustedCaptchaHost()
+		val rawUrl = url ?: return false
+		if (rawUrl.isSafeNonHttpWebViewUrl()) {
+			return false
+		}
+		val destination = rawUrl.navigationDestinationForHostCheck() ?: return true
+		val httpUrl = destination.toHttpUrlOrNull() ?: return true
+		val targetHost = targetUrl.toHttpUrlOrNull()?.host ?: return true
+		return !httpUrl.host.matchesHost(targetHost) && !httpUrl.host.isTrustedCaptchaHost()
+	}
+
+	private fun String.isSafeNonHttpWebViewUrl(): Boolean = when (substringBefore(':', "").lowercase()) {
+		"about", "data", "javascript", "blob" -> true
+		else -> false
 	}
 
 	private fun String.navigationDestinationForHostCheck(): String? {

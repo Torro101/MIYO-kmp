@@ -35,7 +35,7 @@ class ScrobblerConfigViewModel @Inject constructor(
 	scrobblers: Set<@JvmSuppressWildcards Scrobbler>,
 ) : BaseViewModel() {
 
-	private val scrobblerService = getScrobblerService(savedStateHandle)
+	val scrobblerService = getScrobblerService(savedStateHandle)
 	private val scrobbler = scrobblers.first { it.scrobblerService == scrobblerService }
 
 	val titleResId = scrobbler.scrobblerService.titleResId
@@ -108,7 +108,6 @@ class ScrobblerConfigViewModel @Inject constructor(
 			ScrobblerConfigActivity.HOST_SHIKIMORI_AUTH -> ScrobblerService.SHIKIMORI
 			ScrobblerConfigActivity.HOST_ANILIST_AUTH -> ScrobblerService.ANILIST
 			ScrobblerConfigActivity.HOST_MAL_AUTH -> ScrobblerService.MAL
-			ScrobblerConfigActivity.HOST_KITSU_AUTH -> ScrobblerService.KITSU
 			else -> error("Wrong scrobbler uri: $uri")
 		}
 	}

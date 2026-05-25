@@ -34,12 +34,9 @@ object NativeYuvConverter {
         outBitmap: Bitmap,
     ): Boolean {
         if (!isAvailable) return false
-        return try {
+        return runCatching {
             nativeNv21ToRgba(yPlane, uvPlane, width, height, stride, outBitmap)
-            true
-        } catch (e: Exception) {
-            false
-        }
+        }.getOrDefault(false)
     }
 
     @JvmStatic
@@ -50,5 +47,5 @@ object NativeYuvConverter {
         height: Int,
         stride: Int,
         rgbaBitmap: Bitmap,
-    )
+    ): Boolean
 }

@@ -117,7 +117,6 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			return
 		}
 		isCompletingSuccessfully = true
-		pendingResult = RESULT_OK
 		lifecycleScope.launch {
 			runCatchingCancellable {
 				persistVisibleCookies()
@@ -129,18 +128,21 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 					urls = currentCaptchaCookieUrls().map { it.toString() },
 					headers = getSessionVerificationHeaders(),
 					sourceName = intent?.getStringExtra(AppRouter.KEY_SOURCE),
-				).bestResult
+				).resultFor(intent?.dataString)
 			}.onFailure {
 				it.printStackTraceDebug()
-			}.getOrNull()
-			if (scanResult == CaptchaSessionVerifier.Result.NeedsCaptcha ||
-				scanResult == CaptchaSessionVerifier.Result.MissingCaptchaCookie
-			) {
+			}.getOrDefault(CaptchaSessionVerifier.Result.UnverifiedNetworkError)
+			if (scanResult != CaptchaSessionVerifier.Result.Verified) {
 				pendingResult = RESULT_CANCELED
 				isCompletingSuccessfully = false
-				Snackbar.make(viewBinding.webView, R.string.captcha_required_message, Snackbar.LENGTH_LONG).show()
+				val message = when (scanResult) {
+					CaptchaSessionVerifier.Result.UnverifiedNetworkError -> R.string.network_error
+					else -> R.string.captcha_required_message
+				}
+				Snackbar.make(viewBinding.webView, message, Snackbar.LENGTH_LONG).show()
 				return@launch
 			}
+			pendingResult = RESULT_OK
 			viewBinding.webView.stopLoading()
 			val source = intent?.getStringExtra(AppRouter.KEY_SOURCE)
 			if (source != null) {
@@ -235,7 +237,7 @@ class CloudFlareActivity : BaseBrowserActivity(), CloudFlareCallback {
 			viewBinding.webView.url?.toHttpUrlOrNull(),
 			intent?.dataString?.toHttpUrlOrNull(),
 			intent?.getStringExtra(AppRouter.KEY_REFERER)?.toHttpUrlOrNull(),
-		).distinctBy { it.host }
+		).distinctBy { "${it.host}:${it.port}${it.encodedPath}" }
 	}
 
 	class Contract : ActivityResultContract<CloudFlareProtectedException, Boolean>() {

@@ -38,6 +38,7 @@ class WebViewExecutor @Inject constructor(
 	@ApplicationContext private val context: Context,
 	private val proxyProvider: ProxyProvider,
 	private val cookieJar: MutableCookieJar,
+	private val captchaSessionVerifier: CaptchaSessionVerifier,
 	private val mangaRepositoryFactoryProvider: Provider<MangaRepository.Factory>,
 ) {
 
@@ -80,7 +81,7 @@ class WebViewExecutor @Inject constructor(
 			withContext(Dispatchers.Main.immediate) {
 				val webView = obtainWebView()
 				try {
-					exception.source.getUserAgent()?.let {
+					exception.requestedUserAgent()?.let {
 						webView.settings.userAgentString = it
 					}
 					seedCookies(exception)
@@ -93,8 +94,15 @@ class WebViewExecutor @Inject constructor(
 							)
 							webView.loadUrl(exception.url, exception.initialHeaders())
 						}
+						persistCookies(exception)
+						check(
+							captchaSessionVerifier.verify(
+								url = exception.url,
+								headers = exception.verificationHeaders(),
+								sourceName = exception.source.name,
+							) == CaptchaSessionVerifier.Result.Verified,
+						)
 					}
-					persistCookies(exception)
 				} finally {
 					webView.reset()
 				}
@@ -128,12 +136,26 @@ class WebViewExecutor @Inject constructor(
 		return repository?.getRequestHeaders()?.get(CommonHeaders.USER_AGENT)
 	}
 
+	private fun CloudFlareException.requestedUserAgent(): String? {
+		return (this as? CloudFlareProtectedException)?.headers?.get(CommonHeaders.USER_AGENT)
+			?: source.getUserAgent()
+	}
+
 	private fun CloudFlareException.initialHeaders(): Map<String, String> {
 		val referer = (this as? CloudFlareProtectedException)?.headers?.get(CommonHeaders.REFERER)
 		return if (referer.isNullOrEmpty()) {
 			emptyMap()
 		} else {
 			mapOf(CommonHeaders.REFERER to referer)
+		}
+	}
+
+	private fun CloudFlareException.verificationHeaders(): Map<String, String> = buildMap {
+		(this@verificationHeaders as? CloudFlareProtectedException)?.headers?.get(CommonHeaders.REFERER)?.let {
+			put(CommonHeaders.REFERER, it)
+		}
+		requestedUserAgent()?.let {
+			put(CommonHeaders.USER_AGENT, it)
 		}
 	}
 

@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <cstdint>
+#include <limits>
 #include <android/bitmap.h>
 #include <android/log.h>
 
@@ -19,21 +20,21 @@
 
 static void yuvToRgbScalar(const uint8_t* yPlane, const uint8_t* uvPlane,
                            int width, int height, int stride,
-                           uint8_t* rgbaDest, int rgbaStride) {
+                           uint8_t* rgbaDest, int64_t rgbaStride) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            int yIdx = y * stride + x;
-            int uvIdx = (y / 2) * stride + (x & ~1);
+            const int64_t yIdx = static_cast<int64_t>(y) * stride + x;
+            const int64_t uvIdx = static_cast<int64_t>(y / 2) * stride + (x & ~1);
 
             int Y = yPlane[yIdx] & 0xFF;
-            int U = (uvPlane[uvIdx] & 0xFF) - 128;
-            int V = (uvPlane[uvIdx + 1] & 0xFF) - 128;
+            int V = (uvPlane[uvIdx] & 0xFF) - 128;
+            int U = (uvPlane[uvIdx + 1] & 0xFF) - 128;
 
             int R = Y + ((351 * V) >> 8);
             int G = Y - ((179 * V + 86 * U) >> 8);
             int B = Y + ((443 * U) >> 8);
 
-            int destIdx = y * rgbaStride + x * 4;
+            const int64_t destIdx = static_cast<int64_t>(y) * rgbaStride + static_cast<int64_t>(x) * 4;
             rgbaDest[destIdx]     = static_cast<uint8_t>(R < 0 ? 0 : (R > 255 ? 255 : R));
             rgbaDest[destIdx + 1] = static_cast<uint8_t>(G < 0 ? 0 : (G > 255 ? 255 : G));
             rgbaDest[destIdx + 2] = static_cast<uint8_t>(B < 0 ? 0 : (B > 255 ? 255 : B));
@@ -45,99 +46,61 @@ static void yuvToRgbScalar(const uint8_t* yPlane, const uint8_t* uvPlane,
 #if MIYO_HAS_NEON
 static void yuvToRgbNeon(const uint8_t* yPlane, const uint8_t* uvPlane,
                           int width, int height, int stride,
-                          uint8_t* rgbaDest, int rgbaStride) {
-    // Process 8 pixels at a time with NEON
-    int16x8_t vCoeffR = vdupq_n_s16(351);   // V contribution to R
-    int16x8_t vCoeffG_v = vdupq_n_s16(-179); // V contribution to G
-    int16x8_t vCoeffG_u = vdupq_n_s16(-86);  // U contribution to G
-    int16x8_t vCoeffB = vdupq_n_s16(443);    // U contribution to B
-    int16x8_t vBias = vdupq_n_s16(-128);
-    uint8x8_t vAlpha = vdup_n_u8(0xFF);
-
-    int x = 0;
-    for (; x <= width - 8; x += 8) {
-        for (int y = 0; y < height; y++) {
-            int yIdx = y * stride + x;
-            int uvIdx = (y / 2) * stride + (x & ~1);
-
-            uint8x8_t vY = vld1_u8(yPlane + yIdx);
-
-            // Load U,V and interleave
-            uint8x8_t vU = vld1_u8(uvPlane + uvIdx);
-            uint8x8_t vV = vld1_u8(uvPlane + uvIdx + 1);
-
-            int16x8_t sU = vaddw_s8(vBias, vreinterpret_s8_u8(vU));
-            int16x8_t sV = vaddw_s8(vBias, vreinterpret_s8_u8(vV));
-
-            int16x8_t sY = vreinterpretq_s16_u16(vmovl_u8(vY));
-
-            // R = Y + 351*V/256
-            // G = Y - 179*V/256 - 86*U/256
-            // B = Y + 443*U/256
-            int16x8_t sR = vaddq_s16(sY, vshrq_n_s16(vmulq_s16(vCoeffR, sV), 8));
-            int16x8_t sG = vaddq_s16(sY, vshrq_n_s16(
-                vaddq_s16(vmulq_s16(vCoeffG_v, sV), vmulq_s16(vCoeffG_u, sU)), 8));
-            int16x8_t sB = vaddq_s16(sY, vshrq_n_s16(vmulq_s16(vCoeffB, sU), 8));
-
-            uint8x8_t vR8 = vqmovun_s16(sR);
-            uint8x8_t vG8 = vqmovun_s16(sG);
-            uint8x8_t vB8 = vqmovun_s16(sB);
-
-            // Interleave to RGBA
-            uint8x8x4_t vRGBA;
-            vRGBA.val[0] = vR8;
-            vRGBA.val[1] = vG8;
-            vRGBA.val[2] = vB8;
-            vRGBA.val[3] = vAlpha;
-
-            vst4_u8(rgbaDest + y * rgbaStride + x * 4, vRGBA);
-        }
-    }
+                          uint8_t* rgbaDest, int64_t rgbaStride) {
+    yuvToRgbScalar(yPlane, uvPlane, width, height, stride, rgbaDest, rgbaStride);
 }
 #endif // MIYO_HAS_NEON
 
 extern "C" {
 
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_org_koharu_miyo_core_image_NativeYuvConverter_nativeNv21ToRgba(
-    JNIEnv* env, jclass clazz,
+    JNIEnv* env, jclass,
     jobject yBuffer, jobject uvBuffer,
     jint width, jint height, jint stride,
     jobject rgbaBitmap) {
+    if (!yBuffer || !uvBuffer || !rgbaBitmap || width <= 0 || height <= 0 || stride < width) {
+        return JNI_FALSE;
+    }
+    const int64_t maxIndex = std::numeric_limits<int64_t>::max();
+    if (static_cast<int64_t>(height - 1) > (maxIndex - width) / stride ||
+        static_cast<int64_t>((height - 1) / 2) > (maxIndex - (((width - 1) & ~1) + 2)) / stride) {
+        return JNI_FALSE;
+    }
+
+    auto* yPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(yBuffer));
+    auto* uvPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(uvBuffer));
+    const jlong yCapacity = env->GetDirectBufferCapacity(yBuffer);
+    const jlong uvCapacity = env->GetDirectBufferCapacity(uvBuffer);
+    const int64_t yRequired = static_cast<int64_t>(height - 1) * stride + width;
+    const int64_t uvRequired = static_cast<int64_t>((height - 1) / 2) * stride + ((width - 1) & ~1) + 2;
+    if (!yPlane || !uvPlane || yCapacity < yRequired || uvCapacity < uvRequired) {
+        return JNI_FALSE;
+    }
+
+    AndroidBitmapInfo bitmapInfo;
+    if (AndroidBitmap_getInfo(env, rgbaBitmap, &bitmapInfo) < 0 ||
+        bitmapInfo.width < static_cast<uint32_t>(width) ||
+        bitmapInfo.height < static_cast<uint32_t>(height) ||
+        bitmapInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+        return JNI_FALSE;
+    }
+
+    void* rgbaPixels = nullptr;
+    if (AndroidBitmap_lockPixels(env, rgbaBitmap, &rgbaPixels) < 0 || !rgbaPixels) {
+        return JNI_FALSE;
+    }
 
 #if MIYO_HAS_NEON
-    // Use NEON path
-    auto* yPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(yBuffer));
-    auto* uvPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(uvBuffer));
-
-    void* rgbaPixels = nullptr;
-    if (AndroidBitmap_lockPixels(env, rgbaBitmap, &rgbaPixels) < 0) {
-        return;
-    }
-
-    if (yPlane && uvPlane && rgbaPixels) {
-        yuvToRgbNeon(yPlane, uvPlane, width, height, stride,
-                     static_cast<uint8_t*>(rgbaPixels), width * 4);
-    }
-
-    AndroidBitmap_unlockPixels(env, rgbaBitmap);
+    yuvToRgbNeon(yPlane, uvPlane, width, height, stride,
+                 static_cast<uint8_t*>(rgbaPixels), static_cast<int64_t>(bitmapInfo.stride));
 #else
-    // Scalar fallback
-    auto* yPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(yBuffer));
-    auto* uvPlane = static_cast<const uint8_t*>(env->GetDirectBufferAddress(uvBuffer));
-
-    void* rgbaPixels = nullptr;
-    if (AndroidBitmap_lockPixels(env, rgbaBitmap, &rgbaPixels) < 0) {
-        return;
-    }
-
-    if (yPlane && uvPlane && rgbaPixels) {
-        yuvToRgbScalar(yPlane, uvPlane, width, height, stride,
-                      static_cast<uint8_t*>(rgbaPixels), width * 4);
-    }
+    yuvToRgbScalar(yPlane, uvPlane, width, height, stride,
+                   static_cast<uint8_t*>(rgbaPixels), static_cast<int64_t>(bitmapInfo.stride));
+#endif
 
     AndroidBitmap_unlockPixels(env, rgbaBitmap);
-#endif
+    return JNI_TRUE;
 }
 
 } // extern "C"

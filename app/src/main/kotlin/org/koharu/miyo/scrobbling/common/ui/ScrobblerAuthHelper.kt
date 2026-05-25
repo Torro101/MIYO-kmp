@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import org.koharu.miyo.scrobbling.common.domain.ScrobblerRepositoryMap
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblerService
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblerUser
+import org.koharu.miyo.scrobbling.common.ui.config.ScrobblerAuthHandoff
 import org.koharu.miyo.scrobbling.kitsu.ui.KitsuAuthActivity
 import javax.inject.Inject
 
@@ -30,8 +31,12 @@ class ScrobblerAuthHelper @Inject constructor(
 			launchKitsuAuth(context)
 		} else {
 			val repository = repositoriesMap[scrobbler]
+			val state = ScrobblerAuthHandoff.put(context, scrobbler.name)
 			val intent = Intent(Intent.ACTION_VIEW)
 			intent.data = repository.oauthUrl.toUri()
+				.buildUpon()
+				.appendQueryParameter("state", state)
+				.build()
 			context.startActivity(intent)
 		}
 	}

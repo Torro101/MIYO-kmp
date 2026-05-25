@@ -1,6 +1,5 @@
 package org.koharu.miyo.scrobbling.kitsu.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -8,7 +7,6 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
@@ -16,8 +14,11 @@ import org.koharu.miyo.R
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.ui.util.DefaultTextWatcher
 import org.koharu.miyo.core.util.ext.consume
+import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.databinding.ActivityKitsuAuthBinding
-import org.koitharu.kotatsu.parsers.util.urlEncoded
+import org.koharu.miyo.scrobbling.common.domain.model.ScrobblerService
+import org.koharu.miyo.scrobbling.common.ui.config.ScrobblerAuthHandoff
+import org.koharu.miyo.scrobbling.common.ui.config.ScrobblerConfigActivity
 
 class KitsuAuthActivity : BaseActivity<ActivityKitsuAuthBinding>(),
 	View.OnClickListener,
@@ -99,12 +100,12 @@ class KitsuAuthActivity : BaseActivity<ActivityKitsuAuthBinding>(),
 			&& password.length >= 3
 	}
 
-	@SuppressLint("UnsafeImplicitIntentLaunch")
 	private fun continueAuth() {
 		val email = viewBinding.editEmail.text?.toString()?.trim().orEmpty()
 		val password = viewBinding.editPassword.text?.toString()?.trim().orEmpty()
-		val url = "kotatsu://kitsu-auth?code=" + "$email;$password".urlEncoded()
-		val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+		val intent = Intent(this, ScrobblerConfigActivity::class.java)
+			.putExtra(AppRouter.KEY_ID, ScrobblerService.KITSU.id)
+			.putExtra(ScrobblerConfigActivity.EXTRA_AUTH_TOKEN, ScrobblerAuthHandoff.put("$email;$password"))
 		startActivity(intent)
 		finishAfterTransition()
 	}
