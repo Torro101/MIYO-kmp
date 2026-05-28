@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
@@ -141,7 +140,7 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 		return listOfNotNull(
 			viewBinding.webView.url?.toHttpUrlOrNull(),
 			intent?.dataString?.toHttpUrlOrNull(),
-		).distinctBy { it.host }
+		).distinctBy { "${it.host}:${it.port}${it.encodedPath}" }
 	}
 
 	protected suspend fun prepareWebViewCookies(url: String?) {

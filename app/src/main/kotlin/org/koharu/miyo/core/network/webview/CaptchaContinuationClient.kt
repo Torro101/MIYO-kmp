@@ -11,12 +11,14 @@ class CaptchaContinuationClient(
 	private val cookieJar: MutableCookieJar,
 	private val targetUrl: String,
 	continuation: Continuation<Unit>,
+	private val onMaybeSolved: (WebView?) -> Unit,
 ) : ContinuationResumeWebViewClient(continuation) {
 
 	private val oldClearance = CloudFlareHelper.getClearanceCookie(cookieJar, targetUrl)
 
 	override fun onPageFinished(view: WebView?, url: String?) {
 		checkClearance(view)
+		onMaybeSolved(view)
 	}
 
 	override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -36,6 +38,10 @@ class CaptchaContinuationClient(
 			return true
 		}
 		return super.shouldOverrideUrlLoading(view, request)
+	}
+
+	fun resumeAfterVerification(view: WebView?) {
+		resumeContinuation(view)
 	}
 
 	private fun checkClearance(view: WebView?) {

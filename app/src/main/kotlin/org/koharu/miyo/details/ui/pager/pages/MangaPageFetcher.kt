@@ -17,11 +17,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okio.FileSystem
 import okio.Path.Companion.toOkioPath
+import org.koharu.miyo.core.image.BitmapDecoderCompat
 import org.koharu.miyo.core.network.MangaHttpClient
 import org.koharu.miyo.core.network.imageproxy.ImageProxyInterceptor
 import org.koharu.miyo.core.parser.MangaRepository
 import org.koharu.miyo.core.util.MimeTypes
 import org.koharu.miyo.core.util.ext.fetch
+import org.koharu.miyo.core.util.ext.isImage
 import org.koharu.miyo.core.util.ext.isNetworkUri
 import org.koharu.miyo.core.util.ext.toMimeTypeOrNull
 import org.koharu.miyo.local.data.LocalStorageCache
@@ -55,11 +57,17 @@ class MangaPageFetcher(
 		val pageUrl = repo.getPageUrl(page)
 		if (options.diskCachePolicy.readEnabled) {
 			pagesCache[pageUrl]?.let { file ->
-				return SourceFetchResult(
-					source = ImageSource(file.toOkioPath(), options.fileSystem),
-					mimeType = MimeTypes.getMimeTypeFromExtension(file.name)?.toString(),
-					dataSource = DataSource.DISK,
-				)
+				val mimeType = runCatchingCancellable {
+					MimeTypes.probeMimeType(file) ?: BitmapDecoderCompat.probeMimeType(file)
+				}.getOrNull()
+				if (mimeType?.isImage == true) {
+					return SourceFetchResult(
+						source = ImageSource(file.toOkioPath(), options.fileSystem),
+						mimeType = mimeType.toString(),
+						dataSource = DataSource.DISK,
+					)
+				}
+				pagesCache.remove(pageUrl)
 			}
 		}
 		return loadPage(pageUrl)

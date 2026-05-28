@@ -5,8 +5,6 @@ import android.graphics.Rect
 import android.net.Uri
 import androidx.annotation.AnyThread
 import androidx.annotation.CheckResult
-import androidx.collection.LongSparseArray
-import androidx.collection.set
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import coil3.BitmapImage
@@ -58,6 +56,7 @@ import org.koharu.miyo.core.util.ext.ensureRamAtLeast
 import org.koharu.miyo.core.util.ext.ensureSuccess
 import org.koharu.miyo.core.util.ext.getCompletionResultOrNull
 import org.koharu.miyo.core.util.ext.isFileUri
+import org.koharu.miyo.core.util.ext.isImage
 import org.koharu.miyo.core.util.ext.isNotEmpty
 import org.koharu.miyo.core.util.ext.isPowerSaveMode
 import org.koharu.miyo.core.util.ext.isZipUri
@@ -66,6 +65,7 @@ import org.koharu.miyo.core.util.ext.mangaSourceExtra
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import org.koharu.miyo.core.util.ext.ramAvailable
 import org.koharu.miyo.core.util.ext.toMimeType
+import org.koharu.miyo.core.util.ext.toMimeTypeOrNull
 import org.koharu.miyo.core.util.ext.use
 import org.koharu.miyo.core.util.ext.withProgress
 import org.koharu.miyo.core.util.progress.ProgressDeferred
@@ -102,7 +102,7 @@ class PageLoader @Inject constructor(
 
 	val loaderScope = lifecycle.lifecycleScope + InternalErrorHandler() + Dispatchers.Default
 
-	private val tasks = LongSparseArray<ProgressDeferred<Uri, Float>>()
+	private val tasks = HashMap<PageTaskKey, ProgressDeferred<Uri, Float>>()
 	private val semaphore = Semaphore(3)
 	private val convertLock = Mutex()
 	private val prefetchLock = Mutex()
@@ -136,8 +136,9 @@ class PageLoader @Inject constructor(
 				return@withLock
 			}
 			for (page in pages.asReversed()) {
+				val key = page.toMangaPage().taskKey()
 				val hasTask = synchronized(tasks) {
-					tasks.containsKey(page.id)
+					tasks.containsKey(key)
 				}
 				if (hasTask) {
 					continue
@@ -190,8 +191,9 @@ class PageLoader @Inject constructor(
 	}
 
 	fun loadPageAsync(page: MangaPage, force: Boolean): ProgressDeferred<Uri, Float> {
+		val key = page.taskKey()
 		var task = synchronized(tasks) {
-			tasks[page.id]
+			tasks[key]
 		}?.takeIf { it.isValid() }
 		if (force) {
 			task?.cancel()
@@ -200,7 +202,7 @@ class PageLoader @Inject constructor(
 		}
 		task = loadPageAsyncImpl(page, skipCache = force, isPrefetch = false)
 		synchronized(tasks) {
-			tasks[page.id] = task
+			tasks[key] = task
 		}
 		return task
 	}
@@ -213,8 +215,11 @@ class PageLoader @Inject constructor(
 	suspend fun materializeZipEntry(uri: Uri): Uri {
 		check(uri.isZipUri()) { "Expected ZIP uri: $uri" }
 		val cacheKey = rawZipCacheKey(uri)
-		cache.get(cacheKey)?.takeIf { it.isNotEmpty() }?.let {
-			return it.toUri()
+		cache.get(cacheKey)?.let { file ->
+			if (file.isUsablePageCache()) {
+				return file.toUri()
+			}
+			cache.remove(cacheKey)
 		}
 		return withContext(Dispatchers.IO) {
 			ZipFile(uri.schemeSpecificPart).use { zip ->
@@ -231,8 +236,11 @@ class PageLoader @Inject constructor(
 	suspend fun convertBimap(uri: Uri): Uri = convertLock.withLock {
 		if (uri.isZipUri()) {
 			val cacheKey = convertedZipCacheKey(uri)
-			cache.get(cacheKey)?.takeIf { it.isNotEmpty() }?.let {
-				return@withLock it.toUri()
+			cache.get(cacheKey)?.let { file ->
+				if (file.isUsablePageCache()) {
+					return@withLock file.toUri()
+				}
+				cache.remove(cacheKey)
 			}
 			runInterruptible(Dispatchers.IO) {
 				ZipFile(uri.schemeSpecificPart).use { zip ->
@@ -283,7 +291,7 @@ class PageLoader @Inject constructor(
 			while (prefetchQueue.isNotEmpty()) {
 				val page = prefetchQueue.pollFirst() ?: return@launch
 				synchronized(tasks) {
-					tasks[page.id] = loadPageAsyncImpl(page, skipCache = false, isPrefetch = true)
+					tasks[page.taskKey()] = loadPageAsyncImpl(page, skipCache = false, isPrefetch = true)
 				}
 			}
 		}
@@ -333,8 +341,11 @@ class PageLoader @Inject constructor(
 		check(pageUrl.isNotBlank()) { "Cannot obtain full image url for $page" }
 		if (!skipCache) {
 			cache.get(pageUrl)?.let { file ->
-				recordLoadedPageFootprint(file)
-				return file.toUri()
+				if (file.isUsablePageCache()) {
+					recordLoadedPageFootprint(file)
+					return file.toUri()
+				}
+				cache.remove(pageUrl)
 			}
 		}
 		val uri = pageUrl.toUri()
@@ -418,6 +429,26 @@ class PageLoader @Inject constructor(
 		}
 	}
 
+	private fun File.isUsablePageCache(): Boolean {
+		return runCatchingCancellable {
+			if (!isFile || length() == 0L) {
+				return@runCatchingCancellable false
+			}
+			val nativeInfo = if (nativeImageProbe.isAvailable) {
+				nativeImageProbe.probe(this)
+			} else {
+				null
+			}
+			if (nativeInfo?.isCorrupt == true) {
+				return@runCatchingCancellable false
+			}
+			val detectedType = nativeInfo?.mimeType?.toMimeTypeOrNull()
+				?: MimeTypes.probeMimeType(this)
+				?: BitmapDecoderCompat.probeMimeType(this)
+			detectedType?.isImage == true
+		}.getOrDefault(false)
+	}
+
 	private fun File.estimateDecodeMemoryBytes(): Long {
 		val nativeEstimate = if (nativeImageProbe.isAvailable) {
 			nativeImageProbe.probe(this)?.estimatedMemoryBytes
@@ -450,6 +481,18 @@ class PageLoader @Inject constructor(
 			uri.exists() && uri.isTargetNotEmpty()
 		}?.getOrDefault(false) != false
 	}
+
+	private data class PageTaskKey(
+		val sourceName: String,
+		val pageId: Long,
+		val url: String,
+	)
+
+	private fun MangaPage.taskKey(): PageTaskKey = PageTaskKey(
+		sourceName = source.name,
+		pageId = id,
+		url = url,
+	)
 
 	private class InternalErrorHandler : AbstractCoroutineContextElement(CoroutineExceptionHandler),
 		CoroutineExceptionHandler {

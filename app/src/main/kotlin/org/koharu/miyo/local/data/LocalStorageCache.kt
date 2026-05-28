@@ -92,6 +92,13 @@ class LocalStorageCache(
 		}
 	}
 
+	suspend fun remove(url: String) {
+		val file = get(url) ?: return
+		runInterruptible(Dispatchers.IO) {
+			file.delete()
+		}
+	}
+
 	suspend fun clear() {
 		val cache = lruCache.get()
 		runInterruptible(Dispatchers.IO) {

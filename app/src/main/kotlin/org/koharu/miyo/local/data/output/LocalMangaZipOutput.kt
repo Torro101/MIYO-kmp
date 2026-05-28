@@ -70,6 +70,7 @@ class LocalMangaZipOutput(
 			index.addChapter(chapter, null)
 		}
 
+	// A single-CBZ archive is only valid after finish() writes the central directory and index.
 	override suspend fun flushChapter(chapter: MangaChapter): Boolean = false
 
 	override suspend fun finish() = mutex.withLock {

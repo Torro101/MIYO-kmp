@@ -8,6 +8,8 @@ import android.webkit.WebViewClient
 import androidx.annotation.MainThread
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
@@ -87,11 +89,40 @@ class WebViewExecutor @Inject constructor(
 					seedCookies(exception)
 					withTimeout(timeout) {
 						suspendCancellableCoroutine { cont ->
-							webView.webViewClient = CaptchaContinuationClient(
+							var verifierJob: Job? = null
+							var client: CaptchaContinuationClient? = null
+							cont.invokeOnCancellation {
+								verifierJob?.cancel()
+							}
+							client = CaptchaContinuationClient(
 								cookieJar = cookieJar,
 								targetUrl = exception.url,
 								continuation = cont,
+								onMaybeSolved = { view ->
+									if (cont.isActive && verifierJob?.isActive != true) {
+										verifierJob = launch {
+											val isVerified = runCatchingCancellable {
+												persistCookies(exception)
+												captchaSessionVerifier.verify(
+													url = exception.url,
+													headers = exception.verificationHeaders(),
+													sourceName = exception.source.name,
+												) == CaptchaSessionVerifier.Result.Verified
+											}.onFailure { e ->
+												e.printStackTraceDebug()
+											}.getOrDefault(false)
+											if (isVerified) {
+												withContext(Dispatchers.Main.immediate) {
+													if (cont.isActive) {
+														client?.resumeAfterVerification(view ?: webView)
+													}
+												}
+											}
+										}
+									}
+								},
 							)
+							webView.webViewClient = checkNotNull(client)
 							webView.loadUrl(exception.url, exception.initialHeaders())
 						}
 						persistCookies(exception)
@@ -167,11 +198,15 @@ class WebViewExecutor @Inject constructor(
 				?.get(CommonHeaders.REFERER)
 				?.toHttpUrlOrNull()
 				?.let(::add)
-		}.distinctBy { it.host }
+		}.distinctBy { it.cookiePersistenceKey() }
 		for (url in urls) {
 			cookieJar.loadForRequest(url)
 		}
 		cookieJar.flush()
+	}
+
+	private fun okhttp3.HttpUrl.cookiePersistenceKey(): String {
+		return "$host:$port$encodedPath"
 	}
 
 	private suspend fun persistCookies(exception: CloudFlareException) {
@@ -182,7 +217,7 @@ class WebViewExecutor @Inject constructor(
 				?.get(CommonHeaders.REFERER)
 				?.toHttpUrlOrNull()
 				?.let(::add)
-		}.distinctBy { it.host }
+		}.distinctBy { it.cookiePersistenceKey() }
 		if (urls.isEmpty()) {
 			return
 		}

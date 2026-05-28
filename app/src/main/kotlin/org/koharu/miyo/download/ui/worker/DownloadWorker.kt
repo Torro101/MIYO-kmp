@@ -267,6 +267,7 @@ class DownloadWorker @AssistedInject constructor(
 					} ?: continue
 					val pageCounter = AtomicInteger(0)
 					val chapterBytes = AtomicLong(0L)
+					var skippedPages = 0
 					channelFlow {
 						val pageParallelism = parallelismManager.resolveParallelism(
 							sourceOverride = settings.downloadParallelism,
@@ -277,7 +278,7 @@ class DownloadWorker @AssistedInject constructor(
 							launch {
 								for ((pageIndex, page) in pageQueue) {
 									checkIsPaused()
-									runFailsafe {
+									val downloadedBytes = runFailsafe {
 										val url = repo.getPageUrl(page)
 										var file = cache[url]
 										var nativeInfo: NativeImageProbe.ImageInfo? = null
@@ -300,12 +301,17 @@ class DownloadWorker @AssistedInject constructor(
 											pageNumber = pageIndex,
 											type = getMediaType(url, pageFile, nativeInfo),
 										)
-										chapterBytes.addAndGet(pageFile.length())
+										val bytes = pageFile.length()
 										if (pageFile.extension == "tmp") {
 											pageFile.deleteAwait()
 										}
+										bytes
 									}
-									send(pageIndex)
+									if (downloadedBytes == null) {
+										send(PageDownloadEvent.Skipped)
+									} else {
+										send(PageDownloadEvent.Success(downloadedBytes))
+									}
 								}
 							}
 						}
@@ -319,13 +325,27 @@ class DownloadWorker @AssistedInject constructor(
 						} finally {
 							pageQueue.close()
 						}
-					}.map {
-						DownloadProgress(
-							totalChapters = chapters.size,
-							currentChapter = chapterIndex,
-							totalPages = pages.size,
-							currentPage = pageCounter.getAndIncrement(),
-						)
+					}.map { event ->
+						when (event) {
+							is PageDownloadEvent.Success -> {
+								chapterBytes.addAndGet(event.bytes)
+								DownloadProgress(
+									totalChapters = chapters.size,
+									currentChapter = chapterIndex,
+									totalPages = pages.size,
+									currentPage = pageCounter.getAndIncrement(),
+								)
+							}
+							PageDownloadEvent.Skipped -> {
+								skippedPages++
+								DownloadProgress(
+									totalChapters = chapters.size,
+									currentChapter = chapterIndex,
+									totalPages = pages.size,
+									currentPage = pageCounter.get(),
+								)
+							}
+						}
 					}.withTicker(2L, TimeUnit.SECONDS).collect { progress ->
 						val isStuck = etaEstimator.isStuck()
 						publishState(
@@ -344,6 +364,9 @@ class DownloadWorker @AssistedInject constructor(
 								},
 							),
 						)
+					}
+					if (skippedPages > 0) {
+						throw IOException("Chapter download incomplete: $skippedPages of ${pages.size} pages were skipped")
 					}
 					analytics.recordChapterComplete(repo.source, pages.size, chapterBytes.get())
 					if (output.flushChapter(chapter.value)) {
@@ -627,6 +650,13 @@ class DownloadWorker @AssistedInject constructor(
 		is TooManyRequestExceptions -> true
 		is HttpStatusException -> statusCode == HTTP_TOO_MANY_REQUESTS
 		else -> false
+	}
+
+	private sealed interface PageDownloadEvent {
+
+		data class Success(val bytes: Long) : PageDownloadEvent
+
+		data object Skipped : PageDownloadEvent
 	}
 
 	private fun getRetryDoctorMessage(error: Throwable): String {

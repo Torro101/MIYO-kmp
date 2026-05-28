@@ -56,17 +56,6 @@ class CaptchaSessionVerifier @Inject constructor(
 	): UrlResult {
 		val cookies = cookieJar.loadForRequest(httpUrl)
 		val hasCloudFlareCookie = cookies.any { CloudFlareHelper.isCloudFlareCookie(it.name) }
-		if (cookies.none { CloudFlareHelper.isCloudFlareCookie(it.name) }) {
-			return UrlResult(
-				url = httpUrl.toString(),
-				finalUrl = null,
-				status = Status.MissingCloudFlareCookie,
-				statusCode = null,
-				cookieCount = cookies.size,
-				hasCloudFlareCookie = false,
-				challengeMarkers = emptySet(),
-			)
-		}
 		val request = Request.Builder()
 			.url(httpUrl)
 			.get()
@@ -139,7 +128,6 @@ class CaptchaSessionVerifier @Inject constructor(
 			get() = when {
 				results.isEmpty() -> Result.UnverifiedNetworkError
 				results.any { it.status == Status.NeedsCaptcha } -> Result.NeedsCaptcha
-				results.any { it.status == Status.MissingCloudFlareCookie } -> Result.MissingCaptchaCookie
 				results.all { it.status == Status.Verified } -> Result.Verified
 				else -> Result.UnverifiedNetworkError
 			}
@@ -170,7 +158,6 @@ class CaptchaSessionVerifier @Inject constructor(
 			get() = when (status) {
 				Status.Verified -> Result.Verified
 				Status.NeedsCaptcha -> Result.NeedsCaptcha
-				Status.MissingCloudFlareCookie -> Result.MissingCaptchaCookie
 				Status.NetworkError -> Result.UnverifiedNetworkError
 			}
 	}
@@ -178,7 +165,6 @@ class CaptchaSessionVerifier @Inject constructor(
 	enum class Status {
 		Verified,
 		NeedsCaptcha,
-		MissingCloudFlareCookie,
 		NetworkError,
 	}
 
@@ -194,7 +180,6 @@ class CaptchaSessionVerifier @Inject constructor(
 	enum class Result {
 		Verified,
 		NeedsCaptcha,
-		MissingCaptchaCookie,
 		UnverifiedNetworkError,
 	}
 

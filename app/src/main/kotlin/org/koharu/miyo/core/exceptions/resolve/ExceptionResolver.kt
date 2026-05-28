@@ -130,18 +130,30 @@ class ExceptionResolver private constructor(
     private suspend fun resolveBrowserAction(
         e: InteractiveActionRequiredException
     ): Boolean = suspendCancellableCoroutine { cont ->
-		continuations[BrowserActivity.TAG] = cont
-		browserActionContract.launch(e)
+		if (putContinuation(BrowserActivity.TAG, cont)) {
+			cont.invokeOnCancellation { removeContinuation(BrowserActivity.TAG, cont) }
+			browserActionContract.launch(e)
+		} else {
+			cont.resume(false)
+		}
 	}
 
     private suspend fun resolveCF(e: CloudFlareProtectedException): Boolean = suspendCancellableCoroutine { cont ->
-		continuations[CloudFlareActivity.TAG] = cont
-		cloudflareContract.launch(e)
+		if (putContinuation(CloudFlareActivity.TAG, cont)) {
+			cont.invokeOnCancellation { removeContinuation(CloudFlareActivity.TAG, cont) }
+			cloudflareContract.launch(e)
+		} else {
+			cont.resume(false)
+		}
 	}
 
     private suspend fun resolveAuthException(source: MangaSource): Boolean = suspendCancellableCoroutine { cont ->
-		continuations[SourceAuthActivity.TAG] = cont
-		sourceAuthContract.launch(source)
+		if (putContinuation(SourceAuthActivity.TAG, cont)) {
+			cont.invokeOnCancellation { removeContinuation(SourceAuthActivity.TAG, cont) }
+			sourceAuthContract.launch(source)
+		} else {
+			cont.resume(false)
+		}
 	}
 
     private fun openInBrowser(url: String) {
@@ -152,8 +164,25 @@ class ExceptionResolver private constructor(
         host.router.openAlternatives(manga)
     }
 
+    private fun putContinuation(tag: String, continuation: Continuation<Boolean>): Boolean = synchronized(continuations) {
+        if (continuations[tag] != null) {
+            return@synchronized false
+        }
+        continuations[tag] = continuation
+        true
+    }
+
+    private fun removeContinuation(tag: String, continuation: Continuation<Boolean>) = synchronized(continuations) {
+        if (continuations[tag] === continuation) {
+            continuations.remove(tag)
+        }
+    }
+
     private fun handleActivityResult(tag: String, result: Boolean) {
-        continuations.remove(tag)?.resume(result)
+        val continuation = synchronized(continuations) {
+            continuations.remove(tag)
+        }
+        continuation?.resume(result)
     }
 
     private fun showSslErrorDialog() {

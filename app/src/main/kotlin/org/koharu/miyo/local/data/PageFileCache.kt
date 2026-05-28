@@ -9,8 +9,8 @@ import okio.FileSystem
 import okio.Path.Companion.toPath
 import okio.buffer
 import okio.use
-import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import java.io.File
+import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
@@ -23,7 +23,6 @@ class PageFileCache(
     private val maxSize: Long,
 ) {
     private val fileSystem = FileSystem.SYSTEM
-    private val dirPath = directory.absolutePath.toPath()
 
     private val accessTimes = ConcurrentHashMap<String, Long>()
     private val totalSize = AtomicLong(0L)
@@ -33,7 +32,9 @@ class PageFileCache(
         directory.mkdirs()
         // Scan existing files to compute initial size
         directory.listFiles()?.forEach { file ->
-            if (file.isFile) {
+            if (file.name.endsWith(".tmp")) {
+                file.delete()
+            } else if (file.isFile) {
                 totalSize.addAndGet(file.length())
                 accessTimes[file.name] = file.lastModified()
             }
@@ -52,9 +53,18 @@ class PageFileCache(
     suspend fun put(key: String, data: okio.Source, type: String? = null): File = mutex.withLock {
         val safeName = key.toSafeFileName()
         val file = File(directory, safeName)
+        val tmpFile = File(directory, "$safeName.tmp")
         val previousSize = if (file.exists()) file.length() else 0L
-        val sink = fileSystem.sink(file.absolutePath.toPath()).buffer()
-        sink.use { it.writeAll(data) }
+        try {
+            fileSystem.sink(tmpFile.absolutePath.toPath()).buffer().use { it.writeAll(data) }
+            if (file.exists()) {
+                file.delete()
+            }
+            check(tmpFile.renameTo(file)) { "Cannot commit cache file: ${file.name}" }
+        } catch (e: Throwable) {
+            tmpFile.delete()
+            throw e
+        }
         totalSize.addAndGet(file.length() - previousSize)
         accessTimes[safeName] = System.currentTimeMillis()
         evictIfNeeded()
@@ -64,9 +74,19 @@ class PageFileCache(
     suspend fun putBytes(key: String, bytes: ByteArray): File = mutex.withLock {
         val safeName = key.toSafeFileName()
         val file = File(directory, safeName)
+        val tmpFile = File(directory, "$safeName.tmp")
         val previousSize = if (file.exists()) file.length() else 0L
-        withContext(Dispatchers.IO) {
-            file.writeBytes(bytes)
+        try {
+            withContext(Dispatchers.IO) {
+                tmpFile.writeBytes(bytes)
+            }
+            if (file.exists()) {
+                file.delete()
+            }
+            check(tmpFile.renameTo(file)) { "Cannot commit cache file: ${file.name}" }
+        } catch (e: Throwable) {
+            tmpFile.delete()
+            throw e
         }
         totalSize.addAndGet(file.length() - previousSize)
         accessTimes[safeName] = System.currentTimeMillis()
@@ -120,8 +140,11 @@ class PageFileCache(
 
     companion object {
         private fun String.toSafeFileName(): String {
-            return this.hashCode().toString(36) + "_" +
-                this.takeLast(64).replace(Regex("[^a-zA-Z0-9._-]"), "_")
+            val digest = MessageDigest.getInstance("SHA-256")
+                .digest(toByteArray())
+                .joinToString(separator = "") { byte -> "%02x".format(byte.toInt() and 0xff) }
+            val suffix = takeLast(48).replace(Regex("[^a-zA-Z0-9._-]"), "_")
+            return "${digest}_$suffix"
         }
     }
 }

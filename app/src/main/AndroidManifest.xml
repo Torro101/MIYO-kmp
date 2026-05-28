@@ -536,29 +536,9 @@
 				<data android:host="hitomi.la" />
 				<data android:host="imhentai.xxx" />
 				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
 				<data android:host="mangadex.org" />
 				<data android:host="mangafire.to" />
-				<data android:host="mangafire.to" />
-				<data android:host="mangafire.to" />
-				<data android:host="mangafire.to" />
-				<data android:host="mangafire.to" />
-				<data android:host="mangafire.to" />
-				<data android:host="mangafire.to" />
 				<data android:host="mangapark.net" />
-				<data android:host="mangaplus.shueisha.co.jp" />
-				<data android:host="mangaplus.shueisha.co.jp" />
-				<data android:host="mangaplus.shueisha.co.jp" />
-				<data android:host="mangaplus.shueisha.co.jp" />
-				<data android:host="mangaplus.shueisha.co.jp" />
-				<data android:host="mangaplus.shueisha.co.jp" />
-				<data android:host="mangaplus.shueisha.co.jp" />
-				<data android:host="mangaplus.shueisha.co.jp" />
 				<data android:host="mangaplus.shueisha.co.jp" />
 				<data android:host="mangareader.to" />
 				<data android:host="www.ninemanga.com" />
@@ -569,13 +549,6 @@
 				<data android:host="it.ninemanga.com" />
 				<data android:host="fr.ninemanga.com" />
 				<data android:host="animeh.to" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
-				<data android:host="webtoons.com" />
 				<data android:host="papscan.com" />
 				<data android:host="komikzoid.id" />
 				<data android:host="neumanga.xyz" />
@@ -629,7 +602,6 @@
 				<data android:host="legacy-scans.com" />
 				<data android:host="lire-scan.me" />
 				<data android:host="lugnica-scans.com" />
-				<data android:host="www.mangakawaii.io" />
 				<data android:host="www.manga-mana.com" />
 				<data android:host="scansmangas.me" />
 				<data android:host="scantrad-union.com" />
@@ -662,24 +634,23 @@
 				<data android:host="brakeout.xyz" />
 				<data android:host="cerberuseries.xyz" />
 				<data android:host="mangaesp.net" />
-				<data android:host="toomics.com/de" />
-				<data android:host="toomics.top/de" />
-				<data android:host="daycomics.me/en" />
-				<data android:host="hotcomics.me/en" />
-				<data android:host="toomics.com/en" />
-				<data android:host="toomics.com/es" />
-				<data android:host="toomics.com/mx" />
-				<data android:host="toomics.com/fr" />
-				<data android:host="toomics.com/it" />
-				<data android:host="toomics.com/ja" />
-				<data android:host="toomics.com/por" />
-				<data android:host="toomics.com/sc" />
-				<data android:host="toomics.com/tc" />
+				<data android:host="toomics.com" android:pathPrefix="/de" />
+				<data android:host="toomics.top" android:pathPrefix="/de" />
+				<data android:host="daycomics.me" android:pathPrefix="/en" />
+				<data android:host="hotcomics.me" android:pathPrefix="/en" />
+				<data android:host="toomics.com" android:pathPrefix="/en" />
+				<data android:host="toomics.com" android:pathPrefix="/es" />
+				<data android:host="toomics.com" android:pathPrefix="/mx" />
+				<data android:host="toomics.com" android:pathPrefix="/fr" />
+				<data android:host="toomics.com" android:pathPrefix="/it" />
+				<data android:host="toomics.com" android:pathPrefix="/ja" />
+				<data android:host="toomics.com" android:pathPrefix="/por" />
+				<data android:host="toomics.com" android:pathPrefix="/sc" />
+				<data android:host="toomics.com" android:pathPrefix="/tc" />
 				<data android:host="doujindesu.tv" />
 				<data android:host="hentaicrot.com" />
 				<data android:host="pixhentai.com" />
 				<data android:host="mangagalaxy.org" />
-				<data android:host="vortextoon.com" />
 				<data android:host="vortextoon.com" />
 				<data android:host="nicovideo.jp" />
 				<data android:host="4uscans.com" />
@@ -801,7 +772,6 @@
 				<data android:host="madaradex.org" />
 				<data android:host="manga-1001.com" />
 				<data android:host="manga18.xyz" />
-				<data android:host="manga18h.xyz" />
 				<data android:host="manga18x.net" />
 				<data android:host="manga1k.com" />
 				<data android:host="manga1st.online" />
@@ -826,7 +796,6 @@
 				<data android:host="mangaleveling.com" />
 				<data android:host="mangaonlineteam.com" />
 				<data android:host="mangamaniacs.org" />
-				<data android:host="mangaonlineteam.com" />
 				<data android:host="mangaowlnet.com" />
 				<data android:host="mangaowl.io" />
 				<data android:host="mangaowlyaoi.com" />
@@ -834,7 +803,6 @@
 				<data android:host="mangaqueen.com" />
 				<data android:host="www.mangaread.org" />
 				<data android:host="mangaread.co" />
-				<data android:host="mangarockteam.com" />
 				<data android:host="mangarockteam.com" />
 				<data android:host="mangarolls.net" />
 				<data android:host="toon69.com" />
@@ -846,7 +814,6 @@
 				<data android:host="mangaempress.com" />
 				<data android:host="mangatyrant.com" />
 				<data android:host="mangaweebs.in" />
-				<data android:host="mangazin.org" />
 				<data android:host="toonclash.com" />
 				<data android:host="mangagg.com" />
 				<data android:host="mangaowl.one" />
@@ -987,7 +954,6 @@
 				<data android:host="visormonarca.com" />
 				<data android:host="mundomanhwa.com" />
 				<data android:host="www.swordalada.org" />
-				<data android:host="panconcola.com" />
 				<data android:host="ragnarokscan.com" />
 				<data android:host="ragnarokscanlation.net" />
 				<data android:host="richtoscan.com" />
@@ -1033,7 +999,6 @@
 				<data android:host="pojokmanga.info" />
 				<data android:host="shinigami03.com" />
 				<data android:host="worldmanhwas.zone" />
-				<data android:host="www.xmanhwa.me" />
 				<data android:host="yubikiri.my.id" />
 				<data android:host="yuramanga.my.id" />
 				<data android:host="www.beyondtheataraxia.com" />
@@ -1236,7 +1201,6 @@
 				<data android:host="ww8.mangakakalot.tv" />
 				<data android:host="manganato.com" />
 				<data android:host="chapmanganato.to" />
-				<data android:host="chapmanganato.com" />
 				<data android:host="arc-relight.com" />
 				<data android:host="assortedscans.com" />
 				<data android:host="ar.areascans.org" />
@@ -1282,7 +1246,6 @@
 				<data android:host="hentai20.io" />
 				<data android:host="ponvi.online" />
 				<data android:host="komiklab.com" />
-				<data android:host="ponvi.online" />
 				<data android:host="radiantscans.com" />
 				<data android:host="lunarscan.org" />
 				<data android:host="mangagojo.com" />
@@ -1483,7 +1446,6 @@
 				<data android:host="summertoon.biz" />
 				<data android:host="www.tarotscans.com" />
 				<data android:host="tempestfansub.net" />
-				<data android:host="adumanga.com" />
 				<data android:host="tempestfansub.com" />
 				<data android:host="zenithscans.com" />
 				<data android:host="mangaworld.ac" />
@@ -1530,7 +1492,6 @@
 				<data android:host="snkscan.com" />
 				<data android:host="tokyorevengers.fr" />
 				<data android:host="vinlandsaga.fr" />
-				<data android:host="otakusan.net" />
 				<data android:host="otakusan.net" />
 				<data android:host="fmteam.fr" />
 				<data android:host="hni-scantrad.net" />
@@ -1584,8 +1545,6 @@
 				<data android:host="v2.yaoi-chan.me" />
 				<data android:host="v1.yaoi-chan.me" />
 				<data android:host="yaoi-chan.me" />
-				<data android:host="lib.social" />
-				<data android:host="lib.social" />
 				<data android:host="lib.social" />
 				<data android:host="www.mangafr.org" />
 				<data android:host="scan-trad.com" />

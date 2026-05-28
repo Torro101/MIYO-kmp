@@ -6,6 +6,7 @@ import androidx.annotation.WorkerThread
 import androidx.core.util.Predicate
 import okhttp3.Cookie
 import okhttp3.HttpUrl
+import org.koitharu.kotatsu.parsers.network.CloudFlareHelper
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -106,12 +107,17 @@ class AndroidCookieJar(
 		if (name.isEmpty()) {
 			return null
 		}
+		val path = if (CloudFlareHelper.isCloudFlareCookie(name)) {
+			"/"
+		} else {
+			url.encodedPath.takeIf { it.startsWith('/') } ?: "/"
+		}
 		return runCatching {
 			Cookie.Builder()
 				.name(name)
 				.value(value)
 				.hostOnlyDomain(url.host)
-				.path("/")
+				.path(path)
 				.apply {
 					if (url.isHttps) {
 						secure()
