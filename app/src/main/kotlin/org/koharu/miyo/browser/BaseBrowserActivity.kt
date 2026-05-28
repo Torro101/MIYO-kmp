@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.koharu.miyo.core.model.MangaSource as mangaSourceOf
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
@@ -53,7 +54,7 @@ abstract class BaseBrowserActivity : BaseActivity<ActivityBrowserBinding>(), Bro
 		onBackPressedCallback = WebViewBackPressedCallback(viewBinding.webView)
 		onBackPressedDispatcher.addCallback(onBackPressedCallback)
 
-		val mangaSource = MangaSource(intent?.getStringExtra(AppRouter.KEY_SOURCE))
+		val mangaSource = mangaSourceOf(intent?.getStringExtra(AppRouter.KEY_SOURCE))
 		val repository = mangaRepositoryFactory.create(mangaSource) as? ParserMangaRepository
 		val userAgent = intent?.getStringExtra(AppRouter.KEY_USER_AGENT)?.nullIfEmpty()
 			?: repository?.getRequestHeaders()?.get(CommonHeaders.USER_AGENT)
