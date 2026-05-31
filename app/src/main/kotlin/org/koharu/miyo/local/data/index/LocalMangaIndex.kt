@@ -29,6 +29,7 @@ class LocalMangaIndex @Inject constructor(
 
 	private val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 	private val mutex = Mutex()
+	private var lastMissRefreshAt = 0L
 
 	private var currentVersion: Int
 		get() = prefs.getInt(KEY_VERSION, 0)
@@ -41,6 +42,11 @@ class LocalMangaIndex @Inject constructor(
 	}
 
 	suspend fun update() = mutex.withLock {
+		rebuildIndexLocked()
+		lastMissRefreshAt = System.currentTimeMillis()
+	}
+
+	private suspend fun rebuildIndexLocked() {
 		db.withTransaction {
 			val dao = db.getLocalMangaIndexDao()
 			dao.clear()
@@ -66,28 +72,61 @@ class LocalMangaIndex @Inject constructor(
 		if (path == null) {
 			return null
 		}
-		return runCatchingCancellable {
-			LocalMangaParser(File(path)).getManga(withDetails)
+		val file = File(path)
+		if (!file.exists()) {
+			db.getLocalMangaIndexDao().delete(mangaId)
+			return null
+		}
+		val localManga = runCatchingCancellable {
+			LocalMangaParser(file).getMangaIfHasChapters(withDetails)
 		}.onFailure {
 			it.printStackTraceDebug()
 		}.getOrNull()
+		if (localManga == null) {
+			db.getLocalMangaIndexDao().delete(mangaId)
+		}
+		return localManga
 	}
 
 	suspend operator fun contains(mangaId: Long): Boolean {
-		return db.getLocalMangaIndexDao().findPath(mangaId) != null
+		updateIfRequired()
+		if (hasValidPath(mangaId)) {
+			return true
+		}
+		refreshAfterMiss()
+		return hasValidPath(mangaId)
 	}
 
-	suspend fun put(manga: LocalManga) = mutex.withLock {
-		db.withTransaction {
-			upsert(manga)
+	suspend fun put(manga: LocalManga) {
+		val indexedManga = manga.validatedForIndex()
+		mutex.withLock {
+			if (indexedManga == null) {
+				db.getLocalMangaIndexDao().delete(manga.manga.id)
+				return@withLock
+			}
+			db.withTransaction {
+				upsert(indexedManga)
+			}
 		}
 	}
+
+	suspend fun replaceWith(manga: Collection<LocalManga>) = mutex.withLock {
+		db.withTransaction {
+			val dao = db.getLocalMangaIndexDao()
+			dao.clear()
+			manga.forEach { upsert(it) }
+		}
+		currentVersion = VERSION
+		lastMissRefreshAt = System.currentTimeMillis()
+	}
+
 
 	suspend fun delete(mangaId: Long) {
 		db.getLocalMangaIndexDao().delete(mangaId)
 	}
 
 	suspend fun getAvailableTags(skipNsfw: Boolean): List<String> {
+		updateIfRequired()
 		val dao = db.getLocalMangaIndexDao()
 		return if (skipNsfw) {
 			dao.findTags(isNsfw = false)
@@ -96,9 +135,41 @@ class LocalMangaIndex @Inject constructor(
 		}
 	}
 
+	private suspend fun refreshAfterMiss() {
+		val now = System.currentTimeMillis()
+		if (now - lastMissRefreshAt < MISS_REFRESH_INTERVAL) {
+			return
+		}
+		mutex.withLock {
+			val lockedNow = System.currentTimeMillis()
+			if (lockedNow - lastMissRefreshAt >= MISS_REFRESH_INTERVAL) {
+				rebuildIndexLocked()
+				lastMissRefreshAt = lockedNow
+			}
+		}
+	}
+
 	private suspend fun upsert(manga: LocalManga) {
 		mangaDataRepository.storeManga(manga.manga, replaceExisting = true)
 		db.getLocalMangaIndexDao().upsert(manga.toEntity())
+	}
+
+	private suspend fun LocalManga.validatedForIndex(): LocalManga? {
+		return runCatchingCancellable {
+			LocalMangaParser(file).getMangaIfHasChapters(withDetails = false)
+		}.onFailure {
+			it.printStackTraceDebug()
+		}.getOrNull()
+	}
+
+	private suspend fun hasValidPath(mangaId: Long): Boolean {
+		val dao = db.getLocalMangaIndexDao()
+		val path = dao.findPath(mangaId) ?: return false
+		if (File(path).exists()) {
+			return true
+		}
+		dao.delete(mangaId)
+		return false
 	}
 
 	private fun LocalManga.toEntity() = LocalMangaIndexEntity(
@@ -112,6 +183,7 @@ class LocalMangaIndex @Inject constructor(
 
 		private const val PREF_NAME = "_local_index"
 		private const val KEY_VERSION = "ver"
-		private const val VERSION = 1
+		private const val VERSION = 2
+		private const val MISS_REFRESH_INTERVAL = 30_000L
 	}
 }

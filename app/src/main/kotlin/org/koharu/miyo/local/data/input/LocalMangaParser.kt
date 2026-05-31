@@ -142,6 +142,22 @@ class LocalMangaParser(private val uri: Uri) {
 		}
 	}
 
+	suspend fun getMangaIfHasChapters(withDetails: Boolean): LocalManga? {
+		val detailed = getManga(withDetails = true)
+		if (detailed.manga.chapters.isNullOrEmpty()) {
+			return null
+		}
+		return if (withDetails) {
+			detailed
+		} else {
+			LocalManga(detailed.manga.copy(chapters = null), detailed.file)
+		}
+	}
+
+	suspend fun hasReadableChapters(): Boolean {
+		return getManga(withDetails = true).manga.chapters.isNullOrEmpty().not()
+	}
+
 	suspend fun getMangaInfo(): Manga? = runInterruptible(Dispatchers.IO) {
 		uri.resolveFsAndPath().use { (fileSystem, rootPath) ->
 			val index = MangaIndex.read(fileSystem, rootPath / ENTRY_NAME_INDEX)
@@ -261,8 +277,11 @@ class LocalMangaParser(private val uri: Uri) {
 				launch {
 					val parser = getOrNull(File(root, fileName)) ?: getOrNull(File(root, "$fileName.cbz"))
 					val info = runCatchingCancellable { parser?.getMangaInfo() }.getOrNull()
-					if (info?.id == manga.id) {
-						send(parser)
+					val hasChapters = runCatchingCancellable {
+						parser?.hasReadableChapters() == true
+					}.getOrDefault(false)
+					if (info?.id == manga.id && hasChapters) {
+						parser?.let { send(it) }
 					}
 				}
 			}

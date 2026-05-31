@@ -94,6 +94,7 @@ class LocalMangaRepository @Inject constructor(
 			return emptyList()
 		}
 		val list = getRawList()
+		localMangaIndex.replaceWith(list)
 		if (settings.isNsfwContentDisabled) {
 			list.removeAll { it.manga.isNsfw() }
 		}
@@ -183,7 +184,12 @@ class LocalMangaRepository @Inject constructor(
 					val mangaInput = LocalMangaParser.getOrNull(file)
 					runCatchingCancellable {
 						val mangaInfo = mangaInput?.getMangaInfo()
-						if (mangaInfo != null && mangaInfo.id == remoteManga.id) {
+						if (
+							mangaInput != null &&
+							mangaInfo != null &&
+							mangaInfo.id == remoteManga.id &&
+							mangaInput.hasReadableChapters()
+						) {
 							send(mangaInput)
 						}
 					}.onFailure {
@@ -241,7 +247,7 @@ class LocalMangaRepository @Inject constructor(
 		for (file in files) {
 			launch(dispatcher) {
 				runCatchingCancellable {
-					LocalMangaParser.getOrNull(file)?.getManga(withDetails = false)
+					LocalMangaParser.getOrNull(file)?.getMangaIfHasChapters(withDetails = false)
 				}.onFailure { e ->
 					e.printStackTraceDebug()
 				}.onSuccess { m ->
