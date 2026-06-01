@@ -387,7 +387,7 @@ class LocalImageRefineWorker @AssistedInject constructor(
 		private const val TEMP_PREFIX = "miyo-refine"
 
 		fun enqueue(context: Context, manga: Collection<Manga>) {
-			val localPaths = manga.mapNotNullTo(LinkedHashSet<String>()) { item ->
+			val localPaths: Array<String?> = manga.mapNotNullTo(LinkedHashSet<String>()) { item ->
 				if (item.isLocal) {
 					item.url.toUri().toFileOrNull()?.absolutePath
 				} else {
