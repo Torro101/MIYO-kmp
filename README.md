@@ -41,6 +41,7 @@ Miyo includes a smarter download pipeline designed for slow and unreliable sourc
 - Image proxy and mirror handling give providers more recovery paths when direct image requests fail.
 - Native image probing rejects empty, corrupt, or non-image responses before they are written into the local library.
 - Background notifications keep pause and cancel actions tied to the active worker state.
+- Optional page refinement uses the bundled `general-x4v3` refinement profile in the APK, with originals kept as fallback.
 
 ## Performance
 
@@ -84,6 +85,7 @@ For public distribution:
 
 - Keep the same application ID for updates to the same app line.
 - Keep the same release signing key for every future release.
+- CI publishes a `miyo-release-apk-with-general-x4v3` artifact on main/tag builds and verifies that the bundled `general-x4v3` model is inside the release APK.
 - Publish release notes with APK checksums and relevant compatibility notes.
 - Do not publish private keys, keystores, passwords, tokens, or CI secrets.
 

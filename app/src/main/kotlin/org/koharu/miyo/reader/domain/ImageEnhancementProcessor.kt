@@ -40,6 +40,7 @@ class ImageEnhancementProcessor @Inject constructor(
 	@PageCache private val cache: LocalStorageCache,
 	private val settings: AppSettings,
 	private val nativeImageProbe: NativeImageProbe,
+	private val bundledModel: BundledImageRefinementModel,
 ) {
 
 	suspend fun enhanceForReader(sourceUri: android.net.Uri, stableKey: String): android.net.Uri {
@@ -157,55 +158,57 @@ class ImageEnhancementProcessor @Inject constructor(
 	}
 
 	private fun ImageBounds.hasUsefulSize(): Boolean {
+		val model = bundledModel.profile
 		val pixels = width.toLong() * height.toLong()
-		return width > 0 && height > 0 && pixels in MIN_SOURCE_PIXELS..MAX_SOURCE_PIXELS
+		return width > 0 && height > 0 && pixels in model.minSourcePixels..model.maxSourcePixels
 	}
 
 	private fun hasMemoryBudget(width: Int, height: Int): Boolean {
+		val model = bundledModel.profile
 		val pixels = width.toLong() * height.toLong()
 		val requiredBytes = pixels * BYTES_PER_ARGB_PIXEL * WORKING_BITMAP_COUNT
 		val availableRam = context.ramAvailable
 		val ramLimit = if (availableRam > 0L) availableRam / 2L else Long.MAX_VALUE
 		val maxAllowed = minOf(
-			FileSize.MEGABYTES.convert(MAX_WORKING_MEMORY_MB, FileSize.BYTES),
+			FileSize.MEGABYTES.convert(model.maxWorkingMemoryMb, FileSize.BYTES),
 			ramLimit,
 		)
 		return requiredBytes <= maxAllowed
 	}
 
 	private fun Bitmap.scaleIfUseful(): Bitmap {
+		val model = bundledModel.profile
 		val maxSide = maxOf(width, height)
-		if (maxSide >= TARGET_LONG_SIDE_PX) {
+		if (maxSide >= model.targetLongSidePx) {
 			return this
 		}
-		val scale = (TARGET_LONG_SIDE_PX.toFloat() / maxSide.toFloat()).coerceAtMost(MAX_UPSCALE_FACTOR)
-		if (scale <= MIN_UPSCALE_FACTOR) {
+		val scale = (model.targetLongSidePx.toFloat() / maxSide.toFloat()).coerceAtMost(model.maxUpscaleFactor)
+		if (scale <= model.minUpscaleFactor) {
 			return this
 		}
 		val scaledWidth = (width * scale).roundToInt().coerceAtLeast(1)
 		val scaledHeight = (height * scale).roundToInt().coerceAtLeast(1)
 		val scaledPixels = scaledWidth.toLong() * scaledHeight.toLong()
-		if (scaledPixels > MAX_OUTPUT_PIXELS || !hasMemoryBudget(scaledWidth, scaledHeight)) {
+		if (scaledPixels > model.maxOutputPixels || !hasMemoryBudget(scaledWidth, scaledHeight)) {
 			return this
 		}
 		return Bitmap.createScaledBitmap(this, scaledWidth, scaledHeight, true)
 	}
 
 	private fun Bitmap.applyMildEnhancement(): Bitmap {
+		val model = bundledModel.profile
 		val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-		val contrast = 1.07f
-		val brightness = 3f
-		val translate = ((1f - contrast) * 128f) + brightness
+		val translate = ((1f - model.contrast) * 128f) + model.brightness
 		val contrastMatrix = ColorMatrix(
 			floatArrayOf(
-				contrast, 0f, 0f, 0f, translate,
-				0f, contrast, 0f, 0f, translate,
-				0f, 0f, contrast, 0f, translate,
+				model.contrast, 0f, 0f, 0f, translate,
+				0f, model.contrast, 0f, 0f, translate,
+				0f, 0f, model.contrast, 0f, translate,
 				0f, 0f, 0f, 1f, 0f,
 			),
 		)
 		val saturationMatrix = ColorMatrix().apply {
-			setSaturation(1.04f)
+			setSaturation(model.saturation)
 		}
 		contrastMatrix.postConcat(saturationMatrix)
 		val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG).apply {
@@ -234,7 +237,9 @@ class ImageEnhancementProcessor @Inject constructor(
 	}.getOrDefault(false)
 
 	private fun buildCacheKey(namespace: String, stableKey: String, sourceFile: File): String {
-		return "$CACHE_PREFIX:$namespace:$CACHE_VERSION:$stableKey:${sourceFile.absolutePath}:${sourceFile.length()}:${sourceFile.lastModified()}"
+		val modelKey = bundledModel.profile.cacheKey
+		return "$CACHE_PREFIX:$namespace:$CACHE_VERSION:$modelKey:$stableKey:" +
+			"${sourceFile.absolutePath}:${sourceFile.length()}:${sourceFile.lastModified()}"
 	}
 
 	private data class ImageBounds(
@@ -247,13 +252,6 @@ class ImageEnhancementProcessor @Inject constructor(
 		private const val CACHE_VERSION = 1
 		private const val PNG_QUALITY = 100
 		private val MIME_TYPE_PNG = MimeType("image/png")
-		private const val TARGET_LONG_SIDE_PX = 1800
-		private const val MIN_UPSCALE_FACTOR = 1.08f
-		private const val MAX_UPSCALE_FACTOR = 1.35f
-		private const val MIN_SOURCE_PIXELS = 64L * 64L
-		private const val MAX_SOURCE_PIXELS = 18_000_000L
-		private const val MAX_OUTPUT_PIXELS = 20_000_000L
-		private const val MAX_WORKING_MEMORY_MB = 256L
 		private const val BYTES_PER_ARGB_PIXEL = 4L
 		private const val WORKING_BITMAP_COUNT = 3L
 	}
