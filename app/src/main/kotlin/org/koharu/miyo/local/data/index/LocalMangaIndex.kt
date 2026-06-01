@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koharu.miyo.core.db.MangaDatabase
+import org.koharu.miyo.core.db.entity.toManga
 import org.koharu.miyo.core.parser.MangaDataRepository
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import org.koharu.miyo.local.data.LocalMangaRepository
@@ -77,6 +78,11 @@ class LocalMangaIndex @Inject constructor(
 			db.getLocalMangaIndexDao().delete(mangaId)
 			return null
 		}
+		if (!withDetails) {
+			mangaDataRepository.findMangaById(mangaId, withChapters = false)?.let { cachedManga ->
+				return LocalManga(cachedManga, file)
+			}
+		}
 		val localManga = runCatchingCancellable {
 			LocalMangaParser(file).getMangaIfHasChapters(withDetails)
 		}.onFailure {
@@ -88,13 +94,27 @@ class LocalMangaIndex @Inject constructor(
 		return localManga
 	}
 
+	suspend fun getCachedList(): ArrayList<LocalManga> {
+		updateIfRequired()
+		val dao = db.getLocalMangaIndexDao()
+		val result = ArrayList<LocalManga>()
+		for (storedManga in dao.findIndexedManga()) {
+			val manga = storedManga.toManga()
+			val path = dao.findPath(manga.id)
+			if (path != null && hasExistingPath(manga.id)) {
+				result.add(LocalManga(manga, File(path)))
+			}
+		}
+		return result
+	}
+
 	suspend operator fun contains(mangaId: Long): Boolean {
 		updateIfRequired()
-		if (hasValidPath(mangaId)) {
+		if (hasExistingPath(mangaId)) {
 			return true
 		}
 		refreshAfterMiss()
-		return hasValidPath(mangaId)
+		return hasExistingPath(mangaId)
 	}
 
 	suspend fun put(manga: LocalManga) {
@@ -162,11 +182,11 @@ class LocalMangaIndex @Inject constructor(
 		}.getOrNull()
 	}
 
-	private suspend fun hasValidPath(mangaId: Long): Boolean {
+	private suspend fun hasExistingPath(mangaId: Long): Boolean {
 		val dao = db.getLocalMangaIndexDao()
 		val path = dao.findPath(mangaId) ?: return false
 		val file = File(path)
-		if (file.exists() && runCatchingCancellable { LocalMangaParser(file).hasReadableChapters() }.getOrDefault(false)) {
+		if (file.exists()) {
 			return true
 		}
 		dao.delete(mangaId)
@@ -184,7 +204,7 @@ class LocalMangaIndex @Inject constructor(
 
 		private const val PREF_NAME = "_local_index"
 		private const val KEY_VERSION = "ver"
-		private const val VERSION = 2
+		private const val VERSION = 3
 		private const val MISS_REFRESH_INTERVAL = 30_000L
 	}
 }

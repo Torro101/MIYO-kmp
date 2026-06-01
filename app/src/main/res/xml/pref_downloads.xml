@@ -42,6 +42,21 @@
 		android:title="@string/download_image_enhancement" />
 
 	<ListPreference
+		android:defaultValue="general-x4v3"
+		android:entries="@array/image_enhancement_models"
+		android:entryValues="@array/image_enhancement_model_values"
+		android:key="image_enhancement_model"
+		android:summary="@string/image_enhancement_model_summary"
+		android:title="@string/image_enhancement_model"
+		app:useSimpleSummaryProvider="true" />
+
+	<SwitchPreferenceCompat
+		android:defaultValue="true"
+		android:key="delete_original_after_refinement"
+		android:summary="@string/delete_original_after_refinement_summary"
+		android:title="@string/delete_original_after_refinement" />
+
+	<ListPreference
 		android:entries="@array/metered_network_options"
 		android:key="downloads_metered_network"
 		android:title="@string/download_over_cellular"

@@ -112,6 +112,18 @@
 		<item>6</item>
 		<item>8</item>
 	</string-array>
+	<string-array name="image_enhancement_models" translatable="false">
+		<item>General x4v3 (bundled)</item>
+		<item>Fast x2v1</item>
+		<item>Sharp x4v1</item>
+		<item>Webtoon x4v1</item>
+	</string-array>
+	<string-array name="image_enhancement_model_values" translatable="false">
+		<item>general-x4v3</item>
+		<item>fast-x2v1</item>
+		<item>sharp-x4v1</item>
+		<item>webtoon-x4v1</item>
+	</string-array>
 	<string-array name="tracker_frequency" translatable="false">
 		<item>@string/manual</item>
 		<item>@string/less_frequently</item>

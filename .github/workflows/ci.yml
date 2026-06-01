@@ -240,12 +240,48 @@ jobs:
             }
           done
 
+      - name: Prepare Downloadable Refinement Models
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          model_dir="${RUNNER_TEMP}/miyo-refinement-models"
+          mkdir -p "${model_dir}"
+          cp app/src/main/assets/models/general-x4v3.json "${model_dir}/general-x4v3.json"
+          cp .github/model-assets/refinement/*.json "${model_dir}/"
+          expected_models=(general-x4v3 fast-x2v1 sharp-x4v1 webtoon-x4v1)
+          for model in "${expected_models[@]}"; do
+            file="${model_dir}/${model}.json"
+            if [ ! -s "${file}" ]; then
+              echo "Missing refinement model ${model}" >&2
+              exit 1
+            fi
+            grep -q "\"id\"[[:space:]]*:[[:space:]]*\"${model}\"" "${file}" || {
+              echo "Refinement model ${file} has the wrong id" >&2
+              exit 1
+            }
+          done
+          model_count="$(find "${model_dir}" -maxdepth 1 -name '*.json' | wc -l | tr -d ' ')"
+          if [ "${model_count}" != "4" ]; then
+            echo "Expected exactly 4 downloadable model profiles, found ${model_count}" >&2
+            find "${model_dir}" -maxdepth 1 -name '*.json' -print >&2
+            exit 1
+          fi
+          (cd "${model_dir}" && zip -q -r "${GITHUB_WORKSPACE}/release/miyo-refinement-models-v${MIYO_VERSION_NAME}.zip" .)
+
       - name: Upload Release APK
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
           name: miyo-release-apk-with-general-x4v3
           path: release/*-release.apk
+          if-no-files-found: error
+
+      - name: Upload Downloadable Refinement Models
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v7
+        with:
+          name: miyo-downloadable-refinement-models
+          path: release/miyo-refinement-models-*.zip
           if-no-files-found: error
 
       - name: Validate Release Tag
@@ -271,7 +307,9 @@ jobs:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
           generate_release_notes: true
           make_latest: true
-          files: release/*-release.apk
+          files: |
+            release/*-release.apk
+            release/miyo-refinement-models-*.zip
 
   native-build:
     runs-on: ubuntu-latest

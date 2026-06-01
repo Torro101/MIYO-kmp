@@ -576,6 +576,13 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 	val isDownloadImageEnhancementEnabled: Boolean
 		get() = prefs.getBoolean(KEY_DOWNLOAD_IMAGE_ENHANCEMENT, false)
 
+	val imageEnhancementModelId: String
+		get() = prefs.getString(KEY_IMAGE_ENHANCEMENT_MODEL, IMAGE_ENHANCEMENT_MODEL_DEFAULT)
+			?.takeIf { it.isNotBlank() } ?: IMAGE_ENHANCEMENT_MODEL_DEFAULT
+
+	val shouldDeleteOriginalAfterRefinement: Boolean
+		get() = prefs.getBoolean(KEY_DELETE_ORIGINAL_AFTER_REFINEMENT, true)
+
 	val isDiscordRpcEnabled: Boolean
 		get() = prefs.getBoolean(KEY_DISCORD_RPC, false)
 
@@ -853,6 +860,8 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		const val KEY_32BIT_COLOR = "enhanced_colors"
 		const val KEY_READER_IMAGE_ENHANCEMENT = "reader_image_enhancement"
 		const val KEY_DOWNLOAD_IMAGE_ENHANCEMENT = "download_image_enhancement"
+		const val KEY_IMAGE_ENHANCEMENT_MODEL = "image_enhancement_model"
+		const val KEY_DELETE_ORIGINAL_AFTER_REFINEMENT = "delete_original_after_refinement"
 		const val KEY_SOURCES_ORDER = "sources_sort_order"
 		const val KEY_SOURCES_CATALOG = "sources_catalog"
 		const val KEY_CF_BRIGHTNESS = "cf_brightness"
@@ -906,6 +915,7 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		private const val KEY_IMAGES_PROXY_OLD = "images_proxy"
 
 		// values
+		private const val IMAGE_ENHANCEMENT_MODEL_DEFAULT = "general-x4v3"
 		private const val READER_CROP_PAGED = 1
 		private const val READER_CROP_WEBTOON = 2
 	}

@@ -93,8 +93,9 @@ class LocalMangaRepository @Inject constructor(
 		if (offset > 0) {
 			return emptyList()
 		}
-		val list = getRawList()
-		localMangaIndex.replaceWith(list)
+		val list = localMangaIndex.getCachedList().takeUnless { it.isEmpty() } ?: getRawList().also {
+			localMangaIndex.replaceWith(it)
+		}
 		if (settings.isNsfwContentDisabled) {
 			list.removeAll { it.manga.isNsfw() }
 		}

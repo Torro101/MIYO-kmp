@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import org.koharu.miyo.R
 import org.koharu.miyo.core.model.isLocal
 import org.koharu.miyo.core.nav.AppRouter
+import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.util.MimeTypes
 import org.koharu.miyo.core.util.ext.isFileUri
 import org.koharu.miyo.core.util.ext.isImage
@@ -52,6 +53,7 @@ class LocalImageRefineWorker @AssistedInject constructor(
 	private val imageEnhancementProcessor: ImageEnhancementProcessor,
 	private val localMangaIndex: LocalMangaIndex,
 	private val mangaLock: MangaLock,
+	private val settings: AppSettings,
 	@LocalStorageChanges private val localStorageChanges: MutableSharedFlow<LocalManga?>,
 ) : CoroutineWorker(appContext, params) {
 
@@ -182,7 +184,9 @@ class LocalImageRefineWorker @AssistedInject constructor(
 		}
 		val enhanced = imageEnhancementProcessor.refineLocalImage(file, file.parentFile ?: applicationContext.cacheDir)
 			?: return false
-		return replaceFileKeepingBackup(file, enhanced)
+		return replaceFileKeepingBackup(file, enhanced) { candidate ->
+			imageEnhancementProcessor.isReadableImageFile(candidate)
+		}
 	}
 
 	private suspend fun refineZipArchive(
@@ -228,7 +232,9 @@ class LocalImageRefineWorker @AssistedInject constructor(
 			repeat(entryNames.size - processedEntries.size) {
 				onPageProcessed()
 			}
-			changed && outputFile.isReadableZip() && replaceFileKeepingBackup(zipFile, outputFile)
+			changed && outputFile.isReadableZip() && replaceFileKeepingBackup(zipFile, outputFile) { candidate ->
+				candidate.isReadableZip()
+			}
 		} catch (e: Exception) {
 			e.printStackTraceDebug()
 			false
@@ -265,13 +271,21 @@ class LocalImageRefineWorker @AssistedInject constructor(
 		}
 	}
 
-	private fun replaceFileKeepingBackup(original: File, replacement: File): Boolean {
+	private fun replaceFileKeepingBackup(
+		original: File,
+		replacement: File,
+		isReplacementValid: (File) -> Boolean,
+	): Boolean {
 		val parent = original.parentFile ?: return false
 		val committed = File(parent, "${original.name}.$TEMP_PREFIX-${UUID.randomUUID()}.tmp")
-		val backup = File(parent, "${original.name}.$TEMP_PREFIX-${UUID.randomUUID()}.bak")
+		val backupDir = File(parent, ".$TEMP_PREFIX-backups").also { it.mkdirs() }
+		if (!backupDir.isDirectory) {
+			return false
+		}
+		val backup = File(backupDir, "${original.name}.${UUID.randomUUID()}.bak")
 		return try {
 			replacement.copyTo(committed, overwrite = true)
-			if (!committed.isFile || committed.length() == 0L) {
+			if (!committed.isFile || committed.length() == 0L || !isReplacementValid(committed)) {
 				committed.delete()
 				return false
 			}
@@ -279,12 +293,19 @@ class LocalImageRefineWorker @AssistedInject constructor(
 				committed.delete()
 				return false
 			}
-			if (committed.renameTo(original)) {
-				backup.delete()
-				true
-			} else {
+			if (!committed.renameTo(original)) {
 				backup.renameTo(original)
 				committed.delete()
+				false
+			} else if (isReplacementValid(original)) {
+				if (settings.shouldDeleteOriginalAfterRefinement) {
+					backup.delete()
+					backupDir.delete()
+				}
+				true
+			} else {
+				original.delete()
+				backup.renameTo(original)
 				false
 			}
 		} catch (e: Exception) {
@@ -296,6 +317,7 @@ class LocalImageRefineWorker @AssistedInject constructor(
 			false
 		} finally {
 			replacement.delete()
+			backupDir.delete()
 		}
 	}
 

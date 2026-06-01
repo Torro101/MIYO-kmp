@@ -503,6 +503,8 @@
     <string name="enhanced_colors">32-bit color mode</string>
     <string name="reader_image_enhancement">Image refinement while reading</string>
     <string name="reader_image_enhancement_summary">Enhance readable local pages through a safe cache. Originals stay untouched and are used if refinement fails.</string>
+    <string name="image_enhancement_model">Refinement model</string>
+    <string name="image_enhancement_model_summary">Choose the refinement profile. General x4v3 is bundled; the other profiles are loaded when downloaded to app storage.</string>
     <string name="suggest_new_sources">Suggest new sources after app update</string>
     <string name="suggest_new_sources_summary">Prompt to enable newly added sources after updating the application</string>
     <string name="list_options">List options</string>
@@ -934,7 +936,9 @@
     <string name="download_high_speed">Wi-Fi high-speed mode</string>
     <string name="download_high_speed_summary">Boost Wi-Fi downloads. Auto adapts to your device, or choose a fixed parallelism limit above.</string>
     <string name="download_image_enhancement">Refine pages after download</string>
-    <string name="download_image_enhancement_summary">Enhance newly downloaded pages after validation. Disabled by default; failed refinements keep the original page.</string>
+    <string name="download_image_enhancement_summary">Enhance newly downloaded pages after validation. Disabled by default; failed refinements keep the original page and output size is capped.</string>
+    <string name="delete_original_after_refinement">Delete originals after safe refinement</string>
+    <string name="delete_original_after_refinement_summary">Enabled by default. Original files are removed only after the refined image or archive is validated as readable.</string>
 	<string name="experiment">Experiment</string>
 	<string name="details_backdrop">Set large cover as backdrop</string>
 	<string name="details_backdrop_summary">Show a large cover image at the top as a backdrop image (like Tachiyomi)</string>

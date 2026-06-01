@@ -72,6 +72,7 @@ endif()
 # Our JNI bridge library
 add_library(miyo-native SHARED
     native-init.cpp
+    native_image_enhancer.cpp
     native_image_probe.cpp
     native_zip_writer.cpp
     yuv-converter.cpp
