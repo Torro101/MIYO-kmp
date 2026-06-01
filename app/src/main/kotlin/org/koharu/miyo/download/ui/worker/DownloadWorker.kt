@@ -104,6 +104,7 @@ import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
 import org.koharu.miyo.download.domain.DownloadParallelismManager
 import org.koharu.miyo.download.domain.SmartDownloadQueue
 import org.koharu.miyo.download.domain.analytics.DownloadAnalytics
+import org.koharu.miyo.reader.domain.ImageEnhancementProcessor
 import org.koharu.miyo.reader.domain.PageLoader
 import org.jsoup.HttpStatusException
 import java.io.File
@@ -133,6 +134,7 @@ class DownloadWorker @AssistedInject constructor(
 	private val smartQueue: SmartDownloadQueue,
 	private val nativeImageProbe: NativeImageProbe,
 	private val captchaHandler: CaptchaHandler,
+	private val imageEnhancementProcessor: ImageEnhancementProcessor,
 	notificationFactoryFactory: DownloadNotificationFactory.Factory,
 ) : CoroutineWorker(appContext, params) {
 
@@ -295,17 +297,28 @@ class DownloadWorker @AssistedInject constructor(
 											nativeInfo = probeNativeImage(file)
 										}
 										val pageFile = checkNotNull(file)
-										output.addPage(
-											chapter = chapter,
-											file = pageFile,
-											pageNumber = pageIndex,
-											type = getMediaType(url, pageFile, nativeInfo),
-										)
-										val bytes = pageFile.length()
-										if (pageFile.extension == "tmp") {
-											pageFile.deleteAwait()
+										var enhancedPageFile: File? = null
+										try {
+											enhancedPageFile = imageEnhancementProcessor.enhanceForDownload(pageFile, destination)
+											val outputFile = enhancedPageFile ?: pageFile
+											val outputInfo = if (enhancedPageFile != null) {
+												probeNativeImage(outputFile)
+											} else {
+												nativeInfo
+											}
+											output.addPage(
+												chapter = chapter,
+												file = outputFile,
+												pageNumber = pageIndex,
+												type = getMediaType(url, outputFile, outputInfo),
+											)
+											outputFile.length()
+										} finally {
+											enhancedPageFile?.deleteAwait()
+											if (pageFile.extension == "tmp") {
+												pageFile.deleteAwait()
+											}
 										}
-										bytes
 									}
 									if (downloadedBytes == null) {
 										send(PageDownloadEvent.Skipped)

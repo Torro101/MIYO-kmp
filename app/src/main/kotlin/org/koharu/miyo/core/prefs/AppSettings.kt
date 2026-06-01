@@ -570,6 +570,12 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 	val is32BitColorsEnabled: Boolean
 		get() = prefs.getBoolean(KEY_32BIT_COLOR, false)
 
+	val isReaderImageEnhancementEnabled: Boolean
+		get() = prefs.getBoolean(KEY_READER_IMAGE_ENHANCEMENT, false)
+
+	val isDownloadImageEnhancementEnabled: Boolean
+		get() = prefs.getBoolean(KEY_DOWNLOAD_IMAGE_ENHANCEMENT, false)
+
 	val isDiscordRpcEnabled: Boolean
 		get() = prefs.getBoolean(KEY_DISCORD_RPC, false)
 
@@ -845,6 +851,8 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		const val KEY_NAV_PINNED = "nav_pinned"
 		const val KEY_MAIN_FAB = "main_fab"
 		const val KEY_32BIT_COLOR = "enhanced_colors"
+		const val KEY_READER_IMAGE_ENHANCEMENT = "reader_image_enhancement"
+		const val KEY_DOWNLOAD_IMAGE_ENHANCEMENT = "download_image_enhancement"
 		const val KEY_SOURCES_ORDER = "sources_sort_order"
 		const val KEY_SOURCES_CATALOG = "sources_catalog"
 		const val KEY_CF_BRIGHTNESS = "cf_brightness"

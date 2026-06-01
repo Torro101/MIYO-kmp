@@ -35,6 +35,12 @@
 		android:summary="@string/download_high_speed_summary"
 		android:title="@string/download_high_speed" />
 
+	<SwitchPreferenceCompat
+		android:defaultValue="false"
+		android:key="download_image_enhancement"
+		android:summary="@string/download_image_enhancement_summary"
+		android:title="@string/download_image_enhancement" />
+
 	<ListPreference
 		android:entries="@array/metered_network_options"
 		android:key="downloads_metered_network"

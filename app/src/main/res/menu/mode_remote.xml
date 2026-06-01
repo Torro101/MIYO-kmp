@@ -21,4 +21,10 @@
 		android:title="@string/save"
 		app:showAsAction="ifRoom|withText" />
 
+	<item
+		android:id="@+id/action_refine_downloaded"
+		android:icon="@drawable/ic_auto_fix"
+		android:title="@string/refine_downloaded_chapters"
+		app:showAsAction="ifRoom|withText" />
+
 </menu>

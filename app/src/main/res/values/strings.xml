@@ -501,6 +501,8 @@
     <string name="state_abandoned">Dropped</string>
     <string name="enhanced_colors_summary">Reduces banding, but may impact performance</string>
     <string name="enhanced_colors">32-bit color mode</string>
+    <string name="reader_image_enhancement">Image refinement while reading</string>
+    <string name="reader_image_enhancement_summary">Enhance readable local pages through a safe cache. Originals stay untouched and are used if refinement fails.</string>
     <string name="suggest_new_sources">Suggest new sources after app update</string>
     <string name="suggest_new_sources_summary">Prompt to enable newly added sources after updating the application</string>
     <string name="list_options">List options</string>
@@ -735,6 +737,11 @@
     <string name="manga_replaced">Manga \"%1$s\" (%2$s) replaced with \"%3$s\" (%4$s)</string>
     <string name="fixing_manga">Fixing manga</string>
     <string name="fixed">Fixed successfully</string>
+    <string name="refine">Refine</string>
+    <string name="refining_downloaded_chapters">Refining downloaded chapters</string>
+    <string name="refining_downloaded_chapters_progress">%1$d of %2$d pages processed</string>
+    <string name="refine_downloaded_chapters">Refine downloaded chapters</string>
+    <string name="refine_downloaded_chapters_prompt">This will refine already downloaded chapter images in the background. Each page is validated first, and the original file is kept if refinement fails or produces a corrupt image.</string>
     <string name="no_fix_required">No fix required for \"%s\"</string>
     <string name="no_alternatives_found">No alternatives found for \"%s\"</string>
     <string name="manga_fix_prompt">This function will find alternative sources for the selected manga. The task will take some time and will proceed in the background</string>
@@ -926,6 +933,8 @@
     <string name="download_parallelism_summary">Number of simultaneous page downloads. Higher values are faster but may trigger rate limits. Set to Auto for device-adaptive selection.</string>
     <string name="download_high_speed">Wi-Fi high-speed mode</string>
     <string name="download_high_speed_summary">Boost Wi-Fi downloads. Auto adapts to your device, or choose a fixed parallelism limit above.</string>
+    <string name="download_image_enhancement">Refine pages after download</string>
+    <string name="download_image_enhancement_summary">Enhance newly downloaded pages after validation. Disabled by default; failed refinements keep the original page.</string>
 	<string name="experiment">Experiment</string>
 	<string name="details_backdrop">Set large cover as backdrop</string>
 	<string name="details_backdrop_summary">Show a large cover image at the top as a backdrop image (like Tachiyomi)</string>

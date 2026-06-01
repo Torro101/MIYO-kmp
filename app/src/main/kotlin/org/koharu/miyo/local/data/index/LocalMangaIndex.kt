@@ -165,7 +165,8 @@ class LocalMangaIndex @Inject constructor(
 	private suspend fun hasValidPath(mangaId: Long): Boolean {
 		val dao = db.getLocalMangaIndexDao()
 		val path = dao.findPath(mangaId) ?: return false
-		if (File(path).exists()) {
+		val file = File(path)
+		if (file.exists() && runCatchingCancellable { LocalMangaParser(file).hasReadableChapters() }.getOrDefault(false)) {
 			return true
 		}
 		dao.delete(mangaId)

@@ -51,12 +51,15 @@ import org.koharu.miyo.list.ui.adapter.MangaListListener
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration
 import org.koharu.miyo.list.ui.model.ListHeader
 import org.koharu.miyo.list.ui.model.ListModel
+import org.koharu.miyo.list.ui.model.MangaDetailedListModel
+import org.koharu.miyo.list.ui.model.MangaGridModel
 import org.koharu.miyo.list.ui.model.MangaListModel
 import org.koharu.miyo.list.ui.size.DynamicItemSizeResolver
+import org.koharu.miyo.local.ui.LocalImageRefineWorker
 import org.koharu.miyo.main.ui.owners.AppBarOwner
+import org.koharu.miyo.search.ui.MangaListActivity
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.model.MangaTag
-import org.koharu.miyo.search.ui.MangaListActivity
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -89,6 +92,9 @@ abstract class MangaListFragment :
 
 	protected val selectedItems: Set<Manga>
 		get() = collectSelectedItems()
+
+	protected val selectedListModels: Set<MangaListModel>
+		get() = collectSelectedListModels()
 
 	override val recyclerView: RecyclerView?
 		get() = viewBinding?.recyclerView
@@ -277,10 +283,12 @@ abstract class MangaListFragment :
 	@CallSuper
 	override fun onPrepareActionMode(controller: ListSelectionController, mode: ActionMode?, menu: Menu): Boolean {
 		val hasNoLocal = selectedItems.none { it.isLocal }
+		val canRefineDownloaded = selectedListModels.any { it.hasDownloadedChaptersAction() }
 		val isSingleSelection = controller.count == 1
 		menu.findItem(R.id.action_save)?.isVisible = hasNoLocal
 		menu.findItem(R.id.action_fix)?.isVisible = hasNoLocal
 		menu.findItem(R.id.action_edit_override)?.isVisible = isSingleSelection
+		menu.findItem(R.id.action_refine_downloaded)?.isVisible = canRefineDownloaded
 		return super.onPrepareActionMode(controller, mode, menu)
 	}
 
@@ -341,6 +349,27 @@ abstract class MangaListFragment :
 				true
 			}
 
+			R.id.action_refine_downloaded -> {
+				val itemsSnapshot = selectedListModels
+					.filter { it.hasDownloadedChaptersAction() }
+					.map { it.toMangaWithOverride() }
+				if (itemsSnapshot.isEmpty()) {
+					mode?.finish()
+					return true
+				}
+				buildAlertDialog(context ?: return false, isCentered = true) {
+					setTitle(item.title)
+					setIcon(item.icon)
+					setMessage(R.string.refine_downloaded_chapters_prompt)
+					setNegativeButton(android.R.string.cancel, null)
+					setPositiveButton(R.string.refine) { _, _ ->
+						LocalImageRefineWorker.enqueue(requireContext(), itemsSnapshot)
+						mode?.finish()
+					}
+				}.show()
+				true
+			}
+
 			else -> false
 		}
 	}
@@ -359,15 +388,27 @@ abstract class MangaListFragment :
 	}
 
 	private fun collectSelectedItems(): Set<Manga> {
+		return collectSelectedListModels().mapTo(ArraySet()) { it.manga }
+	}
+
+	private fun collectSelectedListModels(): Set<MangaListModel> {
 		val checkedIds = selectionController?.peekCheckedIds() ?: return emptySet()
 		val items = listAdapter?.items ?: return emptySet()
-		val result = ArraySet<Manga>(checkedIds.size)
+		val result = ArraySet<MangaListModel>(checkedIds.size)
 		for (item in items) {
 			if (item is MangaListModel && item.id in checkedIds) {
-				result.add(item.manga)
+				result.add(item)
 			}
 		}
 		return result
+	}
+
+	private fun MangaListModel.hasDownloadedChaptersAction(): Boolean {
+		return manga.isLocal || when (this) {
+			is MangaDetailedListModel -> isSaved
+			is MangaGridModel -> isSaved
+			else -> false
+		}
 	}
 
 	private inner class SpanSizeLookup : GridLayoutManager.SpanSizeLookup() {

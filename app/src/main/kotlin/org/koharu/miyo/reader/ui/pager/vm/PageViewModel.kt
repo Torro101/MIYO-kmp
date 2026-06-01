@@ -44,6 +44,7 @@ class PageViewModel(
 	private var job: Job? = null
 	private var cachedBounds: Rect? = null
 	private var currentPage: MangaPage? = null
+	private var originalDisplayUri: Uri? = null
 	private var lastProgress = PROGRESS_INITIAL
 
 	val state = MutableStateFlow<PageState>(PageState.Empty)
@@ -91,6 +92,7 @@ class PageViewModel(
 		state.value = PageState.Empty
 		cachedBounds = null
 		currentPage = null
+		originalDisplayUri = null
 		lastProgress = PROGRESS_INITIAL
 		job?.cancel()
 	}
@@ -99,6 +101,7 @@ class PageViewModel(
 		state.value = PageState.Empty
 		cachedBounds = null
 		currentPage = null
+		originalDisplayUri = null
 		lastProgress = PROGRESS_INITIAL
 		job?.cancel()
 	}
@@ -139,6 +142,9 @@ class PageViewModel(
 				else -> return@update currentState
 			}
 			val uri = (source as? ImageSource.Uri)?.uri
+			if (tryRestoreOriginalDisplay(uri)) {
+				return@update PageState.Loading(null, lastProgress)
+			}
 			val sourceArchiveUri = currentPage?.url?.toUri()?.takeIf { it.isZipUri() }
 			val conversionUri = sourceArchiveUri ?: uri
 			if (!isConverted && conversionUri != null && (conversionUri.isZipUri() || e is IOException)) {
@@ -148,6 +154,32 @@ class PageViewModel(
 				PageState.Error(e)
 			}
 		}
+	}
+
+	private fun tryRestoreOriginalDisplay(currentUri: Uri?): Boolean {
+		val fallbackUri = originalDisplayUri ?: return false
+		if (currentUri == null || currentUri == fallbackUri) {
+			return false
+		}
+		val prevJob = job
+		job = scope.launch(Dispatchers.Default) {
+			prevJob?.join()
+			state.value = PageState.Loading(null, lastProgress)
+			try {
+				cachedBounds = if (settingsProducer.value.isPagesCropEnabled(isWebtoon)) {
+					loader.getTrimmedBounds(fallbackUri)
+				} else {
+					null
+				}
+				state.value = PageState.Loaded(fallbackUri.toImageSource(cachedBounds), isConverted = false)
+			} catch (ce: CancellationException) {
+				throw ce
+			} catch (e: Throwable) {
+				e.printStackTraceDebug()
+				state.value = PageState.Error(e)
+			}
+		}
+		return true
 	}
 
 	private fun Throwable.asException(): Exception = this as? Exception ?: IOException(this)
@@ -190,17 +222,22 @@ class PageViewModel(
 			val uri = task.await()
 			progressObserver.cancelAndJoin()
 			previewJob.cancel()
-			val displayUri = if (uri.isZipUri()) {
+			lastProgress = PROGRESS_COMPLETE
+			state.update {
+				if (it is PageState.Loading) it.copy(progress = PROGRESS_COMPLETE) else it
+			}
+			val originalUri = if (uri.isZipUri()) {
 				loader.materializeZipEntry(uri)
 			} else {
 				uri
 			}
+			originalDisplayUri = originalUri
+			val displayUri = loader.enhanceForReader(data, originalUri)
 			cachedBounds = if (settingsProducer.value.isPagesCropEnabled(isWebtoon)) {
 				loader.getTrimmedBounds(displayUri)
 			} else {
 				null
 			}
-			lastProgress = PROGRESS_COMPLETE
 			state.value = PageState.Loaded(displayUri.toImageSource(cachedBounds), isConverted = false)
 		} catch (e: CancellationException) {
 			throw e

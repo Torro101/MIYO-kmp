@@ -37,6 +37,7 @@ import okio.source
 import okio.use
 import org.jetbrains.annotations.Blocking
 import org.koharu.miyo.core.LocalizedAppContext
+import org.koharu.miyo.core.exceptions.UnsupportedFileException
 import org.koharu.miyo.core.image.BitmapDecoderCompat
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.nativeio.NativeImageProbe
@@ -98,6 +99,7 @@ class PageLoader @Inject constructor(
 	private val imageProxyInterceptor: ImageProxyInterceptor,
 	private val downloadSlowdownDispatcher: DownloadSlowdownDispatcher,
 	private val nativeImageProbe: NativeImageProbe,
+	private val imageEnhancementProcessor: ImageEnhancementProcessor,
 ) {
 
 	val loaderScope = lifecycle.lifecycleScope + InternalErrorHandler() + Dispatchers.Default
@@ -226,7 +228,13 @@ class PageLoader @Inject constructor(
 				val entryName = uri.fragment ?: throw FileNotFoundException(uri.toString())
 				val entry = zip.getEntry(entryName) ?: throw FileNotFoundException("$uri#$entryName")
 				zip.getInputStream(entry).source().use { source ->
-					cache.set(cacheKey, source, MimeTypes.getMimeTypeFromExtension(entry.name)).toUri()
+					val file = cache.set(cacheKey, source, MimeTypes.getMimeTypeFromExtension(entry.name))
+					if (file.isUsablePageCache()) {
+						file.toUri()
+					} else {
+						cache.remove(cacheKey)
+						throw UnsupportedFileException("Unsupported or corrupt image file")
+					}
 				}
 			}
 		}
@@ -271,6 +279,10 @@ class PageLoader @Inject constructor(
 	}.onFailure { error ->
 		error.printStackTraceDebug()
 	}.getOrNull()
+
+	suspend fun enhanceForReader(page: MangaPage, displayUri: Uri): Uri {
+		return imageEnhancementProcessor.enhanceForReader(displayUri, page.taskKey().toString())
+	}
 
 	suspend fun getPageUrl(page: MangaPage): String {
 		return getRepository(page.source).getPageUrl(page)
@@ -362,6 +374,9 @@ class PageLoader @Inject constructor(
 			}
 
 			uri.isFileUri() -> uri.also {
+				if (!it.toFile().isUsablePageCache()) {
+					throw UnsupportedFileException("Unsupported or corrupt image file")
+				}
 				recordLoadedPageFootprint(it.toFile())
 			}
 			else -> {
@@ -377,6 +392,10 @@ class PageLoader @Inject constructor(
 						cache.set(pageUrl, it.source(), it.contentType()?.toMimeType())
 					}
 				}.also { file ->
+					if (!file.isUsablePageCache()) {
+						cache.remove(pageUrl)
+						throw UnsupportedFileException("Unsupported or corrupt image file")
+					}
 					recordLoadedPageFootprint(file)
 				}.toUri()
 			}
