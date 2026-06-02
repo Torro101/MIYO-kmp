@@ -130,6 +130,7 @@ val Manga.isBroken: Boolean
 	get() = source == UnknownMangaSource
 
 val Manga.appUrl: Uri
+	// TODO(domain-migration): Replace yumemi.moe after buying our own domain, publishing GitHub Pages, configuring DNS/CNAME + HTTPS, and updating Android app-link verification.
 	get() = "https://yumemi.moe/manga".toUri()
 		.buildUpon()
 		.appendQueryParameter("source", source.name)

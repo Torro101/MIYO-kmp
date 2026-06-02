@@ -26,6 +26,7 @@ class MangaLinkResolver @Inject constructor(
 ) {
 
 	suspend fun resolve(uri: Uri): Manga {
+		// TODO(domain-migration): yumemi.moe belongs to the previous upstream. Keep it for old links until our own GitHub Pages domain is live, then add/replace the host and verify deep links.
 		return if (uri.scheme == "kotatsu" || uri.scheme == "miyo" || uri.host == "kotatsu.app" || uri.host == "yumemi.moe") {
 			resolveAppLink(uri)
 		} else {

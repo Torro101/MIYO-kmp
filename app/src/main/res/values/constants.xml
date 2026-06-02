@@ -3,6 +3,7 @@
 	<string name="url_telegram_web" translatable="false">https://t.me/MiyoApp</string>
 	<string name="url_telegram" translatable="false">tg://resolve?domain=MiyoApp</string>
 	<string name="url_weblate" translatable="false">https://hosted.weblate.org/engage/miyo</string>
+	<!-- TODO(domain-migration): yumemi.moe belongs to the previous upstream. Buy our own domain, publish the GitHub Pages site, configure DNS/CNAME + HTTPS, then replace manual/error/report URLs. -->
 	<string name="url_user_manual" translatable="false">https://yumemi.moe/manuals/guides/getting-started/</string>
 	<string name="url_error_report" translatable="false">https://bugs.yumemi.moe/report</string>
 	<string name="shikimori_clientId" translatable="false">Mw6F0tPEOgyV7F9U9Twg50Q8SndMY7hzIOfXg0AX_XU</string>
@@ -40,6 +41,7 @@
 	</string-array>
 	<string-array name="sync_url_list" translatable="false">
 		<item>https://draken.traidep.site:3000</item>
+		<!-- TODO(domain-migration): Replace this default sync/site URL after our own domain and public hosting are ready. -->
 		<item>https://yumemi.moe</item>
 	</string-array>
 	<string-array name="values_proxy_types" translatable="false">

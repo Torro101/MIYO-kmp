@@ -32,3 +32,12 @@
 /.idea/discordrp.xml
 __pycache__/
 *.pyc
+
+# Local agent scratch/worktree files
+.claude/
+CLAUDE.md
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
