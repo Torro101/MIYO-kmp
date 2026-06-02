@@ -146,7 +146,7 @@ jobs:
           set -euo pipefail
           APP_APPLICATION_ID="${APP_APPLICATION_ID:-org.koharu.miyo}"
           APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Miyo}"
-          APP_UPDATES_REPO="${APP_UPDATES_REPO:-asanlamma-ux/MIYO}"
+          APP_UPDATES_REPO="${APP_UPDATES_REPO:-Torro101/MIYO}"
           APP_SOURCE_URL="${APP_SOURCE_URL:-https://github.com/${APP_UPDATES_REPO}}"
           APP_ICON_URL="${APP_ICON_URL:-https://raw.githubusercontent.com/${APP_UPDATES_REPO}/refs/heads/main/.github/assets/icon.png}"
           ./gradlew assembleDebug --stacktrace \
@@ -187,7 +187,7 @@ jobs:
           : "${ANDROID_RELEASE_KEY_PASSWORD:?ANDROID_RELEASE_KEY_PASSWORD secret is missing}"
           APP_APPLICATION_ID="${APP_APPLICATION_ID:-org.koharu.miyo}"
           APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Miyo}"
-          APP_UPDATES_REPO="${APP_UPDATES_REPO:-asanlamma-ux/MIYO}"
+          APP_UPDATES_REPO="${APP_UPDATES_REPO:-Torro101/MIYO}"
           APP_SOURCE_URL="${APP_SOURCE_URL:-https://github.com/${APP_UPDATES_REPO}}"
           APP_ICON_URL="${APP_ICON_URL:-https://raw.githubusercontent.com/${APP_UPDATES_REPO}/refs/heads/main/.github/assets/icon.png}"
           ./gradlew assembleRelease --stacktrace \
@@ -268,6 +268,14 @@ jobs:
           fi
           (cd "${model_dir}" && zip -q -r "${GITHUB_WORKSPACE}/release/miyo-refinement-models-v${MIYO_VERSION_NAME}.zip" .)
 
+      - name: Generate Release Checksums
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          cd release
+          sha256sum *-release.apk miyo-refinement-models-*.zip > "Miyo-v${MIYO_VERSION_NAME}-checksums.sha256"
+          cat "Miyo-v${MIYO_VERSION_NAME}-checksums.sha256"
+
       - name: Upload Release APK
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
@@ -282,6 +290,14 @@ jobs:
         with:
           name: miyo-downloadable-refinement-models
           path: release/miyo-refinement-models-*.zip
+          if-no-files-found: error
+
+      - name: Upload Release Checksums
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v7
+        with:
+          name: miyo-release-checksums
+          path: release/*.sha256
           if-no-files-found: error
 
       - name: Validate Release Tag
@@ -310,6 +326,7 @@ jobs:
           files: |
             release/*-release.apk
             release/miyo-refinement-models-*.zip
+            release/*.sha256
 
   native-build:
     runs-on: ubuntu-latest

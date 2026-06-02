@@ -7,8 +7,8 @@
 
   [![Android 5.0+](https://img.shields.io/badge/Android-5.0%2B-3ddc84?logo=android&logoColor=white)](#)
   [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-  [![GitHub Releases](https://img.shields.io/github/v/release/asanlamma-ux/MIYO?include_prereleases&label=release)](https://github.com/asanlamma-ux/MIYO/releases)
-  [![GitHub Actions](https://img.shields.io/github/actions/workflow/status/asanlamma-ux/MIYO/ci.yml?branch=main&label=CI)](https://github.com/asanlamma-ux/MIYO/actions)
+  [![GitHub Releases](https://img.shields.io/github/v/release/Torro101/MIYO?include_prereleases&label=release)](https://github.com/Torro101/MIYO/releases)
+  [![GitHub Actions](https://img.shields.io/github/actions/workflow/status/Torro101/MIYO/ci.yml?branch=main&label=CI)](https://github.com/Torro101/MIYO/actions)
 </div>
 
 ## Overview
@@ -79,7 +79,7 @@ Plugin compatibility depends on the plugin API used by the app version. When a p
 
 ## Releases
 
-Official public builds are distributed through [GitHub Releases](https://github.com/asanlamma-ux/MIYO/releases). Android will only install an update over an existing installation when the package name and signing certificate match the installed app.
+Official public builds are distributed through [GitHub Releases](https://github.com/Torro101/MIYO/releases). Android will only install an update over an existing installation when the package name and signing certificate match the installed app.
 
 For public distribution:
 
