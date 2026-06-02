@@ -2,7 +2,7 @@
 <resources>
 
 	<style name="Base.V31.Miyo" parent="Base.V27.Miyo">
-		<item name="android:windowSplashScreenAnimatedIcon">@drawable/avd_splash</item>
+		<item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
 		<item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
 		<item name="android:windowSplashScreenBackground">@color/miyo_splash_background</item>
 	</style>
