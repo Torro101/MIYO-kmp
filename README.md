@@ -9,6 +9,8 @@
   [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
   [![GitHub Releases](https://img.shields.io/github/v/release/Torro101/MIYO?include_prereleases&label=release)](https://github.com/Torro101/MIYO/releases)
   [![GitHub Actions](https://img.shields.io/github/actions/workflow/status/Torro101/MIYO/ci.yml?branch=main&label=CI)](https://github.com/Torro101/MIYO/actions)
+
+  [Project Website](https://torro101.github.io/koharu-miyo/)
 </div>
 
 ## Overview
