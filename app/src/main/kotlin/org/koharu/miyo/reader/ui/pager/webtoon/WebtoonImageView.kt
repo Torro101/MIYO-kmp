@@ -119,6 +119,12 @@ class WebtoonImageView @JvmOverloads constructor(
 	override fun onReady() {
 		super.onReady()
 		adjustScale()
+		clampScrollToRange()
+	}
+
+	override fun onImageLoaded() {
+		super.onImageLoaded()
+		clampScrollToRange()
 	}
 
 	private fun scrollToInternal(pos: Int) {
@@ -137,6 +143,16 @@ class WebtoonImageView @JvmOverloads constructor(
 		scrollPos = pos
 		ct.set(sWidth / 2f, (height / 2f + pos.toFloat()) / scale)
 		setScaleAndCenter(scale, ct)
+	}
+
+	private fun clampScrollToRange() {
+		if (!isReady) {
+			return
+		}
+		val maxScroll = getScrollRange()
+		if (scrollPos > maxScroll) {
+			scrollToInternal(maxScroll)
+		}
 	}
 
 	private fun adjustScale() {
