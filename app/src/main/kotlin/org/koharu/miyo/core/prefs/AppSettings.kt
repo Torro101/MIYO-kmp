@@ -577,8 +577,11 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		get() = prefs.getBoolean(KEY_DOWNLOAD_IMAGE_ENHANCEMENT, false)
 
 	val imageEnhancementModelId: String
-		get() = prefs.getString(KEY_IMAGE_ENHANCEMENT_MODEL, IMAGE_ENHANCEMENT_MODEL_DEFAULT)
-			?.takeIf { it.isNotBlank() } ?: IMAGE_ENHANCEMENT_MODEL_DEFAULT
+		get() {
+			val raw = prefs.getString(KEY_IMAGE_ENHANCEMENT_MODEL, IMAGE_ENHANCEMENT_MODEL_DEFAULT)
+				?.takeIf { it.isNotBlank() } ?: IMAGE_ENHANCEMENT_MODEL_DEFAULT
+			return LEGACY_IMAGE_ENHANCEMENT_MODELS[raw] ?: raw
+		}
 
 	val shouldDeleteOriginalAfterRefinement: Boolean
 		get() = prefs.getBoolean(KEY_DELETE_ORIGINAL_AFTER_REFINEMENT, true)
@@ -916,7 +919,13 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		private const val KEY_IMAGES_PROXY_OLD = "images_proxy"
 
 		// values
-		private const val IMAGE_ENHANCEMENT_MODEL_DEFAULT = "general-x4v3"
+		private const val IMAGE_ENHANCEMENT_MODEL_DEFAULT = "realesrgan-x4plus"
+		private val LEGACY_IMAGE_ENHANCEMENT_MODELS = mapOf(
+			"general-x4v3" to "realesrgan-x4plus",
+			"fast-x2v1" to "realesrgan-x4plus",
+			"sharp-x4v1" to "ultrasharp-x4",
+			"webtoon-x4v1" to "realesrgan-x4plus",
+		)
 		private const val READER_CROP_PAGED = 1
 		private const val READER_CROP_WEBTOON = 2
 	}

@@ -42,7 +42,7 @@
 		android:title="@string/download_image_enhancement" />
 
 	<ListPreference
-		android:defaultValue="general-x4v3"
+		android:defaultValue="realesrgan-x4plus"
 		android:entries="@array/image_enhancement_models"
 		android:entryValues="@array/image_enhancement_model_values"
 		android:key="image_enhancement_model"

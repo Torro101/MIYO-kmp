@@ -110,7 +110,7 @@
 	     assigns a custom summary, and Preference.setSummary() throws an
 	     IllegalStateException while a SummaryProvider is attached. -->
 	<ListPreference
-		android:defaultValue="general-x4v3"
+		android:defaultValue="realesrgan-x4plus"
 		android:entries="@array/image_enhancement_models"
 		android:entryValues="@array/image_enhancement_model_values"
 		android:key="image_enhancement_model"
