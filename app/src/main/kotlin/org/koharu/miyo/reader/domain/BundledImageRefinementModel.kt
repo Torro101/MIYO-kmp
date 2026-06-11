@@ -24,7 +24,7 @@ class BundledImageRefinementModel @Inject constructor(
 	private val profileCache = ConcurrentHashMap<String, Profile>()
 
 	fun profileFor(modelId: String): Profile {
-		val safeModelId = modelId.takeIf { it in MODEL_IDS } ?: DEFAULT_MODEL_ID
+		val safeModelId = normalizeModelId(modelId).takeIf { it in MODEL_IDS } ?: DEFAULT_MODEL_ID
 		return profileCache.getOrPut(safeModelId) {
 			loadExternalProfile(safeModelId)
 				?: loadBundledProfile(safeModelId)
@@ -35,7 +35,7 @@ class BundledImageRefinementModel @Inject constructor(
 	}
 
 	fun isModelAvailable(modelId: String): Boolean {
-		val safeModelId = modelId.takeIf { it in MODEL_IDS } ?: return false
+		val safeModelId = normalizeModelId(modelId).takeIf { it in MODEL_IDS } ?: return false
 		if (safeModelId == DEFAULT_MODEL_ID) {
 			return true
 		}
@@ -189,7 +189,7 @@ class BundledImageRefinementModel @Inject constructor(
 	}
 
 	data class Profile(
-		val id: String = "general-x4v3",
+		val id: String = "realesrgan-x4plus",
 		val version: Int = 1,
 		val targetLongSidePx: Int = 1800,
 		val minUpscaleFactor: Float = 1.08f,
@@ -218,16 +218,34 @@ class BundledImageRefinementModel @Inject constructor(
 	}
 
 	companion object {
-		const val DEFAULT_MODEL_ID = "general-x4v3"
-		const val DEFAULT_ASSET_PATH = "models/general-x4v3.json"
+		const val DEFAULT_MODEL_ID = "realesrgan-x4plus"
+		const val DEFAULT_ASSET_PATH = "models/realesrgan-x4plus.json"
 		const val ASSET_MODEL_DIR = "models"
 		const val EXTERNAL_MODEL_DIR = "refinement-models"
-		const val WEBTOON_MODEL_ID = "webtoon-x4v1"
+
+		// RealESRGAN x4plus is also the best choice for tall webtoon pages,
+		// 4x-UltraSharp may oversharpen them.
+		const val WEBTOON_MODEL_ID = DEFAULT_MODEL_ID
+
+		// Ranked lineup:
+		// 1. realesrgan-x4plus - best all-around for mixed content
+		// 2. ultrasharp-x4 - sharp text, line art, speech bubbles
+		// 3. realesrgan-x4plus-anime-6b - B&W manga, anime line art
+		// 4. remacri-x4 - texture recovery for old/noisy scans
 		val MODEL_IDS = setOf(
 			DEFAULT_MODEL_ID,
-			"fast-x2v1",
-			"sharp-x4v1",
-			WEBTOON_MODEL_ID,
+			"ultrasharp-x4",
+			"realesrgan-x4plus-anime-6b",
+			"remacri-x4",
 		)
+
+		private val LEGACY_MODEL_IDS = mapOf(
+			"general-x4v3" to DEFAULT_MODEL_ID,
+			"fast-x2v1" to DEFAULT_MODEL_ID,
+			"sharp-x4v1" to "ultrasharp-x4",
+			"webtoon-x4v1" to DEFAULT_MODEL_ID,
+		)
+
+		fun normalizeModelId(modelId: String): String = LEGACY_MODEL_IDS[modelId] ?: modelId
 	}
 }

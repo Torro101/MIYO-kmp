@@ -113,16 +113,16 @@
 		<item>8</item>
 	</string-array>
 	<string-array name="image_enhancement_models" translatable="false">
-		<item>General x4v3 (bundled)</item>
-		<item>Fast x2v1</item>
-		<item>Sharp x4v1</item>
-		<item>Webtoon x4v1</item>
+		<item>RealESRGAN x4plus - Best all-around (webtoons, comics, manga, covers)</item>
+		<item>4x-UltraSharp - Sharp text, line art and speech bubbles</item>
+		<item>RealESRGAN x4plus Anime 6B - B&amp;W manga and anime line art</item>
+		<item>4x-Foolhardy Remacri - Texture recovery for old or noisy scans</item>
 	</string-array>
 	<string-array name="image_enhancement_model_values" translatable="false">
-		<item>general-x4v3</item>
-		<item>fast-x2v1</item>
-		<item>sharp-x4v1</item>
-		<item>webtoon-x4v1</item>
+		<item>realesrgan-x4plus</item>
+		<item>ultrasharp-x4</item>
+		<item>realesrgan-x4plus-anime-6b</item>
+		<item>remacri-x4</item>
 	</string-array>
 	<string-array name="tracker_frequency" translatable="false">
 		<item>@string/manual</item>

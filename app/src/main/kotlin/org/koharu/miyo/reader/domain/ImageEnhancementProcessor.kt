@@ -176,6 +176,7 @@ class ImageEnhancementProcessor @Inject constructor(
 				inPreferredConfig = Bitmap.Config.ARGB_8888
 			},
 		) ?: return null
+		val sourcePixels = sourceBitmap.width.toLong() * sourceBitmap.height.toLong()
 		var scaledBitmap: Bitmap? = null
 		var enhancedBitmap: Bitmap? = null
 		return try {
@@ -185,7 +186,7 @@ class ImageEnhancementProcessor @Inject constructor(
 				}
 			}
 			enhancedBitmap = workingBitmap.applyMildEnhancement(profile)
-			writeBitmap(outputFile, sourceFile, enhancedBitmap, encodings, profile)
+			writeBitmap(outputFile, sourceFile, enhancedBitmap, encodings, profile, sourcePixels)
 		} finally {
 			enhancedBitmap?.recycle()
 			scaledBitmap?.recycle()
@@ -204,13 +205,13 @@ class ImageEnhancementProcessor @Inject constructor(
 		var outputBitmap: Bitmap? = null
 		return try {
 			outputBitmap = Bitmap.createBitmap(bounds.width, bounds.height, Bitmap.Config.ARGB_8888)
+			val sourcePixels = bounds.width.toLong() * bounds.height.toLong()
 			val stripHeight = bounds.stripHeight(profile)
 			var y = 0
 			while (y < bounds.height) {
 				val height = min(stripHeight, bounds.height - y)
 				val region = Rect(0, y, bounds.width, y + height)
 				var stripBitmap: Bitmap? = null
-				var scaledBitmap: Bitmap? = null
 				var enhancedBitmap: Bitmap? = null
 				try {
 					stripBitmap = decoder.decodeRegion(
@@ -219,21 +220,18 @@ class ImageEnhancementProcessor @Inject constructor(
 							inPreferredConfig = Bitmap.Config.ARGB_8888
 						},
 					) ?: return null
-					val workingBitmap = stripBitmap.scaleIfUseful(profile).also {
-						if (it !== stripBitmap) {
-							scaledBitmap = it
-						}
-					}
-					enhancedBitmap = workingBitmap.applyMildEnhancement(profile)
+					// Do not upscale strips: the output canvas keeps the source
+					// bounds, so a scaled strip would overflow and corrupt the
+					// strips drawn below it.
+					enhancedBitmap = stripBitmap.applyMildEnhancement(profile)
 					Canvas(outputBitmap).drawBitmap(enhancedBitmap, 0f, y.toFloat(), null)
 				} finally {
 					enhancedBitmap?.recycle()
-					scaledBitmap?.recycle()
 					stripBitmap?.recycle()
 				}
 				y += height
 			}
-			writeBitmap(outputFile, sourceFile, outputBitmap, encodings, profile)
+			writeBitmap(outputFile, sourceFile, outputBitmap, encodings, profile, sourcePixels)
 		} catch (e: Exception) {
 			e.printStackTraceDebug()
 			outputFile.delete()
@@ -250,8 +248,15 @@ class ImageEnhancementProcessor @Inject constructor(
 		resultBitmap: Bitmap,
 		encodings: List<OutputEncoding>,
 		profile: BundledImageRefinementModel.Profile,
+		sourcePixels: Long,
 	): OutputEncoding? {
-		val maxOutputBytes = sourceFile.maxEnhancedOutputBytes(profile)
+		val resultPixels = resultBitmap.width.toLong() * resultBitmap.height.toLong()
+		val pixelRatio = if (sourcePixels > 0L) {
+			(resultPixels.toDouble() / sourcePixels.toDouble()).coerceAtLeast(1.0)
+		} else {
+			1.0
+		}
+		val maxOutputBytes = sourceFile.maxEnhancedOutputBytes(profile, pixelRatio)
 		for (encoding in encodings) {
 			outputFile.delete()
 			val success = outputFile.outputStream().use { output ->
@@ -461,9 +466,16 @@ class ImageEnhancementProcessor @Inject constructor(
 		).distinctBy { it.quality }
 	}
 
-	private fun File.maxEnhancedOutputBytes(profile: BundledImageRefinementModel.Profile): Long {
+	private fun File.maxEnhancedOutputBytes(
+		profile: BundledImageRefinementModel.Profile,
+		pixelRatio: Double,
+	): Long {
 		val sourceSize = length().coerceAtLeast(MIN_OUTPUT_BYTES)
-		val profileLimit = (sourceSize.toDouble() * profile.maxOutputSizeRatio.toDouble()).roundToLong()
+		// Scale the size budget with the actual pixel growth of the result:
+		// an upscaled page is legitimately larger than the source file, so a
+		// flat source-size ratio rejected nearly every enhanced image and the
+		// enhancement silently did nothing.
+		val profileLimit = (sourceSize.toDouble() * profile.maxOutputSizeRatio.toDouble() * pixelRatio).roundToLong()
 		return profileLimit.coerceAtLeast(MIN_OUTPUT_BYTES)
 	}
 
@@ -485,7 +497,7 @@ class ImageEnhancementProcessor @Inject constructor(
 
 	private companion object {
 		private const val CACHE_PREFIX = "image-enhancement"
-		private const val CACHE_VERSION = 3
+		private const val CACHE_VERSION = 4
 		private const val PNG_QUALITY = 100
 		private val MIME_TYPE_PNG = MimeType("image/png")
 		private val MIME_TYPE_JPEG = MimeType("image/jpeg")
