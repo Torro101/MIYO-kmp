@@ -30,6 +30,10 @@ class RefinementModelSettingsHelper(
 	}
 
 	fun bindModelSummary(preference: androidx.preference.ListPreference) {
+		// Preference.setSummary() throws an IllegalStateException if a
+		// SummaryProvider is attached (e.g. useSimpleSummaryProvider in XML),
+		// which crashed the Reader settings screen on open. Clear it first.
+		preference.summaryProvider = null
 		val selected = preference.value ?: BundledImageRefinementModel.DEFAULT_MODEL_ID
 		val entryIndex = preference.entryValues?.indexOf(selected) ?: -1
 		val label = if (entryIndex >= 0) {

@@ -31,7 +31,11 @@ object ImageReEncoder {
             if (originalSize < 8 * 1024) return@withContext null // skip small files
 
             val options = BitmapFactory.Options().apply {
-                inPreferredConfig = Bitmap.Config.RGB_565
+                // ARGB_8888 is required here: decoding to RGB_565 permanently
+                // destroys color depth and causes visible banding in the
+                // re-encoded page, since the WebP output is generated from
+                // the decoded bitmap.
+                inPreferredConfig = Bitmap.Config.ARGB_8888
             }
             val bitmap = BitmapFactory.decodeFile(source.absolutePath, options)
                 ?: return@withContext null
