@@ -150,10 +150,10 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 
 	fun relayoutChildren() {
 		forEach { child ->
-			(child as WebtoonFrameLayout).target.requestLayout()
+			(child as? WebtoonFrameLayout)?.target?.requestLayout()
 		}
 		detachedViews.forEach { child ->
-			(child as WebtoonFrameLayout).target.requestLayout()
+			(child as? WebtoonFrameLayout)?.target?.requestLayout()
 		}
 	}
 
@@ -163,7 +163,7 @@ class WebtoonRecyclerView @JvmOverloads constructor(
 		}
 		isFixingScroll = true
 		for (child in this) {
-			val ssiv = (child as WebtoonFrameLayout).target
+			val ssiv = (child as? WebtoonFrameLayout)?.target ?: continue
 			if (adjustScroll(child, ssiv)) {
 				break
 			}
