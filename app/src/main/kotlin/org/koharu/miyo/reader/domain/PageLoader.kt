@@ -574,10 +574,12 @@ class PageLoader @Inject constructor(
 		@Blocking
 		private fun Uri.exists(): Boolean = when {
 			isFileUri() -> toFile().exists()
-			isZipUri() -> {
-				val file = File(requireNotNull(schemeSpecificPart))
-				file.exists() && ZipFile(file).use { it.getEntry(fragment) != null }
-			}
+			// Do not open the ZIP here: this runs on every loadPageAsync() call
+			// (often on the main thread) and parsing the central directory of a
+			// large CBZ archive per page causes jank while reading downloaded
+			// manga. A stale/missing entry is handled by the load failing and
+			// being retried with a fresh task.
+			isZipUri() -> File(requireNotNull(schemeSpecificPart)).exists()
 
 			else -> false
 		}
@@ -585,10 +587,7 @@ class PageLoader @Inject constructor(
 		@Blocking
 		private fun Uri.isTargetNotEmpty(): Boolean = when {
 			isFileUri() -> toFile().isNotEmpty()
-			isZipUri() -> {
-				val file = File(requireNotNull(schemeSpecificPart))
-				file.exists() && ZipFile(file).use { (it.getEntry(fragment)?.size ?: 0L) != 0L }
-			}
+			isZipUri() -> File(requireNotNull(schemeSpecificPart)).isNotEmpty()
 
 			else -> false
 		}
