@@ -973,4 +973,14 @@
 	<string name="plugin_not_found">No plugin found for source: %1$s</string>
 	<string name="set_plugin_name">Set name for this plugin</string>
 	<string name="unknown_source">Unknown source: %1$s</string>
+
+	<!-- Settings section titles -->
+	<string name="section_reading_mode">Reading mode</string>
+	<string name="section_zoom_layout">Zoom &amp; layout</string>
+	<string name="section_controls">Navigation &amp; controls</string>
+	<string name="section_image_enhancement">Image enhancement</string>
+	<string name="section_display">Display</string>
+	<string name="section_performance">Performance &amp; data</string>
+	<string name="section_storage">Storage</string>
+	<string name="section_downloading">Downloading</string>
 </resources>

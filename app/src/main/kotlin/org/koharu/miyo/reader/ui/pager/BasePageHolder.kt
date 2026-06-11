@@ -5,10 +5,13 @@ import android.content.ComponentCallbacks2.TRIM_MEMORY_COMPLETE
 import android.content.Context
 import android.content.res.Configuration
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
 import androidx.viewbinding.ViewBinding
 import com.davemorrissey.labs.subscaleview.DefaultOnImageEventListener
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -174,8 +177,27 @@ abstract class BasePageHolder<B : ViewBinding>(
 	final override fun onLowMemory() = onTrimMemory(TRIM_MEMORY_COMPLETE)
 
 	protected open fun onStateChanged(state: PageState) {
-		bindingInfo.layoutError.isVisible = state is PageState.Error
-		bindingInfo.layoutProgress.isVisible = state !is PageState.Empty && !state.isFinalState()
+		val showError = state is PageState.Error
+		val showProgress = state !is PageState.Empty && !state.isFinalState()
+		// Cross-fade the progress/error overlays instead of snapping. Only run
+		// the transition when visibility actually changes so frequent progress
+		// updates do not retrigger it.
+		if (bindingInfo.layoutError.isVisible != showError ||
+			bindingInfo.layoutProgress.isVisible != showProgress
+		) {
+			(binding.root as? ViewGroup)?.let { rootView ->
+				TransitionManager.beginDelayedTransition(
+					rootView,
+					Fade().apply {
+						duration = 200L
+						addTarget(bindingInfo.layoutError)
+						addTarget(bindingInfo.layoutProgress)
+					},
+				)
+			}
+		}
+		bindingInfo.layoutError.isVisible = showError
+		bindingInfo.layoutProgress.isVisible = showProgress
 		if (state.isFinalState() || state is PageState.Empty) {
 			bindingInfo.progressBar.hide()
 		} else {
