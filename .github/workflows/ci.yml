@@ -226,7 +226,7 @@ jobs:
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         run: |
           set -euo pipefail
-          expected_models=(general-x4v3 fast-x2v1 sharp-x4v1 webtoon-x4v1)
+          expected_models=(realesrgan-x4plus ultrasharp-x4 realesrgan-x4plus-anime-6b remacri-x4)
           for apk in release/*-release.apk; do
             model_entries="$(unzip -Z1 "${apk}" | grep '^assets/models/' | sed '/^$/d' | sort || true)"
             model_count="$(printf '%s\n' "${model_entries}" | sed '/^$/d' | wc -l | tr -d ' ')"
@@ -254,9 +254,8 @@ jobs:
           set -euo pipefail
           model_dir="${RUNNER_TEMP}/miyo-refinement-models"
           mkdir -p "${model_dir}"
-          cp app/src/main/assets/models/general-x4v3.json "${model_dir}/general-x4v3.json"
           cp .github/model-assets/refinement/*.json "${model_dir}/"
-          expected_models=(general-x4v3 fast-x2v1 sharp-x4v1 webtoon-x4v1)
+          expected_models=(realesrgan-x4plus ultrasharp-x4 realesrgan-x4plus-anime-6b remacri-x4)
           for model in "${expected_models[@]}"; do
             file="${model_dir}/${model}.json"
             if [ ! -s "${file}" ]; then
@@ -288,7 +287,7 @@ jobs:
         if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7
         with:
-          name: miyo-release-apk-with-general-x4v3
+          name: miyo-release-apk-with-refinement-models
           path: release/*-release.apk
           if-no-files-found: error
 
