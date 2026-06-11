@@ -106,14 +106,16 @@
 		android:summary="@string/reader_image_enhancement_summary"
 		android:title="@string/reader_image_enhancement" />
 
+	<!-- Do not set useSimpleSummaryProvider here: RefinementModelSettingsHelper
+	     assigns a custom summary, and Preference.setSummary() throws an
+	     IllegalStateException while a SummaryProvider is attached. -->
 	<ListPreference
 		android:defaultValue="general-x4v3"
 		android:entries="@array/image_enhancement_models"
 		android:entryValues="@array/image_enhancement_model_values"
 		android:key="image_enhancement_model"
 		android:summary="@string/image_enhancement_model_summary"
-		android:title="@string/image_enhancement_model"
-		app:useSimpleSummaryProvider="true" />
+		android:title="@string/image_enhancement_model" />
 
 	<Preference
 		android:key="import_refinement_models"

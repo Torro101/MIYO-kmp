@@ -13,7 +13,11 @@ class WebtoonFrameLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
 	private var _target: WebtoonImageView? = null
-	val target: WebtoonImageView
+
+	// Nullable: findViewById may return null while the holder is being
+	// created or recycled. Callers must handle the null case instead of
+	// crashing the scroll dispatch with an NPE.
+	val target: WebtoonImageView?
 		get() {
 			val cached = _target
 			// Stale-cache defense: onDetachedFromWindow below clears _target on
@@ -38,7 +42,7 @@ class WebtoonFrameLayout @JvmOverloads constructor(
 		if (dy == 0) {
 			return 0
 		}
-		val ssiv = target
+		val ssiv = target ?: return 0
 		val oldScroll = ssiv.getScroll()
 		ssiv.scrollBy(dy)
 		return ssiv.getScroll() - oldScroll

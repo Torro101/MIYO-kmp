@@ -36,12 +36,20 @@ class WebtoonHolder(
 	override fun onReady() {
 		binding.ssiv.colorFilter = settings.colorFilter?.toColorFilter()
 		with(binding.ssiv) {
-			// Always prefer the saved scroll position when it is non-zero;
-			// itemView.top is usually 0 for a freshly bound holder at the top
-			// of the RecyclerView, so the old `else -> 0` branch overwrote
-			// the saved scroll for nearly every page. scrollTo() itself
-			// short-circuits while !isReady, so we don't need to gate here.
-			scrollTo(if (scrollToRestore != 0) scrollToRestore else 0)
+			// Restore the saved scroll if present. Otherwise, when the page
+			// re-binds while partially scrolled off the top of the viewport
+			// (itemView.top < 0), its internal scroll must start at the
+			// bottom (getScrollRange()). Starting at 0 makes the nested
+			// scroll dispatcher consume all downward scroll panning through
+			// the page's full internal range, which freezes the webtoon
+			// scroll on tall pages.
+			scrollTo(
+				when {
+					scrollToRestore != 0 -> scrollToRestore
+					itemView.top < 0 -> getScrollRange()
+					else -> 0
+				},
+			)
 			scrollToRestore = 0
 		}
 		requestParentScrollSync()
