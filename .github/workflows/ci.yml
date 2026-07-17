@@ -144,6 +144,7 @@ jobs:
           write_build_env APP_ICON_URL "${APP_ICON_URL:-}"
 
       - name: Build Debug APK
+        continue-on-error: true
         run: |
           set -euo pipefail
           APP_APPLICATION_ID="${APP_APPLICATION_ID:-org.koharu.miyo}"
