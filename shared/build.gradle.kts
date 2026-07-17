@@ -32,13 +32,13 @@ kotlin {
 			implementation(libs.kotlinx.serialization.json)
 			implementation(libs.kotlinx.coroutines.core)
 			implementation(libs.okio)
-			implementation(libs.json)
-			implementation(libs.jsoup)
 		}
 
 		androidMain.dependencies {
 			implementation(libs.kotlinx.coroutines.android)
 			implementation(libs.kotlinx.coroutines.guava)
+			implementation(libs.json)
+			implementation(libs.jsoup)
 
 			// OkHttp
 			implementation(libs.okhttp)
