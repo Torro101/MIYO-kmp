@@ -1,5 +1,8 @@
 [versions]
 acra = "5.13.1"
+# KMP / Android SDK levels (shared + app)
+android-compileSdk = "36"
+android-minSdk = "21"
 #noinspection GradleDependency
 # AndroidX Activity 1.12.x raises minSdk to 23; keep 1.11.0 while app minSdk is 21.
 activity = "1.11.0"
@@ -122,7 +125,8 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp" }
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycle" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }

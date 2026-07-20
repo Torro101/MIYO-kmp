@@ -75,17 +75,17 @@ actual class Preferences(private val defaults: NSUserDefaults) {
 	}
 
 	actual fun observe(key: String): Flow<String> {
-		val state = MutableStateFlow(getString(key))
+		val state = MutableStateFlow(getString(key, ""))
 		return state
 	}
 
 	actual fun observeInt(key: String): Flow<Int> {
-		val state = MutableStateFlow(getInt(key))
+		val state = MutableStateFlow(getInt(key, 0))
 		return state
 	}
 
 	actual fun observeBoolean(key: String): Flow<Boolean> {
-		val state = MutableStateFlow(getBoolean(key))
+		val state = MutableStateFlow(getBoolean(key, false))
 		return state
 	}
 }

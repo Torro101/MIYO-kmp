@@ -1,10 +1,8 @@
 package org.koharu.miyo.list.ui.model
 
-data class LoadingFooter @JvmOverloads constructor(
+data class LoadingFooter(
 	val key: Int = 0,
 ) : ListModel {
-
-	override fun areItemsTheSame(other: ListModel): Boolean {
-		return other is LoadingFooter && key == other.key
-	}
+	override fun areItemsTheSame(other: ListModel): Boolean =
+		other is LoadingFooter && key == other.key
 }

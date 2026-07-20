@@ -133,13 +133,17 @@ kotlin {
 		}
 
 		iosMain.dependencies {
+			implementation(libs.kotlinx.coroutines.core)
+			implementation(libs.okio)
 		}
 	}
 }
 
 android {
-	namespace = "org.koharu.miyo.shared"
+	// Keep namespace org.koharu.miyo so existing R / BuildConfig imports resolve.
+	namespace = "org.koharu.miyo"
 	compileSdk = libs.versions.android.compileSdk.get().toInt()
+	ndkVersion = "27.0.12077973"
 	defaultConfig {
 		minSdk = libs.versions.android.minSdk.get().toInt()
 		externalNativeBuild {
@@ -151,6 +155,7 @@ android {
 		ndk {
 			abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
 		}
+		consumerProguardFiles("consumer-rules.pro")
 	}
 	compileOptions {
 		isCoreLibraryDesugaringEnabled = true
@@ -191,6 +196,11 @@ android {
 		disable += listOf(
 			"MissingTranslation", "PrivateResource", "SetJavaScriptEnabled", "SimpleDateFormat"
 		)
+	}
+	buildFeatures {
+		// Needed for org.koharu.miyo.BuildConfig references inside androidMain.
+		buildConfig = true
+		viewBinding = true
 	}
 }
 

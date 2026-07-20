@@ -9,6 +9,8 @@ data class ReadingTime(
 	val hours: Int,
 	val isContinue: Boolean,
 ) {
+	fun toEstimate(): ReadingTimeEstimate =
+		ReadingTimeEstimate(minutes = minutes, hours = hours, isContinue = isContinue)
 
 	fun format(resources: Resources): String = when {
 		hours == 0 && minutes == 0 -> resources.getString(R.string.less_than_minute)
@@ -26,5 +28,13 @@ data class ReadingTime(
 		hours == 0 -> resources.getString(R.string.minutes_short, minutes)
 		minutes == 0 -> resources.getString(R.string.hours_short, hours)
 		else -> resources.getString(R.string.hours_minutes_short, hours, minutes)
+	}
+
+	companion object {
+		fun fromEstimate(estimate: ReadingTimeEstimate): ReadingTime = ReadingTime(
+			minutes = estimate.minutes,
+			hours = estimate.hours,
+			isContinue = estimate.isContinue,
+		)
 	}
 }

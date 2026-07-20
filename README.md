@@ -105,7 +105,15 @@ For public distribution:
 
 ## Building
 
-This project is an Android/Kotlin application with native C++ sources. A normal Android development environment with the Android Gradle Plugin, Android SDK/NDK, CMake, and a JDK is required to build it locally.
+This project is a **Kotlin Multiplatform** codebase:
+
+- `:shared` — KMP library (Android + iOS targets; Android holds UI, Room, Hilt, NDK)
+- `:app` — thin Android application shell
+- `iosApp/` — SwiftUI host for the shared framework (build framework on macOS)
+
+See [docs/KMP_MIGRATION_STATUS.md](docs/KMP_MIGRATION_STATUS.md) and [iosApp/README.md](iosApp/README.md).
+
+A normal Android development environment with the Android Gradle Plugin, Android SDK/NDK, CMake, and a JDK is required to build the Android app. iOS framework linking requires macOS + Xcode.
 
 Release signing should be configured through private local files or encrypted CI secrets. Never commit signing material to the repository.
 

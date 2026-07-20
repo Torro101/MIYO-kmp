@@ -106,11 +106,11 @@ data class ChapterListItem(
 
 	companion object {
 
-		const val FLAG_UNREAD: Byte = 2
-		const val FLAG_CURRENT: Byte = 4
-		const val FLAG_NEW: Byte = 8
-		const val FLAG_BOOKMARKED: Byte = 16
-		const val FLAG_DOWNLOADED: Byte = 32
-		const val FLAG_GRID: Byte = 64
+		const val FLAG_UNREAD: Byte = ChapterListFlags.FLAG_UNREAD
+		const val FLAG_CURRENT: Byte = ChapterListFlags.FLAG_CURRENT
+		const val FLAG_NEW: Byte = ChapterListFlags.FLAG_NEW
+		const val FLAG_BOOKMARKED: Byte = ChapterListFlags.FLAG_BOOKMARKED
+		const val FLAG_DOWNLOADED: Byte = ChapterListFlags.FLAG_DOWNLOADED
+		const val FLAG_GRID: Byte = ChapterListFlags.FLAG_GRID
 	}
 }

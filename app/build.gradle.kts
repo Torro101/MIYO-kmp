@@ -138,12 +138,7 @@ android {
 			"MissingTranslation", "PrivateResource", "SetJavaScriptEnabled", "SimpleDateFormat"
 		)
 	}
-	ndkVersion = "27.0.12077973"
-	externalNativeBuild {
-		cmake {
-			path = file("src/main/cpp/CMakeLists.txt")
-		}
-	}
+	// Native C++ lives in :shared (androidMain/cpp). App is a thin Android shell.
 	testOptions {
 		isIncludeAndroidResources = true
 		isReturnDefaultValues = false

@@ -37,3 +37,13 @@ __pycache__/
 .dolt/
 *.db
 .beads-credential-key
+
+# KMP / native / Xcode
+**/build/
+shared/build/
+app/build/
+.cxx/
+**/.externalNativeBuild/
+iosApp/**/xcuserdata/
+iosApp/**/DerivedData/
+*.xcuserstate

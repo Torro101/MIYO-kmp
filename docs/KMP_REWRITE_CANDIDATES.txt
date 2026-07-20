@@ -1,0 +1,10 @@
+org/koharu/miyo/core/model/HistoryMappers.kt
+org/koharu/miyo/core/util/MultiMutex.kt
+org/koharu/miyo/favourites/data/EntityMapping.kt
+org/koharu/miyo/history/data/EntityMapping.kt
+org/koharu/miyo/local/data/CbzFilter.kt
+org/koharu/miyo/local/data/DownloadResumeTracker.kt
+org/koharu/miyo/local/data/TempFileFilter.kt
+org/koharu/miyo/settings/storage/DirectoryModel.kt
+org/koharu/miyo/settings/storage/directories/DirectoryConfigModel.kt
+org/koharu/miyo/tracker/data/EntityMapping.kt
