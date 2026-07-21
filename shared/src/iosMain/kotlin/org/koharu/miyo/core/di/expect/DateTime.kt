@@ -1,7 +1,5 @@
 package org.koharu.miyo.core.di.expect
 
-import kotlin.system.getTimeMillis
-
 actual class DateTime(private val millis: Long) {
 	actual val epochMillis: Long get() = millis
 	actual val year: Int get() = 1970
@@ -15,7 +13,10 @@ actual class DateTime(private val millis: Long) {
 	actual fun toString(format: String): String = millis.toString()
 }
 
-actual fun currentDateTime(): DateTime = DateTime(getTimeMillis())
+// Simple epoch clock for K/N stubs (no deprecated getTimeMillis).
+private var stubClockMs: Long = 1_700_000_000_000L
+
+actual fun currentDateTime(): DateTime = DateTime(stubClockMs++)
 
 actual fun dateTimeFromEpochMillis(epochMillis: Long): DateTime = DateTime(epochMillis)
 

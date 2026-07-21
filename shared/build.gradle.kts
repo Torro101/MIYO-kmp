@@ -7,6 +7,7 @@ plugins {
 	alias(libs.plugins.ksp)
 	alias(libs.plugins.hilt)
 	alias(libs.plugins.room)
+	id("kotlin-parcelize")
 }
 
 kotlin {
@@ -126,6 +127,8 @@ android {
 		buildConfigField("String", "APPLICATION_ID", "\"org.koharu.miyo\"")
 		buildConfigField("int", "VERSION_CODE", "13")
 		buildConfigField("String", "VERSION_NAME", "\"0.0.6-beta\"")
+		buildConfigField("String", "UPDATES_REPO", "\"Torro101/MIYO\"")
+		buildConfigField("String", "RELEASE_CERT_SHA256", "\"\"")
 		externalNativeBuild {
 			cmake {
 				cppFlags += listOf("-std=c++20", "-Ofast")

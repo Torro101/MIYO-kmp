@@ -1,7 +1,5 @@
 package org.koharu.miyo.core.di.expect
 
-import kotlin.system.getTimeMillis
-
 actual object DateUtils {
 	actual fun formatDate(epochMillis: Long, pattern: String): String = epochMillis.toString()
 
@@ -9,7 +7,7 @@ actual object DateUtils {
 
 	actual fun parseDate(dateString: String, pattern: String): Long? = dateString.toLongOrNull()
 
-	actual fun getCurrentEpochMillis(): Long = getTimeMillis()
+	actual fun getCurrentEpochMillis(): Long = currentDateTime().toEpochMilliseconds()
 }
 
 actual fun createDateUtils(): DateUtils = DateUtils

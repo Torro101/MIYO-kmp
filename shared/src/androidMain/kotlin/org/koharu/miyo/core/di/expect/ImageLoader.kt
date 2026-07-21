@@ -1,20 +1,18 @@
 package org.koharu.miyo.core.di.expect
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
-import coil3.ImageLoader
+import coil3.ImageLoader as CoilImageLoader
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.request.allowHardware
 import coil3.toBitmap
 import okio.Path
-import okio.Path.Companion.toPath
+import org.koharu.miyo.core.os.AndroidContextHolder
 import java.io.File
 
 actual class ImageLoader(private val context: Context) {
-	private val loader = ImageLoader.Builder(context)
+	private val loader = CoilImageLoader.Builder(context)
 		.allowHardware(true)
 		.build()
 
@@ -27,27 +25,12 @@ actual class ImageLoader(private val context: Context) {
 			val result = loader.execute(request)
 			if (result is SuccessResult) {
 				val bitmap = result.image.toBitmap()
-				ImageResult(
-					isSuccess = true,
-					error = null,
-					width = bitmap.width,
-					height = bitmap.height
-				)
+				ImageResult(true, null, bitmap.width, bitmap.height)
 			} else {
-				ImageResult(
-					isSuccess = false,
-					error = "Failed to load image",
-					width = 0,
-					height = 0
-				)
+				ImageResult(false, "Failed to load image", 0, 0)
 			}
 		} catch (e: Exception) {
-			ImageResult(
-				isSuccess = false,
-				error = e.message,
-				width = 0,
-				height = 0
-			)
+			ImageResult(false, e.message, 0, 0)
 		}
 	}
 
@@ -56,27 +39,12 @@ actual class ImageLoader(private val context: Context) {
 			val file = File(path.toString())
 			val bitmap = BitmapFactory.decodeFile(file.absolutePath)
 			if (bitmap != null) {
-				ImageResult(
-					isSuccess = true,
-					error = null,
-					width = bitmap.width,
-					height = bitmap.height
-				)
+				ImageResult(true, null, bitmap.width, bitmap.height)
 			} else {
-				ImageResult(
-					isSuccess = false,
-					error = "Failed to decode image",
-					width = 0,
-					height = 0
-				)
+				ImageResult(false, "Failed to decode image", 0, 0)
 			}
 		} catch (e: Exception) {
-			ImageResult(
-				isSuccess = false,
-				error = e.message,
-				width = 0,
-				height = 0
-			)
+			ImageResult(false, e.message, 0, 0)
 		}
 	}
 
@@ -92,6 +60,5 @@ actual class ImageResult(
 	actual val height: Int,
 )
 
-actual fun createImageLoader(): ImageLoader {
-	return ImageLoader(org.koharu.miyo.core.os.AndroidContextHolder.applicationContext)
-}
+actual fun createImageLoader(): ImageLoader =
+	ImageLoader(AndroidContextHolder.applicationContext)
