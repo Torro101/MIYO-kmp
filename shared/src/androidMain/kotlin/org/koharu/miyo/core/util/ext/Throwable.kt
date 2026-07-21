@@ -15,8 +15,8 @@ import okio.ProtocolException
 import org.acra.ktx.sendSilentlyWithAcra
 import org.acra.ktx.sendWithAcra
 import org.jsoup.HttpStatusException
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.BadBackupFormatException
 import org.koharu.miyo.core.exceptions.CaughtException
 import org.koharu.miyo.core.exceptions.CloudFlareBlockedException

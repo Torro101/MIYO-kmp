@@ -93,5 +93,5 @@ actual class ImageResult actual constructor(
 )
 
 actual fun createImageLoader(): ImageLoader {
-	throw UnsupportedOperationException("Use Android-specific initialization with Context")
+	return ImageLoader(org.koharu.miyo.core.os.AndroidContextHolder.applicationContext)
 }

@@ -8,7 +8,7 @@ import okio.buffer
 import org.jetbrains.annotations.Blocking
 import org.json.JSONArray
 import org.json.JSONObject
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.model.isLocal
 import org.koharu.miyo.core.util.ext.printStackTraceDebug

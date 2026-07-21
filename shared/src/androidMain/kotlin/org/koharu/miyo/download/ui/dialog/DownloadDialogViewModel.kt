@@ -10,7 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.getPreferredBranch
 import org.koharu.miyo.core.model.parcelable.ParcelableManga
 import org.koharu.miyo.core.nav.AppRouter

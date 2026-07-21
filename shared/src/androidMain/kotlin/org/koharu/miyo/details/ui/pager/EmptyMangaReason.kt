@@ -1,7 +1,7 @@
 package org.koharu.miyo.details.ui.pager
 
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 enum class EmptyMangaReason(
 	@StringRes val msgResId: Int,

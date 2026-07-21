@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.AlertDialogFragment
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
@@ -18,7 +18,7 @@ import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.joinToStringWithLimit
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
-import org.koharu.miyo.databinding.DialogFavoriteBinding
+import org.koharu.miyo.shared.databinding.DialogFavoriteBinding
 import org.koharu.miyo.favourites.ui.categories.select.adapter.MangaCategoriesAdapter
 import org.koharu.miyo.favourites.ui.categories.select.model.MangaCategoryItem
 

@@ -9,7 +9,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.IOException
 import org.json.JSONObject
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.util.ext.parseJsonOrNull
 import org.koitharu.kotatsu.parsers.util.await

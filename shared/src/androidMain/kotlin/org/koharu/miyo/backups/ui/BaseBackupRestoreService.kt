@@ -7,7 +7,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import androidx.core.app.ShareCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ErrorReporterReceiver
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.ui.CoroutineIntentService

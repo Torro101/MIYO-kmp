@@ -22,8 +22,8 @@ import androidx.viewbinding.ViewBinding
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.ui.util.ActionModeDelegate

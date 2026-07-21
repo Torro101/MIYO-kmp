@@ -7,8 +7,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.BasePreferenceFragment
 import org.koharu.miyo.core.util.ext.addMenuProvider

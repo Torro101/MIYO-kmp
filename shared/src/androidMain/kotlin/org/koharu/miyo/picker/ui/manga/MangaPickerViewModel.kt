@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.parser.MangaDataRepository
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.favourites.domain.FavouritesRepository

@@ -8,7 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.network.BaseHttpClient
 import org.koharu.miyo.core.os.AppValidator
 import org.koharu.miyo.core.prefs.AppSettings

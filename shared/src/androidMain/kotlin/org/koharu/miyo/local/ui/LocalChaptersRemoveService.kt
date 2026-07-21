@@ -11,7 +11,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableSharedFlow
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ErrorReporterReceiver
 import org.koharu.miyo.core.model.parcelable.ParcelableManga
 import org.koharu.miyo.core.ui.CoroutineIntentService

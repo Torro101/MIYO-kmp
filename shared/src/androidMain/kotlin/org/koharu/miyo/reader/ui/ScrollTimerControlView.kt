@@ -17,14 +17,14 @@ import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.ReaderMode
 import org.koharu.miyo.core.prefs.observeAsStateFlow
 import org.koharu.miyo.core.util.ext.isAnimationsEnabled
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.parentView
-import org.koharu.miyo.databinding.ViewScrollTimerBinding
+import org.koharu.miyo.shared.databinding.ViewScrollTimerBinding
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.math.abs

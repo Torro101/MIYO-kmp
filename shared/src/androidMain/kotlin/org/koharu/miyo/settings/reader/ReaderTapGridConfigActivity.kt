@@ -16,14 +16,14 @@ import androidx.core.text.buildSpannedString
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
 import org.koharu.miyo.core.util.ext.findKeyByValue
 import org.koharu.miyo.core.util.ext.getThemeDrawable
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityReaderTapActionsBinding
+import org.koharu.miyo.shared.databinding.ActivityReaderTapActionsBinding
 import org.koharu.miyo.reader.domain.TapGridArea
 import org.koharu.miyo.reader.ui.tapgrid.TapAction
 import java.util.EnumMap

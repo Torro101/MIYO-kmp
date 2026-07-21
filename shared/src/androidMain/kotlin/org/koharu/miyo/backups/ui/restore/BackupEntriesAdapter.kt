@@ -4,7 +4,7 @@ import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.ui.BaseListAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.setChecked
-import org.koharu.miyo.databinding.ItemCheckableMultipleBinding
+import org.koharu.miyo.shared.databinding.ItemCheckableMultipleBinding
 import org.koharu.miyo.list.ui.ListModelDiffCallback.Companion.PAYLOAD_CHECKED_CHANGED
 import org.koharu.miyo.list.ui.adapter.ListItemType
 

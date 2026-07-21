@@ -50,5 +50,5 @@ actual class NotificationManager(private val context: Context) {
 }
 
 actual fun createNotificationManager(): NotificationManager {
-	throw UnsupportedOperationException("Use Android-specific initialization with Context")
+	return NotificationManager(org.koharu.miyo.core.os.AndroidContextHolder.applicationContext)
 }

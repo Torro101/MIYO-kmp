@@ -5,7 +5,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.network.MangaHttpClient
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koitharu.kotatsu.parsers.model.MangaSource

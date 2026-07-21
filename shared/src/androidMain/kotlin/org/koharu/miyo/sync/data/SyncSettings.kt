@@ -5,7 +5,7 @@ import android.accounts.AccountManager
 import android.content.Context
 import androidx.annotation.WorkerThread
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.isHttpUrl
 import org.koitharu.kotatsu.parsers.util.ifNullOrEmpty
 import javax.inject.Inject

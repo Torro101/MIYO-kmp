@@ -2,7 +2,7 @@ package org.koharu.miyo.core.util.ext
 
 import android.content.Context
 import androidx.core.os.LocaleListCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koitharu.kotatsu.parsers.util.Set
 import org.koitharu.kotatsu.parsers.util.toTitleCase
 import java.util.Locale

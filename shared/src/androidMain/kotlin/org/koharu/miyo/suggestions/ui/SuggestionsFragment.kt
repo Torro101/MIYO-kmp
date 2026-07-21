@@ -7,11 +7,11 @@ import android.view.MenuItem
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.viewModels
 import com.google.android.material.snackbar.Snackbar
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.list.ListSelectionController
 import org.koharu.miyo.core.util.ext.addMenuProvider
-import org.koharu.miyo.databinding.FragmentListBinding
+import org.koharu.miyo.shared.databinding.FragmentListBinding
 import org.koharu.miyo.list.ui.MangaListFragment
 
 class SuggestionsFragment : MangaListFragment() {

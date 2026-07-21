@@ -13,7 +13,7 @@ import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.TwoStatePreference
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.os.AppShortcutManager
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.ListMode

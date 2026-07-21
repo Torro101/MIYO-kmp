@@ -9,7 +9,7 @@ import coil3.Image
 import coil3.asImage
 import coil3.request.Disposable
 import coil3.request.ImageRequest
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler.Companion.suppressCaptchaErrors
 import org.koharu.miyo.core.image.CoilImageView
 import org.koharu.miyo.core.parser.favicon.faviconUri

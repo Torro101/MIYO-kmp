@@ -2,7 +2,7 @@ package org.koharu.miyo.favourites.ui.container
 
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator.TabConfigurationStrategy
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.ui.util.PopupMenuMediator
 

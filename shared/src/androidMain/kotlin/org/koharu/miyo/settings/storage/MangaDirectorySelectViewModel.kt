@@ -4,7 +4,7 @@ import android.net.Uri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.BaseViewModel
 import org.koharu.miyo.core.util.ext.MutableEventFlow

@@ -2,7 +2,7 @@ package org.koharu.miyo.core.util.ext
 
 import android.content.Context
 import androidx.collection.arraySetOf
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koitharu.kotatsu.parsers.util.ellipsize
 import org.koitharu.kotatsu.parsers.util.nullIfEmpty
 import java.util.UUID

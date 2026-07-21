@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.DialogErrorObserver
 import org.koharu.miyo.core.ui.BaseFragment
 import org.koharu.miyo.core.util.ext.consumeAll
@@ -22,7 +22,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.showOrHide
 import org.koharu.miyo.core.util.ext.start
-import org.koharu.miyo.databinding.FragmentChangelogBinding
+import org.koharu.miyo.shared.databinding.FragmentChangelogBinding
 
 @AndroidEntryPoint
 class ChangelogFragment : BaseFragment<FragmentChangelogBinding>() {

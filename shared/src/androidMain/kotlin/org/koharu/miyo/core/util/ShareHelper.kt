@@ -5,8 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.appUrl
 import org.koitharu.kotatsu.parsers.model.Manga
 import java.io.File

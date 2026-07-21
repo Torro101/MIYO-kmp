@@ -4,7 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.history.ui.util.ReadingProgressView
 
 class StaticItemSizeResolver(

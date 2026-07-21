@@ -12,7 +12,7 @@ import coil3.getExtra
 import coil3.request.ImageRequest
 import com.google.android.material.animation.ArgbEvaluatorCompat
 import com.google.android.material.color.MaterialColors
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.util.ext.getAnimationDuration
 import org.koharu.miyo.core.util.ext.mangaSourceKey

@@ -13,7 +13,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.ToastErrorObserver
 import org.koharu.miyo.core.os.OpenDocumentTreeHelper
 import org.koharu.miyo.core.ui.AlertDialogFragment
@@ -21,7 +21,7 @@ import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.tryLaunch
-import org.koharu.miyo.databinding.DialogDirectorySelectBinding
+import org.koharu.miyo.shared.databinding.DialogDirectorySelectBinding
 
 @AndroidEntryPoint
 class MangaDirectorySelectDialog : AlertDialogFragment<DialogDirectorySelectBinding>(),

@@ -23,5 +23,5 @@ actual class ClipboardManager(private val context: Context) {
 }
 
 actual fun createClipboardManager(): ClipboardManager {
-	throw UnsupportedOperationException("Use Android-specific initialization with Context")
+	return ClipboardManager(org.koharu.miyo.core.os.AndroidContextHolder.applicationContext)
 }

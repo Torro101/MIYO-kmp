@@ -1,7 +1,7 @@
 package org.koharu.miyo.core.security
 
 import android.util.Log
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import java.io.File
 import java.io.FileInputStream
 import java.security.MessageDigest

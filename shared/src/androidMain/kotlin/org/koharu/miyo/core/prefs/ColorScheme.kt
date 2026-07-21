@@ -3,7 +3,7 @@ package org.koharu.miyo.core.prefs
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koitharu.kotatsu.parsers.util.find
 
 @Keep

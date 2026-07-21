@@ -1,7 +1,7 @@
 package org.koharu.miyo.list.ui.model
 
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.util.ext.getDisplayIcon
 import org.koitharu.kotatsu.parsers.util.ifZero

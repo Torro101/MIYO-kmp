@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.db.dao.MangaSourcesDao

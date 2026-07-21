@@ -21,7 +21,7 @@ import androidx.work.WorkerParameters
 import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.parser.MangaDataRepository
 import org.koharu.miyo.core.prefs.AppSettings

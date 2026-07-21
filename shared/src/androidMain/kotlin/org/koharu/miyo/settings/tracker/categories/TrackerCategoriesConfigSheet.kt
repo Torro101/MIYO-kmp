@@ -8,13 +8,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.FavouriteCategory
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.ui.sheet.BaseAdaptiveSheet
 import org.koharu.miyo.core.util.ext.consume
 import org.koharu.miyo.core.util.ext.observe
-import org.koharu.miyo.databinding.SheetBaseBinding
+import org.koharu.miyo.shared.databinding.SheetBaseBinding
 
 @AndroidEntryPoint
 class TrackerCategoriesConfigSheet :

@@ -17,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.parser.MangaRepository
@@ -30,7 +30,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.setValueRounded
 import org.koharu.miyo.core.util.ext.viewLifecycleScope
 import org.koharu.miyo.core.util.progress.IntPercentLabelFormatter
-import org.koharu.miyo.databinding.SheetReaderConfigBinding
+import org.koharu.miyo.shared.databinding.SheetReaderConfigBinding
 import org.koharu.miyo.reader.domain.PageLoader
 import org.koharu.miyo.reader.ui.ReaderViewModel
 import org.koharu.miyo.reader.ui.ScreenOrientationHelper

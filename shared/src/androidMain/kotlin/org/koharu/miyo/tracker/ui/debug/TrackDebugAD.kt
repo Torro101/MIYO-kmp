@@ -7,11 +7,11 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.drawableStart
 import org.koharu.miyo.core.util.ext.getThemeColor
-import org.koharu.miyo.databinding.ItemTrackDebugBinding
+import org.koharu.miyo.shared.databinding.ItemTrackDebugBinding
 import org.koharu.miyo.tracker.data.TrackEntity
 import androidx.appcompat.R as appcompatR
 

@@ -15,7 +15,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.sheet.BaseAdaptiveSheet
@@ -24,7 +24,7 @@ import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.sanitize
-import org.koharu.miyo.databinding.SheetScrobblingBinding
+import org.koharu.miyo.shared.databinding.SheetScrobblingBinding
 import org.koharu.miyo.details.ui.DetailsViewModel
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblingInfo
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblingStatus

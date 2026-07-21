@@ -23,7 +23,7 @@ import org.koharu.miyo.core.parser.ParserMangaRepository
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.util.ext.configureForParser
 import org.koharu.miyo.core.util.ext.consumeAll
-import org.koharu.miyo.databinding.ActivityBrowserBinding
+import org.koharu.miyo.shared.databinding.ActivityBrowserBinding
 import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koitharu.kotatsu.parsers.util.nullIfEmpty
 import javax.inject.Inject

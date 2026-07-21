@@ -6,7 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.BasePreferenceFragment
 import org.koharu.miyo.settings.utils.MultiAutoCompleteTextViewPreference

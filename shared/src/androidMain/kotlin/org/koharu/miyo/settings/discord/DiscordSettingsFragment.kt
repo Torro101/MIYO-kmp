@@ -10,7 +10,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.EditTextPreferenceDialogFragmentCompat
 import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.BasePreferenceFragment
 import org.koharu.miyo.core.util.ext.observe

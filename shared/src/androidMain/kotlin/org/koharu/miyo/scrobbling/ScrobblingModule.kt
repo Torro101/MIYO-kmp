@@ -8,7 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
 import okhttp3.OkHttpClient
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.network.BaseHttpClient
 import org.koharu.miyo.core.network.CurlLoggingInterceptor

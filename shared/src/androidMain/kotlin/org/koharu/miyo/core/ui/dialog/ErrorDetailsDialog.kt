@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.github.AppUpdateRepository
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
@@ -19,7 +19,7 @@ import org.koharu.miyo.core.util.ext.isReportable
 import org.koharu.miyo.core.util.ext.report
 import org.koharu.miyo.core.util.ext.requireSerializable
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.DialogErrorDetailsBinding
+import org.koharu.miyo.shared.databinding.DialogErrorDetailsBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint

@@ -16,7 +16,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import androidx.transition.TransitionManager
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.DetailsUiMode
 import org.koharu.miyo.details.ui.BackdropController.Companion.blurRadius

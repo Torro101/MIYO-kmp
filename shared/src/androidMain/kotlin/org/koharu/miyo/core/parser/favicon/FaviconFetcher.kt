@@ -25,7 +25,7 @@ import kotlinx.coroutines.runInterruptible
 import okio.FileSystem
 import okio.IOException
 import okio.Path.Companion.toOkioPath
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.parser.EmptyMangaRepository

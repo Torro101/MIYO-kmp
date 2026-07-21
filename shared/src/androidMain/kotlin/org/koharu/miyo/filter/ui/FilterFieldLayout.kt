@@ -15,12 +15,12 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.core.widget.TextViewCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.drawableStart
 import org.koharu.miyo.core.util.ext.getThemeColorStateList
 import org.koharu.miyo.core.util.ext.setThemeTextAppearance
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ViewFilterFieldBinding
+import org.koharu.miyo.shared.databinding.ViewFilterFieldBinding
 import java.util.LinkedList
 import androidx.appcompat.R as appcompatR
 import com.google.android.material.R as materialR

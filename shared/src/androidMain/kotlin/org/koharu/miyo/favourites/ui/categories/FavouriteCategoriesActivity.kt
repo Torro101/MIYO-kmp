@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import coil3.ImageLoader
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.model.FavouriteCategory
 import org.koharu.miyo.core.nav.router
@@ -23,7 +23,7 @@ import org.koharu.miyo.core.util.ext.end
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityCategoriesBinding
+import org.koharu.miyo.shared.databinding.ActivityCategoriesBinding
 import org.koharu.miyo.favourites.ui.categories.adapter.CategoriesAdapter
 import org.koharu.miyo.list.ui.adapter.ListStateHolderListener
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration

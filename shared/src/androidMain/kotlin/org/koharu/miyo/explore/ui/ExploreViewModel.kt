@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.MangaSourceInfo
 import org.koharu.miyo.core.os.AppShortcutManager
 import org.koharu.miyo.core.prefs.AppSettings

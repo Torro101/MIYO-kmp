@@ -10,12 +10,12 @@ import android.widget.TextView
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.ui.util.DefaultTextWatcher
 import org.koharu.miyo.core.util.ext.consume
 import org.koharu.miyo.core.nav.AppRouter
-import org.koharu.miyo.databinding.ActivityKitsuAuthBinding
+import org.koharu.miyo.shared.databinding.ActivityKitsuAuthBinding
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblerService
 import org.koharu.miyo.scrobbling.common.ui.config.ScrobblerAuthHandoff
 import org.koharu.miyo.scrobbling.common.ui.config.ScrobblerConfigActivity

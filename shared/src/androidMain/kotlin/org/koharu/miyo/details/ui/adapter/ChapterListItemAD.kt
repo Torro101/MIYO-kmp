@@ -4,13 +4,13 @@ import android.graphics.Typeface
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.AdapterDelegateClickListenerAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.drawableStart
 import org.koharu.miyo.core.util.ext.getThemeColorStateList
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemChapterBinding
+import org.koharu.miyo.shared.databinding.ItemChapterBinding
 import org.koharu.miyo.details.ui.model.ChapterListItem
 import org.koharu.miyo.list.ui.model.ListModel
 import com.google.android.material.R as materialR

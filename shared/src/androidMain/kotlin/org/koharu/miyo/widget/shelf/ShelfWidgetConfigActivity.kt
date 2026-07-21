@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.prefs.AppWidgetConfig
 import org.koharu.miyo.core.ui.BaseActivity
@@ -17,7 +17,7 @@ import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityAppwidgetShelfBinding
+import org.koharu.miyo.shared.databinding.ActivityAppwidgetShelfBinding
 import org.koharu.miyo.widget.shelf.adapter.CategorySelectAdapter
 import org.koharu.miyo.widget.shelf.model.CategoryItem
 

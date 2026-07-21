@@ -5,7 +5,7 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class TypedListSpacingDecoration(
 	context: Context,

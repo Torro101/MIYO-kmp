@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.backups.data.BackupRepository
 import org.koharu.miyo.backups.data.BoundedInputStream
 import org.koharu.miyo.backups.domain.BackupSection

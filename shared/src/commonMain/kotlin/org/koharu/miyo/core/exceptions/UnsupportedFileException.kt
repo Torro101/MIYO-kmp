@@ -1,5 +1,6 @@
 package org.koharu.miyo.core.exceptions
 
-import java.io.IOException
-
-class UnsupportedFileException(message: String? = null) : IOException(message)
+class UnsupportedFileException(
+	message: String? = null,
+	cause: Throwable? = null,
+) : Exception(message, cause)

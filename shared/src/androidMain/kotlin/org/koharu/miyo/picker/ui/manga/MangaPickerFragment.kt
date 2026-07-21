@@ -3,7 +3,7 @@ package org.koharu.miyo.picker.ui.manga
 import android.view.View
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.list.ui.MangaListFragment
 import org.koharu.miyo.list.ui.model.MangaListModel
 import org.koharu.miyo.picker.ui.PageImagePickActivity

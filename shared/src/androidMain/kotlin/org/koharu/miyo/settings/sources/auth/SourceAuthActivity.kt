@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.browser.BaseBrowserActivity
 import org.koharu.miyo.browser.BrowserCallback
 import org.koharu.miyo.browser.BrowserClient

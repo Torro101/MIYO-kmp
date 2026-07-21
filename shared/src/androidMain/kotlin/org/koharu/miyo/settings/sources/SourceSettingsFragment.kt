@@ -10,7 +10,7 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreferenceCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.nav.AppRouter

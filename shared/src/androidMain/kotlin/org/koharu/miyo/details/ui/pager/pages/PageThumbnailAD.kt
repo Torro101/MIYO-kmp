@@ -2,11 +2,11 @@ package org.koharu.miyo.details.ui.pager.pages
 
 import coil3.size.Size
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.AdapterDelegateClickListenerAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.setTextColorAttr
-import org.koharu.miyo.databinding.ItemPageThumbBinding
+import org.koharu.miyo.shared.databinding.ItemPageThumbBinding
 import org.koharu.miyo.list.ui.model.ListModel
 import com.google.android.material.R as materialR
 

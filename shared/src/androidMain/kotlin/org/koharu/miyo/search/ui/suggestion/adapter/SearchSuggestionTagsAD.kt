@@ -2,7 +2,7 @@ package org.koharu.miyo.search.ui.suggestion.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.ui.widgets.ChipsView
-import org.koharu.miyo.databinding.ItemSearchSuggestionTagsBinding
+import org.koharu.miyo.shared.databinding.ItemSearchSuggestionTagsBinding
 import org.koitharu.kotatsu.parsers.model.MangaTag
 import org.koharu.miyo.search.ui.suggestion.SearchSuggestionListener
 import org.koharu.miyo.search.ui.suggestion.model.SearchSuggestionItem

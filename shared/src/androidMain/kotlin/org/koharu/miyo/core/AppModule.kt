@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import okhttp3.OkHttpClient
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.backups.domain.BackupObserver
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler

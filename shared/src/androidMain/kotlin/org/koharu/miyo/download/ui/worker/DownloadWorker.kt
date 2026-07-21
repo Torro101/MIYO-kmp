@@ -44,7 +44,7 @@ import okio.IOException
 import okio.buffer
 import okio.sink
 import okio.use
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.NoDataReceivedException
 import org.koharu.miyo.core.exceptions.UnsupportedFileException
 import org.koharu.miyo.core.exceptions.findCloudFlareCause

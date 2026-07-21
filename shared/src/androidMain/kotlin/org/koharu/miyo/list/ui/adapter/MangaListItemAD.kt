@@ -6,7 +6,7 @@ import org.koharu.miyo.core.ui.list.AdapterDelegateClickListenerAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.setTooltipCompat
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemMangaListBinding
+import org.koharu.miyo.shared.databinding.ItemMangaListBinding
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.list.ui.model.MangaCompactListModel
 import org.koharu.miyo.list.ui.model.MangaListModel

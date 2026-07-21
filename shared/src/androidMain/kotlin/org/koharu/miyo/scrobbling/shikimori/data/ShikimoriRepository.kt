@@ -7,7 +7,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.util.ext.toRequestBody
 import org.koitharu.kotatsu.parsers.util.await

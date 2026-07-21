@@ -24,8 +24,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okio.IOException
 import org.jetbrains.annotations.Blocking
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.db.TABLE_FAVOURITES
 import org.koharu.miyo.core.db.TABLE_FAVOURITE_CATEGORIES
 import org.koharu.miyo.core.db.TABLE_HISTORY

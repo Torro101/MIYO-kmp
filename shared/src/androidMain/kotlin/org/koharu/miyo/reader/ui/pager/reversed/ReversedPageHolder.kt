@@ -8,7 +8,7 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.model.ZoomMode
 import org.koharu.miyo.core.os.NetworkState
-import org.koharu.miyo.databinding.ItemPageBinding
+import org.koharu.miyo.shared.databinding.ItemPageBinding
 import org.koharu.miyo.reader.domain.PageLoader
 import org.koharu.miyo.reader.ui.config.ReaderSettings
 import org.koharu.miyo.reader.ui.pager.standard.PageHolder

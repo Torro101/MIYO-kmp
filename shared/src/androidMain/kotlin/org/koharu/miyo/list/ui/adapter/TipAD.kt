@@ -2,7 +2,7 @@ package org.koharu.miyo.list.ui.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.ui.widgets.TipView
-import org.koharu.miyo.databinding.ItemTip2Binding
+import org.koharu.miyo.shared.databinding.ItemTip2Binding
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.list.ui.model.TipModel
 

@@ -2,7 +2,7 @@ package org.koharu.miyo.list.domain
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.db.entity.toEntity
 import org.koharu.miyo.core.model.FavouriteCategory
 import org.koharu.miyo.core.model.LocalMangaSource

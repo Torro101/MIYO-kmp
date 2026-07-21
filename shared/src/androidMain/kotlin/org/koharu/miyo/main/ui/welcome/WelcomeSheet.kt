@@ -13,12 +13,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.sheet.BaseAdaptiveSheet
 import org.koharu.miyo.core.util.ext.consume
 import org.koharu.miyo.core.util.ext.tryLaunch
-import org.koharu.miyo.databinding.SheetWelcomeBinding
+import org.koharu.miyo.shared.databinding.SheetWelcomeBinding
 
 @AndroidEntryPoint
 class WelcomeSheet : BaseAdaptiveSheet<SheetWelcomeBinding>(), View.OnClickListener,

@@ -25,7 +25,7 @@ import coil3.size.ViewSizeResolver
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.FileNotFoundException
 import org.jsoup.HttpStatusException
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
 import org.koharu.miyo.core.exceptions.UnsupportedSourceException

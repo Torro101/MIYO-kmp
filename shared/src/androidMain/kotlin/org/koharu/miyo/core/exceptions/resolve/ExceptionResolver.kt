@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.suspendCancellableCoroutine
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.browser.BrowserActivity
 import org.koharu.miyo.browser.cloudflare.CloudFlareActivity
 import org.koharu.miyo.core.exceptions.CaughtException

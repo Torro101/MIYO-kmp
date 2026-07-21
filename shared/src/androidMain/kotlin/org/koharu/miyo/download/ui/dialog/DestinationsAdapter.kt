@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.view.isVisible
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemStorageConfigBinding
+import org.koharu.miyo.shared.databinding.ItemStorageConfigBinding
 import org.koharu.miyo.settings.storage.DirectoryModel
 
 class DestinationsAdapter(context: Context, dataset: List<DirectoryModel>) :

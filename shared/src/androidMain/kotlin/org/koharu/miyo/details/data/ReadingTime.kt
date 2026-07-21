@@ -1,7 +1,7 @@
 package org.koharu.miyo.details.data
 
 import android.content.res.Resources
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getQuantityStringSafe
 
 data class ReadingTime(

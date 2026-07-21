@@ -1,7 +1,7 @@
 package org.koharu.miyo.core.ui.model
 
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.SortDirection
 import org.koitharu.kotatsu.parsers.model.SortOrder
 import org.koitharu.kotatsu.parsers.model.SortOrder.ADDED

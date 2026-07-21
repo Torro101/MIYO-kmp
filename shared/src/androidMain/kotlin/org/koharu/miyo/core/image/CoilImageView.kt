@@ -28,7 +28,7 @@ import com.google.android.material.imageview.ShapeableImageView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.os.NetworkState
 import org.koharu.miyo.core.util.ext.decodeRegion
 import org.koharu.miyo.core.util.ext.getAnimationDuration

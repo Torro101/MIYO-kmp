@@ -16,7 +16,7 @@ import coil3.ImageLoader
 import coil3.request.ImageRequest
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ErrorReporterReceiver
 import org.koharu.miyo.core.model.isNsfw
 import org.koharu.miyo.core.nav.AppRouter

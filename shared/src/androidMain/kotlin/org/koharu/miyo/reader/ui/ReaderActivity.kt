@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.DialogErrorObserver
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.nav.AppRouter
@@ -61,7 +61,7 @@ import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.postDelayed
 import org.koharu.miyo.core.util.ext.toUriOrNull
 import org.koharu.miyo.core.util.ext.zipWithPrevious
-import org.koharu.miyo.databinding.ActivityReaderBinding
+import org.koharu.miyo.shared.databinding.ActivityReaderBinding
 import org.koharu.miyo.details.ui.pager.pages.PagesSavedObserver
 import org.koitharu.kotatsu.parsers.model.MangaChapter
 import org.koharu.miyo.reader.data.TapGridSettings

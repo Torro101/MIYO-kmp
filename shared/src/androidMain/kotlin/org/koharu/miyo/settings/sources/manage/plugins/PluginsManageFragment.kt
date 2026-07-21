@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseFragment
 import org.koharu.miyo.core.ui.dialog.buildAlertDialog
 import org.koharu.miyo.core.ui.dialog.setEditText
@@ -28,8 +28,8 @@ import org.koharu.miyo.core.util.ext.addMenuProvider
 import org.koharu.miyo.core.util.ext.container
 import org.koharu.miyo.core.util.ext.end
 import org.koharu.miyo.core.util.ext.start
-import org.koharu.miyo.databinding.DialogImportBinding
-import org.koharu.miyo.databinding.FragmentSettingsSourcesBinding
+import org.koharu.miyo.shared.databinding.DialogImportBinding
+import org.koharu.miyo.shared.databinding.FragmentSettingsSourcesBinding
 import org.koharu.miyo.main.ui.owners.AppBarOwner
 import kotlin.coroutines.resume
 

@@ -11,7 +11,7 @@ import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.material.textview.MaterialTextView
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getAnimationDuration
 import org.koharu.miyo.core.util.ext.isAnimationsEnabled
 

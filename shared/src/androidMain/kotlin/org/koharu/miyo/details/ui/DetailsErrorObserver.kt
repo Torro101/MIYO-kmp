@@ -1,7 +1,7 @@
 package org.koharu.miyo.details.ui
 
 import com.google.android.material.snackbar.Snackbar
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.UnsupportedSourceException
 import org.koharu.miyo.core.exceptions.resolve.ErrorObserver
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver

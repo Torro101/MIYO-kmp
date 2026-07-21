@@ -20,9 +20,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegate
 import com.hannesdorfmann.adapterdelegates4.AdapterDelegatesManager
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
-import org.koharu.miyo.R
-import org.koharu.miyo.databinding.DialogCheckboxBinding
-import org.koharu.miyo.databinding.ViewDialogAutocompleteBinding
+import org.koharu.miyo.shared.R
+import org.koharu.miyo.shared.databinding.DialogCheckboxBinding
+import org.koharu.miyo.shared.databinding.ViewDialogAutocompleteBinding
 import com.google.android.material.R as materialR
 
 inline fun buildAlertDialog(

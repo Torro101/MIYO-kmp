@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.network.BaseHttpClient
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.BasePreferenceFragment

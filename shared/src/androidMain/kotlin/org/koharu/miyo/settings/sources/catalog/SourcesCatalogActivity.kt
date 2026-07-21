@@ -14,7 +14,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.titleResId
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.BaseActivity
@@ -28,7 +28,7 @@ import org.koharu.miyo.core.util.ext.getDisplayName
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.toLocale
-import org.koharu.miyo.databinding.ActivitySourcesCatalogBinding
+import org.koharu.miyo.shared.databinding.ActivitySourcesCatalogBinding
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration
 import org.koharu.miyo.main.ui.owners.AppBarOwner
 import org.koitharu.kotatsu.parsers.model.ContentType

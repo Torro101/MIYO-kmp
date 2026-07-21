@@ -10,7 +10,7 @@ import android.view.ViewOutlineProvider
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.ProgressIndicatorMode.CHAPTERS_LEFT
 import org.koharu.miyo.core.prefs.ProgressIndicatorMode.CHAPTERS_READ
 import org.koharu.miyo.core.prefs.ProgressIndicatorMode.NONE

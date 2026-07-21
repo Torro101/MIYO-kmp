@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.preference.PreferenceViewHolder
 import androidx.preference.SwitchPreferenceCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class SplitSwitchPreference @JvmOverloads constructor(
 	context: Context,

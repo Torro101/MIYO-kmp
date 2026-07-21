@@ -2,10 +2,10 @@ package org.koharu.miyo.stats.ui
 
 import android.content.res.ColorStateList
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.MiyoColors
-import org.koharu.miyo.databinding.ItemStatsBinding
+import org.koharu.miyo.shared.databinding.ItemStatsBinding
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koharu.miyo.stats.domain.StatsRecord
 

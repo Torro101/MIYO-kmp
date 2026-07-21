@@ -2,36 +2,32 @@ package org.koharu.miyo.core.di.expect
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import org.koharu.miyo.core.os.AndroidContextHolder
 
-actual class Preferences(private val prefs: SharedPreferences) {
-	private val listeners = mutableMapOf<String, MutableStateFlow<String>>()
+actual class Preferences internal constructor(
+	private val prefs: SharedPreferences,
+) {
+	actual fun getString(key: String, defaultValue: String): String =
+		prefs.getString(key, defaultValue) ?: defaultValue
 
-	actual fun getString(key: String, defaultValue: String): String {
-		return prefs.getString(key, defaultValue) ?: defaultValue
-	}
+	actual fun getInt(key: String, defaultValue: Int): Int =
+		prefs.getInt(key, defaultValue)
 
-	actual fun getInt(key: String, defaultValue: Int): Int {
-		return prefs.getInt(key, defaultValue)
-	}
+	actual fun getLong(key: String, defaultValue: Long): Long =
+		prefs.getLong(key, defaultValue)
 
-	actual fun getLong(key: String, defaultValue: Long): Long {
-		return prefs.getLong(key, defaultValue)
-	}
+	actual fun getFloat(key: String, defaultValue: Float): Float =
+		prefs.getFloat(key, defaultValue)
 
-	actual fun getFloat(key: String, defaultValue: Float): Float {
-		return prefs.getFloat(key, defaultValue)
-	}
+	actual fun getBoolean(key: String, defaultValue: Boolean): Boolean =
+		prefs.getBoolean(key, defaultValue)
 
-	actual fun getBoolean(key: String, defaultValue: Boolean): Boolean {
-		return prefs.getBoolean(key, defaultValue)
-	}
-
-	actual fun getStringSet(key: String, defaultValue: Set<String>): Set<String> {
-		return prefs.getStringSet(key, defaultValue) ?: defaultValue
-	}
+	actual fun getStringSet(key: String, defaultValue: Set<String>): Set<String> =
+		prefs.getStringSet(key, defaultValue) ?: defaultValue
 
 	actual fun putString(key: String, value: String) {
 		prefs.edit().putString(key, value).apply()
@@ -65,47 +61,43 @@ actual class Preferences(private val prefs: SharedPreferences) {
 		prefs.edit().clear().apply()
 	}
 
-	actual fun contains(key: String): Boolean {
-		return prefs.contains(key)
-	}
+	actual fun contains(key: String): Boolean = prefs.contains(key)
 
-	actual fun observe(key: String): Flow<String> {
-		val state = listeners.getOrPut(key) { MutableStateFlow(getString(key)) }
-		prefs.registerOnSharedPreferenceChangeListener { _, changedKey ->
-			if (changedKey == key) {
-				state.value = getString(key)
+	actual fun observe(key: String): Flow<String> = callbackFlow {
+		trySend(getString(key, ""))
+		val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changed ->
+			if (changed == null || changed == key) {
+				trySend(getString(key, ""))
 			}
 		}
-		return state
-	}
+		prefs.registerOnSharedPreferenceChangeListener(listener)
+		awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+	}.distinctUntilChanged()
 
-	actual fun observeInt(key: String): Flow<Int> {
-		return flow {
-			val state = MutableStateFlow(getInt(key))
-			prefs.registerOnSharedPreferenceChangeListener { _, changedKey ->
-				if (changedKey == key) {
-					state.value = getInt(key)
-				}
+	actual fun observeInt(key: String): Flow<Int> = callbackFlow {
+		trySend(getInt(key, 0))
+		val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changed ->
+			if (changed == null || changed == key) {
+				trySend(getInt(key, 0))
 			}
-			emit(state.value)
 		}
-	}
+		prefs.registerOnSharedPreferenceChangeListener(listener)
+		awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+	}.distinctUntilChanged()
 
-	actual fun observeBoolean(key: String): Flow<Boolean> {
-		return flow {
-			val state = MutableStateFlow(getBoolean(key))
-			prefs.registerOnSharedPreferenceChangeListener { _, changedKey ->
-				if (changedKey == key) {
-					state.value = getBoolean(key)
-				}
+	actual fun observeBoolean(key: String): Flow<Boolean> = callbackFlow {
+		trySend(getBoolean(key, false))
+		val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changed ->
+			if (changed == null || changed == key) {
+				trySend(getBoolean(key, false))
 			}
-			emit(state.value)
 		}
-	}
+		prefs.registerOnSharedPreferenceChangeListener(listener)
+		awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+	}.distinctUntilChanged()
 }
 
 actual fun createPreferences(name: String): Preferences {
-	// Note: This requires a Context to be initialized
-	// In practice, use the Android-specific initialization
-	throw UnsupportedOperationException("Use Android-specific initialization")
+	val ctx = AndroidContextHolder.applicationContext
+	return Preferences(ctx.getSharedPreferences(name, Context.MODE_PRIVATE))
 }

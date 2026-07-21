@@ -17,10 +17,10 @@ import androidx.core.view.updatePaddingRelative
 import androidx.customview.view.AbsSavedState
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.ColorScheme
-import org.koharu.miyo.databinding.ItemColorSchemeBinding
-import org.koharu.miyo.databinding.PreferenceThemeBinding
+import org.koharu.miyo.shared.databinding.ItemColorSchemeBinding
+import org.koharu.miyo.shared.databinding.PreferenceThemeBinding
 import java.lang.ref.WeakReference
 import com.google.android.material.R as materialR
 

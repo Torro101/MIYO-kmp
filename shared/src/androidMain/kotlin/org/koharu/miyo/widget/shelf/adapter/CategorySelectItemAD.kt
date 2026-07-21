@@ -1,9 +1,9 @@
 package org.koharu.miyo.widget.shelf.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
-import org.koharu.miyo.databinding.ItemCategoryCheckableSingleBinding
+import org.koharu.miyo.shared.databinding.ItemCategoryCheckableSingleBinding
 import org.koharu.miyo.widget.shelf.model.CategoryItem
 
 fun categorySelectItemAD(

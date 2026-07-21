@@ -4,7 +4,7 @@ import android.content.res.Resources
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

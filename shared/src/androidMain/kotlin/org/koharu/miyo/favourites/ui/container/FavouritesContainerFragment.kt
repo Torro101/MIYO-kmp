@@ -14,7 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.BaseFragment
 import org.koharu.miyo.core.ui.util.ActionModeListener
@@ -27,8 +27,8 @@ import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.recyclerView
 import org.koharu.miyo.core.util.ext.setTabsEnabled
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.FragmentFavouritesContainerBinding
-import org.koharu.miyo.databinding.ItemEmptyStateBinding
+import org.koharu.miyo.shared.databinding.FragmentFavouritesContainerBinding
+import org.koharu.miyo.shared.databinding.ItemEmptyStateBinding
 
 @AndroidEntryPoint
 class FavouritesContainerFragment : BaseFragment<FragmentFavouritesContainerBinding>(),

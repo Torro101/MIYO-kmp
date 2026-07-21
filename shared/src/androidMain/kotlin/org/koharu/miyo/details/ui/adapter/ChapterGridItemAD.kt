@@ -7,7 +7,7 @@ import org.koharu.miyo.core.ui.list.AdapterDelegateClickListenerAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.getThemeColorStateList
 import org.koharu.miyo.core.util.ext.setTooltipCompat
-import org.koharu.miyo.databinding.ItemChapterGridBinding
+import org.koharu.miyo.shared.databinding.ItemChapterGridBinding
 import org.koharu.miyo.details.ui.model.ChapterListItem
 import org.koharu.miyo.list.ui.model.ListModel
 

@@ -4,7 +4,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.ListSelectionController
 import org.koharu.miyo.list.ui.MangaListFragment
 

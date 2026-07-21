@@ -2,7 +2,7 @@ package org.koharu.miyo.filter.ui
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.titleResId
 import org.koharu.miyo.core.ui.widgets.ChipsView
 import org.koharu.miyo.filter.data.PersistableFilter

@@ -44,7 +44,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.findCloudFlareCause
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler
 import org.koharu.miyo.core.model.distinctById

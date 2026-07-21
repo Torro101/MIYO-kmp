@@ -4,7 +4,7 @@ import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.model.FavouriteCategory
 import org.koharu.miyo.core.ui.list.AdapterDelegateClickListenerAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
-import org.koharu.miyo.databinding.ItemCategoryCheckableMultipleBinding
+import org.koharu.miyo.shared.databinding.ItemCategoryCheckableMultipleBinding
 
 fun trackerCategoryAD(
 	listener: OnListItemClickListener<FavouriteCategory>,

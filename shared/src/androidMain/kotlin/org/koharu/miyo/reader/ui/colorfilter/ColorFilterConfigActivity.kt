@@ -16,7 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.LabelFormatter
 import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
 import org.koharu.miyo.core.util.ext.observe
@@ -25,7 +25,7 @@ import org.koharu.miyo.core.util.ext.setChecked
 import org.koharu.miyo.core.util.ext.setValueRounded
 import org.koharu.miyo.core.util.ext.systemBarsInsets
 import org.koharu.miyo.core.util.progress.ImageRequestIndicatorListener
-import org.koharu.miyo.databinding.ActivityColorFilterBinding
+import org.koharu.miyo.shared.databinding.ActivityColorFilterBinding
 import org.koitharu.kotatsu.parsers.model.MangaPage
 import org.koitharu.kotatsu.parsers.util.format
 import org.koharu.miyo.reader.domain.ReaderColorFilter

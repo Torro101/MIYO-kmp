@@ -7,13 +7,13 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.isGone
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.FileSize
 import org.koharu.miyo.core.util.ext.getThemeColor
 import org.koharu.miyo.core.util.ext.setTooltipCompat
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemStorageConfig2Binding
+import org.koharu.miyo.shared.databinding.ItemStorageConfig2Binding
 
 fun directoryConfigAD(
     clickListener: OnListItemClickListener<DirectoryConfigModel>,

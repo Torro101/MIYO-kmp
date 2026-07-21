@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.toChipModel
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.parser.MangaDataRepository

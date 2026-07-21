@@ -13,7 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.closeQuietly
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.network.BaseHttpClient
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.prefs.AppSettings

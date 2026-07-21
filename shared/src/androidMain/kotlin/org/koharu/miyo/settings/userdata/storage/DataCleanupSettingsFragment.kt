@@ -7,7 +7,7 @@ import androidx.preference.Preference
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.StateFlow
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.BasePreferenceFragment

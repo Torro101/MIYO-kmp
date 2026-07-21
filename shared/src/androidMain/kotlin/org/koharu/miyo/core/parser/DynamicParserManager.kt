@@ -3,7 +3,7 @@ package org.koharu.miyo.core.parser
 import android.content.Context
 import android.util.Log
 import dalvik.system.DexClassLoader
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.MangaSourceRegistry
 import org.koharu.miyo.core.model.PluginMangaSource
 import org.koharu.miyo.core.parser.tachiyomi.ExtensionLoadError

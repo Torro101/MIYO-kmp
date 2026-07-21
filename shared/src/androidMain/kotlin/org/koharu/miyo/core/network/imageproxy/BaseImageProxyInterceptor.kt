@@ -14,7 +14,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.jsoup.HttpStatusException
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.exceptions.CloudFlareBlockedException
 import org.koharu.miyo.core.util.ext.ensureSuccess
 import org.koitharu.kotatsu.parsers.util.await

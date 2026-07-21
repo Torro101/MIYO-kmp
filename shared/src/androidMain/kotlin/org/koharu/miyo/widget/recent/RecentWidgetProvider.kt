@@ -8,7 +8,7 @@ import android.graphics.Color
 import android.widget.RemoteViews
 import androidx.core.app.PendingIntentCompat
 import androidx.core.net.toUri
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.ReaderIntent
 import org.koharu.miyo.core.prefs.AppWidgetConfig
 import org.koharu.miyo.core.ui.BaseAppWidgetProvider

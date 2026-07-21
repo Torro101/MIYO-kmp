@@ -17,8 +17,8 @@ import com.davemorrissey.labs.subscaleview.DefaultOnImageEventListener
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.os.NetworkState
 import org.koharu.miyo.core.ui.list.lifecycle.LifecycleAwareViewHolder
@@ -26,7 +26,7 @@ import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.isLowRamDevice
 import org.koharu.miyo.core.util.ext.isSerializable
 import org.koharu.miyo.core.util.ext.observe
-import org.koharu.miyo.databinding.LayoutPageInfoBinding
+import org.koharu.miyo.shared.databinding.LayoutPageInfoBinding
 import org.koitharu.kotatsu.parsers.util.ifZero
 import org.koharu.miyo.reader.domain.PageLoader
 import org.koharu.miyo.reader.ui.config.ReaderSettings

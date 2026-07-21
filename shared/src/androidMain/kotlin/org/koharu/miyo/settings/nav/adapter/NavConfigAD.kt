@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.NavItem
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.ItemNavAvailableBinding
-import org.koharu.miyo.databinding.ItemNavConfigBinding
+import org.koharu.miyo.shared.databinding.ItemNavAvailableBinding
+import org.koharu.miyo.shared.databinding.ItemNavConfigBinding
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.settings.nav.model.NavItemAddModel
 import org.koharu.miyo.settings.nav.model.NavItemConfigModel

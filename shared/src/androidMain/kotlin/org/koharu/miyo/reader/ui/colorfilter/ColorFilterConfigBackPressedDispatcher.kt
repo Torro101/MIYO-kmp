@@ -3,7 +3,7 @@ package org.koharu.miyo.reader.ui.colorfilter
 import android.content.DialogInterface
 import androidx.activity.OnBackPressedCallback
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.call
 
 class ColorFilterConfigBackPressedDispatcher(

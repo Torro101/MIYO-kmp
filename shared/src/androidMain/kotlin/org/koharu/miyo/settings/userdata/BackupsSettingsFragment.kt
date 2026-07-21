@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.preference.Preference
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.backups.domain.BackupUtils
 import org.koharu.miyo.backups.ui.backup.BackupService
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver

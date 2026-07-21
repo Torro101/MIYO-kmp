@@ -1,7 +1,7 @@
 package org.koharu.miyo.settings.utils
 
 import androidx.preference.Preference
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class PercentSummaryProvider : Preference.SummaryProvider<SliderPreference> {
 

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.bookmarks.domain.BookmarksRepository
 import org.koharu.miyo.core.ui.BaseViewModel

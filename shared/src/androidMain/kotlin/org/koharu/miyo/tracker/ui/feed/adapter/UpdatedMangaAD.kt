@@ -1,10 +1,10 @@
 package org.koharu.miyo.tracker.ui.feed.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseListAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
-import org.koharu.miyo.databinding.ItemListGroupBinding
+import org.koharu.miyo.shared.databinding.ItemListGroupBinding
 import org.koharu.miyo.list.ui.adapter.ListHeaderClickListener
 import org.koharu.miyo.list.ui.adapter.ListItemType
 import org.koharu.miyo.list.ui.adapter.mangaGridItemAD

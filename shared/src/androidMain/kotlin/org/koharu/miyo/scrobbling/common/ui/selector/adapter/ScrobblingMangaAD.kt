@@ -1,10 +1,10 @@
 package org.koharu.miyo.scrobbling.common.ui.selector.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemMangaListBinding
+import org.koharu.miyo.shared.databinding.ItemMangaListBinding
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblerManga
 

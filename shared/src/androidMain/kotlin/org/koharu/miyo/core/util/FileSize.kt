@@ -1,7 +1,7 @@
 package org.koharu.miyo.core.util
 
 import android.content.Context
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import java.text.DecimalFormat
 import kotlin.math.log10
 import kotlin.math.pow

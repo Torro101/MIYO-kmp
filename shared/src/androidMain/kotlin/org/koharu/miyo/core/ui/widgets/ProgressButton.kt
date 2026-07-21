@@ -19,7 +19,7 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.children
 import androidx.core.widget.TextViewCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getAnimationDuration
 import org.koharu.miyo.core.util.ext.getThemeColorStateList
 import org.koharu.miyo.core.util.ext.isAnimationsEnabled

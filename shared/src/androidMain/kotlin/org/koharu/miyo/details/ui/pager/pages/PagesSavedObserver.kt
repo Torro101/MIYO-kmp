@@ -4,7 +4,7 @@ import android.net.Uri
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.FlowCollector
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ShareHelper
 
 class PagesSavedObserver(

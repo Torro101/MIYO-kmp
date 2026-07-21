@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.db.TABLE_HISTORY
 import org.koharu.miyo.core.model.getTitle

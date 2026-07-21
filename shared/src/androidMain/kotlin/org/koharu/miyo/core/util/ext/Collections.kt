@@ -3,7 +3,7 @@ package org.koharu.miyo.core.util.ext
 import androidx.collection.ArrayMap
 import androidx.collection.ArraySet
 import androidx.collection.LongSet
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import java.util.EnumSet
 
 fun <T> Collection<T>.asArrayList(): ArrayList<T> = if (this is ArrayList<*>) {

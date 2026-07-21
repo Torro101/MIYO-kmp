@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.NavItem
 import org.koharu.miyo.core.ui.BaseFragment
 import org.koharu.miyo.core.ui.BaseListAdapter
@@ -24,7 +24,7 @@ import org.koharu.miyo.core.util.ext.end
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.start
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.FragmentSettingsSourcesBinding
+import org.koharu.miyo.shared.databinding.FragmentSettingsSourcesBinding
 import org.koharu.miyo.list.ui.adapter.ListItemType
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.settings.nav.adapter.navAddAD

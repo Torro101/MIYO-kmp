@@ -22,7 +22,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.isLocal
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.prefs.AppSettings

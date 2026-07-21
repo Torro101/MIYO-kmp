@@ -39,5 +39,5 @@ actual class ShareManager(private val context: Context) {
 }
 
 actual fun createShareManager(): ShareManager {
-	throw UnsupportedOperationException("Use Android-specific initialization with Context")
+	return ShareManager(org.koharu.miyo.core.os.AndroidContextHolder.applicationContext)
 }

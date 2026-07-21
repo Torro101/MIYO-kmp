@@ -17,7 +17,7 @@ import coil3.request.placeholder
 import coil3.request.transformations
 import coil3.transform.RoundedCornersTransformation
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.parser.favicon.faviconUri
 import org.koharu.miyo.core.ui.image.ChipIconTarget
@@ -26,7 +26,7 @@ import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.enqueueWith
 import org.koharu.miyo.core.util.ext.getQuantityStringSafe
 import org.koharu.miyo.core.util.ext.mangaSourceExtra
-import org.koharu.miyo.databinding.ItemMangaAlternativeBinding
+import org.koharu.miyo.shared.databinding.ItemMangaAlternativeBinding
 import org.koharu.miyo.list.ui.ListModelDiffCallback
 import org.koharu.miyo.list.ui.model.ListModel
 import kotlin.math.sign

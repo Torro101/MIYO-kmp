@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.strikeThrough
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.model.MangaOverride
 import org.koharu.miyo.core.util.ext.iterator
 import org.koharu.miyo.details.ui.model.ChapterListItem

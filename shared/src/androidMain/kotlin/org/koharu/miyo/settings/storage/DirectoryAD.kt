@@ -3,7 +3,7 @@ package org.koharu.miyo.settings.storage
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemStorageBinding
+import org.koharu.miyo.shared.databinding.ItemStorageBinding
 
 fun directoryAD(
 	clickListener: OnListItemClickListener<DirectoryModel>,

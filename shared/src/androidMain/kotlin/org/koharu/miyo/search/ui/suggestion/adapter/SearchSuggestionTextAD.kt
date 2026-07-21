@@ -2,7 +2,7 @@ package org.koharu.miyo.search.ui.suggestion.adapter
 
 import android.widget.TextView
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegate
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.search.ui.suggestion.model.SearchSuggestionItem
 

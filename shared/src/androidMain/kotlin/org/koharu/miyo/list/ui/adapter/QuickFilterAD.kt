@@ -2,7 +2,7 @@ package org.koharu.miyo.list.ui.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.ui.widgets.ChipsView
-import org.koharu.miyo.databinding.ItemQuickFilterBinding
+import org.koharu.miyo.shared.databinding.ItemQuickFilterBinding
 import org.koharu.miyo.list.domain.ListFilterOption
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.list.ui.model.QuickFilter

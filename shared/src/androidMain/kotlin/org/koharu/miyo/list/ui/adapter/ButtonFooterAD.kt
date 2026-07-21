@@ -1,7 +1,7 @@
 package org.koharu.miyo.list.ui.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.databinding.ItemButtonFooterBinding
+import org.koharu.miyo.shared.databinding.ItemButtonFooterBinding
 import org.koharu.miyo.list.ui.model.ButtonFooter
 import org.koharu.miyo.list.ui.model.ListModel
 

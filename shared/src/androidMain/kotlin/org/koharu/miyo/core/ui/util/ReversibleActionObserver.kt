@@ -3,7 +3,7 @@ package org.koharu.miyo.core.ui.util
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.FlowCollector
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.findActivity
 import org.koharu.miyo.main.ui.owners.BottomNavOwner
 import org.koharu.miyo.main.ui.owners.BottomSheetOwner

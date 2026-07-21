@@ -3,7 +3,7 @@ package org.koharu.miyo.settings.appearance
 import android.os.Bundle
 import androidx.preference.ListPreference
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.DetailsUiMode
 import org.koharu.miyo.core.ui.BasePreferenceFragment

@@ -9,14 +9,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.sheet.BaseAdaptiveSheet
 import org.koharu.miyo.core.util.MiyoColors
 import org.koharu.miyo.core.util.ext.consume
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.SheetStatsMangaBinding
+import org.koharu.miyo.shared.databinding.SheetStatsMangaBinding
 import org.koitharu.kotatsu.parsers.util.format
 import org.koharu.miyo.stats.ui.views.BarChartView
 

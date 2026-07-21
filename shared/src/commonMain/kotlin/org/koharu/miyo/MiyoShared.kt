@@ -10,13 +10,19 @@ import org.koharu.miyo.core.nativeio.PlatformNativeZip
 
 /**
  * Stable entry surface for host apps (Android shell, iOS app) and smoke tests.
- * Prefer [MiyoRuntime] for library/history operations.
+ *
+ * - [initialize] only boots platform hooks (safe for production Android).
+ * - Library/history helpers require [MiyoRuntime.start] (iOS / debug sample stack).
  */
 object MiyoShared {
 	const val SHARED_API_VERSION: Int = 2
 
 	fun initialize() {
-		MiyoRuntime.start()
+		initializePlatform()
+	}
+
+	fun startSampleRuntime() {
+		MiyoRuntime.start(useSampleData = true)
 	}
 
 	fun hello(): String = "Miyo shared KMP ready on ${platformName()}"
@@ -31,7 +37,9 @@ object MiyoShared {
 
 	fun nativeZipAvailable(): Boolean = PlatformNativeZip.isAvailable
 
-	fun platformSummary(): String = MiyoRuntime.platformSummary()
+	fun platformSummary(): String =
+		if (MiyoRuntime.isStarted()) MiyoRuntime.platformSummary()
+		else "Miyo $SHARED_API_VERSION · ${Platform.name} ${Platform.version} (runtime not started)"
 
 	fun library(): List<Manga> = MiyoRuntime.librarySnapshot()
 

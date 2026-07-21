@@ -7,7 +7,7 @@ import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.dialog.buildAlertDialog
 import org.koharu.miyo.core.ui.list.ListSelectionController
@@ -15,7 +15,7 @@ import org.koharu.miyo.core.ui.list.RecyclerScrollKeeper
 import org.koharu.miyo.core.ui.util.MenuInvalidator
 import org.koharu.miyo.core.util.ext.addMenuProvider
 import org.koharu.miyo.core.util.ext.observe
-import org.koharu.miyo.databinding.FragmentListBinding
+import org.koharu.miyo.shared.databinding.FragmentListBinding
 import org.koharu.miyo.list.ui.MangaListFragment
 import org.koharu.miyo.list.ui.size.DynamicItemSizeResolver
 

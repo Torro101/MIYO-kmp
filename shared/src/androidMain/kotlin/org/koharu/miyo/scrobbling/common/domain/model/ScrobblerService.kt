@@ -2,7 +2,7 @@ package org.koharu.miyo.scrobbling.common.domain.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 enum class ScrobblerService(
 	val id: Int,

@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import com.google.android.material.button.MaterialButtonGroup
-import org.koharu.miyo.R
-import org.koharu.miyo.databinding.ViewZoomBinding
+import org.koharu.miyo.shared.R
+import org.koharu.miyo.shared.databinding.ViewZoomBinding
 
 class ZoomControl @JvmOverloads constructor(
 	context: Context,

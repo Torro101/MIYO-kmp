@@ -19,7 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import okio.utf8Size
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.model.appUrl
 import org.koharu.miyo.core.model.getTitle

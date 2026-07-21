@@ -6,14 +6,14 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView.RecycledViewPool
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.UnknownMangaSource
 import org.koharu.miyo.core.ui.list.AdapterDelegateClickListenerAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.ui.list.decor.SpacingItemDecoration
 import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemListGroupBinding
+import org.koharu.miyo.shared.databinding.ItemListGroupBinding
 import org.koharu.miyo.list.ui.MangaSelectionDecoration
 import org.koharu.miyo.list.ui.adapter.mangaGridItemAD
 import org.koharu.miyo.list.ui.model.ListModel

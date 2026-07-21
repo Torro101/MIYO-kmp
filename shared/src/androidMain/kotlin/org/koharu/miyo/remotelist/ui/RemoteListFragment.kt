@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.drop
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.list.ListSelectionController
@@ -21,7 +21,7 @@ import org.koharu.miyo.core.util.ext.getCauseUrl
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.withArgs
-import org.koharu.miyo.databinding.FragmentListBinding
+import org.koharu.miyo.shared.databinding.FragmentListBinding
 import org.koharu.miyo.filter.ui.FilterCoordinator
 import org.koharu.miyo.list.ui.MangaListFragment
 import org.koitharu.kotatsu.parsers.model.MangaSource

@@ -13,7 +13,7 @@ import android.view.ViewOutlineProvider
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.withClip
 import com.google.android.material.drawable.DrawableUtils
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class ShapeView @JvmOverloads constructor(
 	context: Context,

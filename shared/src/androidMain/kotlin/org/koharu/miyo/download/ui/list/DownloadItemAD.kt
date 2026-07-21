@@ -11,12 +11,12 @@ import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseListAdapter
 import org.koharu.miyo.core.util.ext.getQuantityStringSafe
 import org.koharu.miyo.core.util.ext.setContentDescriptionAndTooltip
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemDownloadBinding
+import org.koharu.miyo.shared.databinding.ItemDownloadBinding
 import org.koharu.miyo.download.ui.list.chapters.DownloadChapter
 import org.koharu.miyo.download.ui.list.chapters.downloadChapterAD
 import org.koharu.miyo.list.ui.ListModelDiffCallback

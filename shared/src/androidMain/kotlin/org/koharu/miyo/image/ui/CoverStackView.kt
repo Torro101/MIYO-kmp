@@ -13,11 +13,11 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.ImageViewCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.UnknownMangaSource
 import org.koharu.miyo.core.ui.widgets.StackLayout
 import org.koharu.miyo.core.util.ext.getThemeColor
-import org.koharu.miyo.databinding.ViewCoverStackBinding
+import org.koharu.miyo.shared.databinding.ViewCoverStackBinding
 import org.koharu.miyo.favourites.domain.model.Cover
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.model.MangaSource

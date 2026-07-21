@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.nav.router
@@ -36,7 +36,7 @@ import org.koharu.miyo.core.util.ext.findAppCompatDelegate
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.FragmentExploreBinding
+import org.koharu.miyo.shared.databinding.FragmentExploreBinding
 import org.koharu.miyo.explore.ui.adapter.ExploreAdapter
 import org.koharu.miyo.explore.ui.adapter.ExploreListEventListener
 import org.koharu.miyo.explore.ui.model.MangaSourceItem

@@ -11,13 +11,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.BaseFragment
 import org.koharu.miyo.core.ui.widgets.ChipsView
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.FragmentPreviewBinding
+import org.koharu.miyo.shared.databinding.FragmentPreviewBinding
 import org.koharu.miyo.filter.ui.FilterCoordinator
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.model.MangaTag

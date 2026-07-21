@@ -1,253 +1,180 @@
-name: KMP CI/CD Pipeline
+name: KMP CI
 
 on:
   push:
-    branches: [ 'feature/kmp-migration' ]
+    branches: [ main, feature/kmp-migration ]
   pull_request:
-    branches: [ main, devel ]
+    branches: [ main, feature/kmp-migration ]
   workflow_dispatch:
+
+concurrency:
+  group: kmp-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dkotlin.compiler.execution.strategy=in-process
+
 jobs:
-  kmp-build:
-    name: Build KMP Shared Module
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v4.0.1
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Compile Shared Module (Android Target)
-        run: ./gradlew shared:compileDebugKotlinAndroid --stacktrace
-        id: compile-android
-        continue-on-error: true
-
-      - name: Compile Shared Module (Common)
-        run: ./gradlew shared:compileKotlinMetadata --stacktrace
-        id: compile-common
-        continue-on-error: true
-
-      - name: Build Shared Module Android AAR
-        run: ./gradlew shared:assembleDebug --stacktrace
-        id: build-shared
-        continue-on-error: true
-
-      - name: Report Compilation Status
-        run: |
-          echo "=== KMP Compilation Status ==="
-          echo "Android compile: ${{ steps.compile-android.outcome }}"
-          echo "Common compile: ${{ steps.compile-common.outcome }}"
-          echo "AAR build: ${{ steps.build-shared.outcome }}"
-
-          if [ "${{ steps.compile-android.outcome }}" = "failure" ] || [ "${{ steps.compile-common.outcome }}" = "failure" ]; then
-            echo "::warning::Some KMP compilation steps had errors (expected during migration)"
-          fi
-
-      - name: Upload Shared Module AAR
-        uses: actions/upload-artifact@v7
-        if: steps.build-shared.outcome == 'success'
-        with:
-          name: shared-module-aar
-          path: shared/build/outputs/aar/*.aar
-          if-no-files-found: warn
-
-      - name: Upload Compilation Reports
-        uses: actions/upload-artifact@v7
-        if: always()
-        with:
-          name: kmp-compilation-reports
-          path: |
-            shared/build/reports/
-            shared/build/tmp/
-
   verify-structure:
-    name: Verify KMP Structure
+    name: Verify KMP structure
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - name: Verify Source Sets
+      - name: Source sets and hygiene
         run: |
-          echo "=== Verifying KMP source set structure ==="
+          set -euo pipefail
+          test -d shared/src/commonMain/kotlin
+          test -d shared/src/androidMain/kotlin
+          test -d shared/src/iosMain/kotlin
+          test -f shared/build.gradle.kts
+          test -f settings.gradle.kts
+          test -f iosApp/Miyo/ContentView.swift
+          test -f shared/src/commonMain/kotlin/org/koharu/miyo/MiyoRuntime.kt
+          test -f shared/src/iosMain/kotlin/org/koharu/miyo/MiyoIosBootstrap.kt
 
-          # Check commonMain exists and has files
-          if [ ! -d "shared/src/commonMain/kotlin" ]; then
-            echo "ERROR: commonMain/kotlin directory missing"
+          COMMON=$(find shared/src/commonMain/kotlin -name '*.kt' | wc -l)
+          ANDROID=$(find shared/src/androidMain/kotlin -name '*.kt' | wc -l)
+          IOS=$(find shared/src/iosMain/kotlin -name '*.kt' | wc -l)
+          echo "counts common=$COMMON android=$ANDROID ios=$IOS"
+          test "$COMMON" -ge 150
+          test "$ANDROID" -ge 500
+          test "$IOS" -ge 12
+
+          echo "=== Android imports in commonMain (must be empty) ==="
+          if grep -RInE '^import (android\.|androidx\.|okhttp3\.|org\.jsoup\.|javax\.inject|dagger\.)' shared/src/commonMain/kotlin --include='*.kt'; then
+            echo "FAIL: platform imports in commonMain"
             exit 1
           fi
-          COMMON_COUNT=$(find shared/src/commonMain/kotlin -name "*.kt" | wc -l)
-          echo "commonMain: $COMMON_COUNT Kotlin files"
 
-          # Check androidMain exists and has files
-          if [ ! -d "shared/src/androidMain/kotlin" ]; then
-            echo "ERROR: androidMain/kotlin directory missing"
+          echo "=== java.* imports in commonMain (must be empty for K/N) ==="
+          if grep -RInE '^import java\.|^import javax\.' shared/src/commonMain/kotlin --include='*.kt'; then
+            echo "FAIL: JVM imports in commonMain"
             exit 1
           fi
-          ANDROID_COUNT=$(find shared/src/androidMain/kotlin -name "*.kt" | wc -l)
-          echo "androidMain: $ANDROID_COUNT Kotlin files"
 
-          # Check iosMain exists and has files
-          if [ ! -d "shared/src/iosMain/kotlin" ]; then
-            echo "ERROR: iosMain/kotlin directory missing"
-            exit 1
-          fi
-          IOS_COUNT=$(find shared/src/iosMain/kotlin -name "*.kt" | wc -l)
-          echo "iosMain: $IOS_COUNT Kotlin files"
-
-          # Check native code
-          if [ -d "shared/src/androidMain/cpp" ]; then
-            CPP_COUNT=$(find shared/src/androidMain/cpp -type f | wc -l)
-            echo "C++ native files: $CPP_COUNT"
-          fi
-
-          # Check resources
-          if [ -d "shared/src/androidMain/res" ]; then
-            RES_COUNT=$(find shared/src/androidMain/res -type f | wc -l)
-            echo "Android resources: $RES_COUNT"
-          fi
-
-          # Check expect/actual declarations
-          EXPECT_COUNT=$(find shared/src/commonMain/kotlin -path "*/expect/*" -name "*.kt" | wc -l)
-          ACTUAL_ANDROID=$(find shared/src/androidMain/kotlin -path "*/expect/*" -name "*.kt" | wc -l)
-          ACTUAL_IOS=$(find shared/src/iosMain/kotlin -path "*/expect/*" -name "*.kt" | wc -l)
-
-          echo ""
-          echo "=== Expect/Actual Declarations ==="
-          echo "Expect declarations: $EXPECT_COUNT"
-          echo "Android actuals: $ACTUAL_ANDROID"
-          echo "iOS actuals: $ACTUAL_IOS"
-
-          if [ "$EXPECT_COUNT" -ne "$ACTUAL_ANDROID" ] || [ "$EXPECT_COUNT" -ne "$ACTUAL_IOS" ]; then
-            echo "WARNING: Expect/Actual count mismatch"
-          fi
-
-          # Verify build files exist
-          echo ""
-          echo "=== Build Files ==="
-          for file in settings.gradle.kts build.gradle.kts shared/build.gradle.kts app/build.gradle.kts; do
-            if [ -f "$file" ]; then
-              echo "✓ $file exists"
-            else
-              echo "✗ $file MISSING"
-              exit 1
-            fi
+          echo "=== expect/actual trio check ==="
+          for f in Clipboard DateTime DateUtils FileSystem HttpClient ImageLoader Logger Network Notification Platform Preferences Share; do
+            test -f "shared/src/commonMain/kotlin/org/koharu/miyo/core/di/expect/${f}.kt"
+            test -f "shared/src/androidMain/kotlin/org/koharu/miyo/core/di/expect/${f}.kt"
+            test -f "shared/src/iosMain/kotlin/org/koharu/miyo/core/di/expect/${f}.kt"
           done
+          test -f shared/src/commonMain/kotlin/org/koharu/miyo/core/nativeio/PlatformNative.kt
+          test -f shared/src/androidMain/kotlin/org/koharu/miyo/core/nativeio/PlatformNative.android.kt
+          test -f shared/src/iosMain/kotlin/org/koharu/miyo/core/nativeio/PlatformNative.ios.kt
+          echo "structure OK"
 
-          echo ""
-          echo "=== Structure verification passed ==="
-
-      - name: Verify No Android Imports in commonMain
-        run: |
-          echo "=== Checking for Android imports in commonMain ==="
-          # Only check actual import statements, not comments
-          ANDROID_IMPORTS=$(grep -rn "^import android\.\|^import androidx\.\|^import okhttp3\.\|^import.*BuildConfig\|^import.*databinding\|^@Parcelize" shared/src/commonMain/kotlin/ --include="*.kt" 2>/dev/null | wc -l)
-
-          if [ "$ANDROID_IMPORTS" -gt 0 ]; then
-            echo "ERROR: Found $ANDROID_IMPORTS files with Android imports in commonMain"
-            grep -rn "^import android\.\|^import androidx\.\|^import okhttp3\.\|^import.*BuildConfig\|^import.*databinding\|^@Parcelize" shared/src/commonMain/kotlin/ --include="*.kt" 2>/dev/null
-            exit 1
-          else
-            echo "✓ No Android imports found in commonMain"
-          fi
-
-      - name: Generate Migration Report
-        run: |
-          echo "# KMP Migration Report" > kmp-migration-report.md
-          echo "" >> kmp-migration-report.md
-          echo "## Source Set Statistics" >> kmp-migration-report.md
-          echo "" >> kmp-migration-report.md
-          echo "| Source Set | Files |" >> kmp-migration-report.md
-          echo "|------------|-------|" >> kmp-migration-report.md
-          echo "| commonMain | $(find shared/src/commonMain/kotlin -name '*.kt' | wc -l) |" >> kmp-migration-report.md
-          echo "| androidMain | $(find shared/src/androidMain/kotlin -name '*.kt' | wc -l) |" >> kmp-migration-report.md
-          echo "| iosMain | $(find shared/src/iosMain/kotlin -name '*.kt' | wc -l) |" >> kmp-migration-report.md
-          echo "" >> kmp-migration-report.md
-
-          echo "## Expect/Actual Declarations" >> kmp-migration-report.md
-          echo "" >> kmp-migration-report.md
-          echo "### Expect Declarations (commonMain)" >> kmp-migration-report.md
-          find shared/src/commonMain/kotlin -path "*/expect/*" -name "*.kt" -exec basename {} \; | sort >> kmp-migration-report.md
-          echo "" >> kmp-migration-report.md
-
-          echo "### Android Actuals" >> kmp-migration-report.md
-          find shared/src/androidMain/kotlin -path "*/expect/*" -name "*.kt" -exec basename {} \; | sort >> kmp-migration-report.md
-          echo "" >> kmp-migration-report.md
-
-          echo "### iOS Actuals" >> kmp-migration-report.md
-          find shared/src/iosMain/kotlin -path "*/expect/*" -name "*.kt" -exec basename {} \; | sort >> kmp-migration-report.md
-          echo "" >> kmp-migration-report.md
-
-          echo "## Key Packages in commonMain" >> kmp-migration-report.md
-          find shared/src/commonMain/kotlin -maxdepth 5 -type d | sed 's|shared/src/commonMain/kotlin/||' | sort | grep -v "^$" >> kmp-migration-report.md
-
-      - name: Upload Migration Report
-        uses: actions/upload-artifact@v7
-        with:
-          name: kmp-migration-report
-          path: kmp-migration-report.md
-
-  build-app:
-    name: Build Android App with KMP
+  compile-shared-android:
+    name: Compile shared (Android)
     runs-on: ubuntu-latest
     needs: [ verify-structure ]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
+          java-version: "17"
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v4.0.1
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK
+        run: |
+          yes | sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1" || true
+          sdkmanager --list_installed | head -40
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
-        continue-on-error: true
-        id: build-apk
-
-      - name: Report Build Status
+      - name: Compile common metadata + Android debug Kotlin
         run: |
-          echo "=== App Build Status ==="
-          echo "Build: ${{ steps.build-apk.outcome }}"
-          if [ "${{ steps.build-apk.outcome }}" = "failure" ]; then
-            echo "::warning::App build had errors (expected during KMP migration)"
-          fi
+          chmod +x gradlew
+          ./gradlew --no-daemon \
+            -Pandroid.builder.sdkDownload=true \
+            :shared:compileKotlinMetadata \
+            :shared:compileDebugKotlinAndroid \
+            --stacktrace
 
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v7
-        if: steps.build-apk.outcome == 'success'
-        with:
-          name: debug-apk-with-kmp
-          path: app/build/outputs/apk/debug/*.apk
+      - name: Assemble shared debug AAR
+        run: ./gradlew --no-daemon :shared:assembleDebug --stacktrace
 
-      - name: Upload Build Reports
-        uses: actions/upload-artifact@v7
-        if: always()
+      - name: Upload shared AAR
+        uses: actions/upload-artifact@v4
         with:
-          name: app-build-reports
+          name: shared-debug-aar
+          path: shared/build/outputs/aar/*.aar
+          if-no-files-found: error
+
+  compile-shared-ios:
+    name: Compile shared (iOS framework)
+    runs-on: macos-14
+    needs: [ verify-structure ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Link iOS Simulator arm64 framework
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon \
+            :shared:linkDebugFrameworkIosSimulatorArm64 \
+            --stacktrace
+
+      - name: Upload iOS framework
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-ios-simulator-framework
           path: |
-            app/build/reports/
-            app/build/outputs/
+            shared/build/bin/iosSimulatorArm64/debugFramework/**
+          if-no-files-found: error
+
+  compile-app-android:
+    name: Compile Android app (debug)
+    runs-on: ubuntu-latest
+    needs: [ compile-shared-android ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK
+        run: |
+          yes | sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1" || true
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Compile app debug Kotlin
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:compileDebugKotlin --stacktrace
+
+      - name: Assemble debug APK
+        run: ./gradlew --no-daemon :app:assembleDebug --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

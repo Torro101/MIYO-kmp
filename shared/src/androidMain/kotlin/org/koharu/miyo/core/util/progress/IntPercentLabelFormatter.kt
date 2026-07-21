@@ -2,7 +2,7 @@ package org.koharu.miyo.core.util.progress
 
 import android.content.Context
 import com.google.android.material.slider.LabelFormatter
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class IntPercentLabelFormatter(context: Context) : LabelFormatter {
 

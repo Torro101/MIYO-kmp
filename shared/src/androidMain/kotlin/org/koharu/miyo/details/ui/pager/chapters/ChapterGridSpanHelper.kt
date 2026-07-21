@@ -3,7 +3,7 @@ package org.koharu.miyo.details.ui.pager.chapters
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.list.ui.adapter.ListItemType
 import kotlin.math.roundToInt
 

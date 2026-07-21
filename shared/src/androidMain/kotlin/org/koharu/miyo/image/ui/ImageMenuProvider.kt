@@ -10,7 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
 import com.google.android.material.snackbar.Snackbar
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.isZipUri
 import org.koharu.miyo.core.util.ext.tryLaunch
 

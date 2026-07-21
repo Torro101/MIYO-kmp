@@ -6,7 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.main.ui.owners.AppBarOwner
 
 class SourcesCatalogMenuProvider(

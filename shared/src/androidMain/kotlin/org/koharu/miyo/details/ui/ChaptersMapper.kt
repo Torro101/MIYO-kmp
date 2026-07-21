@@ -1,7 +1,7 @@
 package org.koharu.miyo.details.ui
 
 import android.content.Context
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.details.data.MangaDetails
 import org.koharu.miyo.details.ui.model.ChapterListItem

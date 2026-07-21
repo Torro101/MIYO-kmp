@@ -2,7 +2,7 @@ package org.koharu.miyo.list.ui.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.ItemInfoBinding
+import org.koharu.miyo.shared.databinding.ItemInfoBinding
 import org.koharu.miyo.list.ui.model.InfoModel
 import org.koharu.miyo.list.ui.model.ListModel
 

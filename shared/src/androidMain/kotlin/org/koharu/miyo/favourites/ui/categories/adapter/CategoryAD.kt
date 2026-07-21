@@ -9,11 +9,11 @@ import android.view.View.OnTouchListener
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getQuantityStringSafe
 import org.koharu.miyo.core.util.ext.setTooltipCompat
-import org.koharu.miyo.databinding.ItemCategoriesAllBinding
-import org.koharu.miyo.databinding.ItemCategoryBinding
+import org.koharu.miyo.shared.databinding.ItemCategoriesAllBinding
+import org.koharu.miyo.shared.databinding.ItemCategoryBinding
 import org.koharu.miyo.favourites.ui.categories.FavouriteCategoriesListListener
 import org.koharu.miyo.list.ui.model.ListModel
 

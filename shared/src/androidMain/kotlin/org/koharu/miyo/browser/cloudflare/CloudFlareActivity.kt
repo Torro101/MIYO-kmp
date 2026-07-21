@@ -16,7 +16,7 @@ import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.yield
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.browser.BaseBrowserActivity
 import org.koharu.miyo.core.exceptions.CloudFlareProtectedException
 import org.koharu.miyo.core.exceptions.resolve.CaptchaHandler

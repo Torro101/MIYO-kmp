@@ -8,7 +8,7 @@ import androidx.collection.MutableScatterSet
 import androidx.collection.ScatterSet
 import dagger.Reusable
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.parser.MangaDataRepository
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.ListMode

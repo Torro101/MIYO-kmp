@@ -29,7 +29,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.chip.ChipGroup
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.image.ChipIconTarget
 import org.koharu.miyo.core.util.ext.enqueueWith
 import org.koharu.miyo.core.util.ext.getThemeColor

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.db.TABLE_SOURCES
 import org.koharu.miyo.core.model.MangaSourceInfo

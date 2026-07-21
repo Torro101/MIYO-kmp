@@ -17,7 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil3.ImageLoader
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.alternatives.ui.AutoFixService
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
@@ -42,7 +42,7 @@ import org.koharu.miyo.core.util.ext.findAppCompatDelegate
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.viewLifecycleScope
-import org.koharu.miyo.databinding.FragmentListBinding
+import org.koharu.miyo.shared.databinding.FragmentListBinding
 import org.koharu.miyo.list.domain.ListFilterOption
 import org.koharu.miyo.list.domain.QuickFilterListener
 import org.koharu.miyo.list.ui.adapter.ListItemType

@@ -3,7 +3,7 @@ package org.koharu.miyo.settings.utils
 import android.net.Uri
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.reader.domain.BundledImageRefinementModel
 
 class RefinementModelSettingsHelper(

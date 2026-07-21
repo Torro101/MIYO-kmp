@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.os.NetworkState
 import org.koharu.miyo.core.prefs.ReaderAnimation
 import org.koharu.miyo.core.ui.list.lifecycle.PagerLifecycleDispatcher
@@ -25,7 +25,7 @@ import org.koharu.miyo.core.util.ext.findCurrentViewHolder
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.recyclerView
 import org.koharu.miyo.core.util.ext.resetTransformations
-import org.koharu.miyo.databinding.FragmentReaderPagerBinding
+import org.koharu.miyo.shared.databinding.FragmentReaderPagerBinding
 import org.koharu.miyo.reader.domain.PageLoader
 import org.koharu.miyo.reader.ui.ReaderState
 import org.koharu.miyo.reader.ui.pager.standard.NoAnimPageTransformer

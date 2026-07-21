@@ -12,7 +12,7 @@ import androidx.core.view.isVisible
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.ui.model.MangaOverride
 import org.koharu.miyo.core.util.ext.consumeAll
@@ -20,7 +20,7 @@ import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.tryLaunch
-import org.koharu.miyo.databinding.ActivityOverrideEditBinding
+import org.koharu.miyo.shared.databinding.ActivityOverrideEditBinding
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.util.ifNullOrEmpty
 import org.koharu.miyo.picker.ui.PageImagePickContract

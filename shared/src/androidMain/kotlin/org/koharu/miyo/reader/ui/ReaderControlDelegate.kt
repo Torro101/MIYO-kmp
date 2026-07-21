@@ -3,7 +3,7 @@ package org.koharu.miyo.reader.ui
 import android.content.res.Resources
 import android.view.KeyEvent
 import android.view.View
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.ReaderMode
 import org.koharu.miyo.reader.data.TapGridSettings

@@ -15,7 +15,7 @@ import org.koharu.miyo.core.ui.BaseFragment
 import org.koharu.miyo.core.ui.widgets.ChipsView
 import org.koharu.miyo.core.util.ext.isAnimationsEnabled
 import org.koharu.miyo.core.util.ext.observe
-import org.koharu.miyo.databinding.FragmentFilterHeaderBinding
+import org.koharu.miyo.shared.databinding.FragmentFilterHeaderBinding
 import org.koharu.miyo.filter.data.PersistableFilter
 import org.koharu.miyo.filter.ui.model.FilterHeaderModel
 import org.koitharu.kotatsu.parsers.model.ContentRating

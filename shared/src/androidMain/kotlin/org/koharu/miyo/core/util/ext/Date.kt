@@ -1,7 +1,7 @@
 package org.koharu.miyo.core.util.ext
 
 import android.content.res.Resources
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.model.DateTimeAgo
 import java.time.Instant
 import java.time.LocalDate

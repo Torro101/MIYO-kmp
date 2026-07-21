@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.os.AppShortcutManager
@@ -33,7 +33,7 @@ import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.start
 import org.koharu.miyo.core.util.ext.systemBarsInsets
 import org.koharu.miyo.core.util.ext.viewLifecycleScope
-import org.koharu.miyo.databinding.FragmentSettingsSourcesBinding
+import org.koharu.miyo.shared.databinding.FragmentSettingsSourcesBinding
 import org.koharu.miyo.main.ui.owners.AppBarOwner
 import org.koharu.miyo.settings.SettingsActivity
 import org.koharu.miyo.settings.sources.SourceSettingsFragment

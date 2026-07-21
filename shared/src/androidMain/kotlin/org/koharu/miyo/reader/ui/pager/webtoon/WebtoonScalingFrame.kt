@@ -19,7 +19,7 @@ import android.widget.FrameLayout
 import android.widget.OverScroller
 import androidx.core.animation.doOnEnd
 import androidx.core.view.ViewConfigurationCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.widgets.ZoomControl
 import org.koharu.miyo.core.util.ext.getAnimationDuration
 import kotlin.math.roundToInt

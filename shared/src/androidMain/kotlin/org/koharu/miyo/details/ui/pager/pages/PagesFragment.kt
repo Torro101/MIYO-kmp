@@ -18,7 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.nav.ReaderIntent
 import org.koharu.miyo.core.nav.dismissParentDialog
@@ -38,7 +38,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.setTextAndVisible
 import org.koharu.miyo.core.util.ext.showOrHide
-import org.koharu.miyo.databinding.FragmentPagesBinding
+import org.koharu.miyo.shared.databinding.FragmentPagesBinding
 import org.koharu.miyo.details.ui.pager.ChaptersPagesViewModel
 import org.koharu.miyo.details.ui.pager.EmptyMangaReason
 import org.koharu.miyo.list.ui.GridSpanResolver

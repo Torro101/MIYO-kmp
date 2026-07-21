@@ -6,7 +6,7 @@ import android.content.res.AssetManager
 import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.tls.HandshakeCertificates
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import java.security.SecureRandom
 import java.security.cert.CertificateFactory

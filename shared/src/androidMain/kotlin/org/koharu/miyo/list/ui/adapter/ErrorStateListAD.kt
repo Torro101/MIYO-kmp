@@ -3,10 +3,10 @@ package org.koharu.miyo.list.ui.adapter
 import android.view.View
 import androidx.core.view.isVisible
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.ItemErrorStateBinding
+import org.koharu.miyo.shared.databinding.ItemErrorStateBinding
 import org.koharu.miyo.list.ui.model.ErrorState
 import org.koharu.miyo.list.ui.model.ListModel
 

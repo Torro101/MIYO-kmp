@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView.NO_ID
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
@@ -31,7 +31,7 @@ import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.setProgressIcon
 import org.koharu.miyo.core.util.ext.setTabsEnabled
 import org.koharu.miyo.core.util.ext.viewLifecycleScope
-import org.koharu.miyo.databinding.SheetScrobblingSelectorBinding
+import org.koharu.miyo.shared.databinding.SheetScrobblingSelectorBinding
 import org.koharu.miyo.list.ui.adapter.ListStateHolderListener
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration
 import org.koharu.miyo.list.ui.model.ListModel

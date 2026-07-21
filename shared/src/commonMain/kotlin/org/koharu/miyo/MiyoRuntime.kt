@@ -51,6 +51,8 @@ object MiyoRuntime {
 	@Volatile
 	private var started = false
 
+	fun isStarted(): Boolean = started
+
 	fun start(useSampleData: Boolean = true) {
 		if (started) return
 		synchronized(this) {

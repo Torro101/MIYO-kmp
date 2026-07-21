@@ -6,7 +6,7 @@ import org.koharu.miyo.core.ui.BaseListAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.ui.list.fastscroll.FastScroller
 import org.koharu.miyo.core.util.ext.setChecked
-import org.koharu.miyo.databinding.ItemCheckableNewBinding
+import org.koharu.miyo.shared.databinding.ItemCheckableNewBinding
 import org.koharu.miyo.filter.ui.model.TagCatalogItem
 import org.koharu.miyo.list.ui.ListModelDiffCallback
 import org.koharu.miyo.list.ui.adapter.ListItemType

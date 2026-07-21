@@ -20,7 +20,7 @@ import org.koharu.miyo.core.ui.sheet.BaseAdaptiveSheet
 import org.koharu.miyo.core.ui.util.DefaultTextWatcher
 import org.koharu.miyo.core.util.ext.consumeAll
 import org.koharu.miyo.core.util.ext.observe
-import org.koharu.miyo.databinding.SheetTagsBinding
+import org.koharu.miyo.shared.databinding.SheetTagsBinding
 import org.koharu.miyo.filter.ui.FilterCoordinator
 import org.koharu.miyo.filter.ui.model.TagCatalogItem
 

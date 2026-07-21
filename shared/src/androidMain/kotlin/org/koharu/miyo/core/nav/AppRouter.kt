@@ -22,8 +22,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.LifecycleOwner
 import dagger.hilt.android.EntryPointAccessors
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.alternatives.ui.AlternativesActivity
 import org.koharu.miyo.backups.ui.backup.BackupDialogFragment
 import org.koharu.miyo.backups.ui.restore.RestoreDialogFragment

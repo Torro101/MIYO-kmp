@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.pm.PackageInfoCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koitharu.kotatsu.parsers.util.suspendlazy.suspendLazy
 import java.util.Locale
 import javax.inject.Inject

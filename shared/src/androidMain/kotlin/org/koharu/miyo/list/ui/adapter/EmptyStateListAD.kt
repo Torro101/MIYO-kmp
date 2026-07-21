@@ -3,7 +3,7 @@ package org.koharu.miyo.list.ui.adapter
 import androidx.core.view.isVisible
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.ItemEmptyStateBinding
+import org.koharu.miyo.shared.databinding.ItemEmptyStateBinding
 import org.koharu.miyo.list.ui.model.EmptyState
 import org.koharu.miyo.list.ui.model.ListModel
 

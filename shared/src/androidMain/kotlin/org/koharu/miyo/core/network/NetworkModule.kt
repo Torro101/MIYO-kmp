@@ -10,7 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.CookieJar
 import okhttp3.OkHttpClient
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.network.cookies.AndroidCookieJar
 import org.koharu.miyo.core.network.cookies.MutableCookieJar
 import org.koharu.miyo.core.network.cookies.PreferencesCookieJar

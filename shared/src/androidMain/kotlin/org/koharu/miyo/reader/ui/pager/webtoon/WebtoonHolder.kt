@@ -4,7 +4,7 @@ import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import org.koharu.miyo.core.exceptions.resolve.ExceptionResolver
 import org.koharu.miyo.core.os.NetworkState
-import org.koharu.miyo.databinding.ItemPageWebtoonBinding
+import org.koharu.miyo.shared.databinding.ItemPageWebtoonBinding
 import org.koharu.miyo.reader.domain.PageLoader
 import org.koharu.miyo.reader.ui.config.ReaderSettings
 import org.koharu.miyo.reader.ui.pager.BasePageHolder

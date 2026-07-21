@@ -2,7 +2,7 @@ package org.koharu.miyo.search.ui.suggestion.adapter
 
 import android.view.View
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.databinding.ItemSearchSuggestionQueryHintBinding
+import org.koharu.miyo.shared.databinding.ItemSearchSuggestionQueryHintBinding
 import org.koharu.miyo.search.domain.SearchKind
 import org.koharu.miyo.search.ui.suggestion.SearchSuggestionListener
 import org.koharu.miyo.search.ui.suggestion.model.SearchSuggestionItem

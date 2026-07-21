@@ -11,7 +11,7 @@ import androidx.activity.viewModels
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.FavouriteCategory
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.ui.util.DefaultTextWatcher
@@ -23,7 +23,7 @@ import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.setChecked
 import org.koharu.miyo.core.util.ext.sortedByOrdinal
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityCategoryEditBinding
+import org.koharu.miyo.shared.databinding.ActivityCategoryEditBinding
 import org.koharu.miyo.list.domain.ListSortOrder
 
 @AndroidEntryPoint

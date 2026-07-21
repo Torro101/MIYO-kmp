@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuProvider
 import androidx.core.view.inputmethod.EditorInfoCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.util.ReversibleAction
 import org.koharu.miyo.core.util.ext.call
 import org.koharu.miyo.filter.ui.FilterCoordinator

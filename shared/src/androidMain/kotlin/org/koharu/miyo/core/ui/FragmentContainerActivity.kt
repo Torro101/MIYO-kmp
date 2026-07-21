@@ -9,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.consumeSystemBarsInsets
-import org.koharu.miyo.databinding.ActivityContainerBinding
+import org.koharu.miyo.shared.databinding.ActivityContainerBinding
 import org.koharu.miyo.main.ui.owners.AppBarOwner
 import org.koharu.miyo.main.ui.owners.SnackbarOwner
 

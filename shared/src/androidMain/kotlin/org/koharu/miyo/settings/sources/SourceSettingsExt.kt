@@ -6,7 +6,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.parser.EmptyMangaRepository
 import org.koharu.miyo.core.parser.MangaRepository
 import org.koharu.miyo.core.parser.ParserMangaRepository

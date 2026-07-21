@@ -1,5 +1,6 @@
 package org.koharu.miyo.core.exceptions
 
-import java.io.IOException
-
-class BadBackupFormatException(cause: Throwable?) : IOException(cause)
+class BadBackupFormatException(
+	message: String? = null,
+	cause: Throwable? = null,
+) : Exception(message, cause)

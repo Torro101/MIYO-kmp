@@ -1,7 +1,7 @@
 package org.koharu.miyo.settings.utils.validation
 
 import okhttp3.Headers
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.network.CommonHeaders
 import org.koharu.miyo.core.util.EditTextValidator
 

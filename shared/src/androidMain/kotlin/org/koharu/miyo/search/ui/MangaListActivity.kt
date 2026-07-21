@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.model.getSummary
@@ -39,7 +39,7 @@ import org.koharu.miyo.core.util.ext.getThemeColor
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.setTextAndVisible
 import org.koharu.miyo.core.util.ext.start
-import org.koharu.miyo.databinding.ActivityMangaListBinding
+import org.koharu.miyo.shared.databinding.ActivityMangaListBinding
 import org.koharu.miyo.filter.ui.FilterCoordinator
 import org.koharu.miyo.filter.ui.FilterHeaderFragment
 import org.koharu.miyo.filter.ui.sheet.FilterSheetFragment

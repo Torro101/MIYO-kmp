@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegate
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.decor.SpacingItemDecoration
 import org.koharu.miyo.core.util.RecyclerViewScrollCallback
 import org.koharu.miyo.core.util.ext.setTooltipCompat
-import org.koharu.miyo.databinding.ItemSearchSuggestionMangaGridBinding
+import org.koharu.miyo.shared.databinding.ItemSearchSuggestionMangaGridBinding
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koharu.miyo.search.ui.suggestion.SearchSuggestionListener
 import org.koharu.miyo.search.ui.suggestion.model.SearchSuggestionItem

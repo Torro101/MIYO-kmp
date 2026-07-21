@@ -15,7 +15,7 @@ import androidx.core.view.updatePadding
 import com.google.android.material.snackbar.Snackbar
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.os.OpenDocumentTreeHelper
 import org.koharu.miyo.core.ui.BaseActivity
@@ -25,7 +25,7 @@ import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.tryLaunch
-import org.koharu.miyo.databinding.ActivityMangaDirectoriesBinding
+import org.koharu.miyo.shared.databinding.ActivityMangaDirectoriesBinding
 import org.koharu.miyo.settings.storage.RequestStorageManagerPermissionContract
 
 @AndroidEntryPoint

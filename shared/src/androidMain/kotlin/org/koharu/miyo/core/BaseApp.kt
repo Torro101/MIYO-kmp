@@ -21,9 +21,10 @@ import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
 import org.conscrypt.Conscrypt
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.MiyoShared
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
+import org.koharu.miyo.core.os.AndroidContextHolder
 import org.koharu.miyo.core.db.MangaDatabase
 import org.koharu.miyo.core.os.AppValidator
 import org.koharu.miyo.core.os.RomCompat
@@ -89,6 +90,7 @@ open class BaseApp : Application(), Configuration.Provider {
 
 	override fun onCreate() {
 		super.onCreate()
+		AndroidContextHolder.init(this)
 		MiyoShared.initialize()
 		PlatformRegistry.applicationContext = this // TODO replace with OkHttp.initialize
 		if (ACRA.isACRASenderServiceProcess()) {
@@ -129,6 +131,7 @@ open class BaseApp : Application(), Configuration.Provider {
 
 	override fun attachBaseContext(base: Context) {
 		super.attachBaseContext(base)
+		AndroidContextHolder.init(base)
 		if (ACRA.isACRASenderServiceProcess()) {
 			return
 		}

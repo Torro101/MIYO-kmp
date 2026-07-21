@@ -2,7 +2,7 @@ package org.koharu.miyo.list.ui.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.util.ext.getDisplayMessage
-import org.koharu.miyo.databinding.ItemErrorFooterBinding
+import org.koharu.miyo.shared.databinding.ItemErrorFooterBinding
 import org.koharu.miyo.list.ui.model.ErrorFooter
 import org.koharu.miyo.list.ui.model.ListModel
 

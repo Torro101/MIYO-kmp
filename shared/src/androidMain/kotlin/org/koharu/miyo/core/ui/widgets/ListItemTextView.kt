@@ -18,7 +18,7 @@ import androidx.core.content.withStyledAttributes
 import com.google.android.material.ripple.RippleUtils
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.resolveDp
 
 @SuppressLint("RestrictedApi")

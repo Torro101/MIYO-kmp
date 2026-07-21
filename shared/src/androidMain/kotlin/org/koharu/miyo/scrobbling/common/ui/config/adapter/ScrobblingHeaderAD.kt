@@ -2,8 +2,8 @@ package org.koharu.miyo.scrobbling.common.ui.config.adapter
 
 import androidx.core.view.isInvisible
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
-import org.koharu.miyo.databinding.ItemHeaderBinding
+import org.koharu.miyo.shared.R
+import org.koharu.miyo.shared.databinding.ItemHeaderBinding
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblingStatus
 

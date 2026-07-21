@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import coil3.ImageLoader
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.ui.list.ListSelectionController
@@ -21,7 +21,7 @@ import org.koharu.miyo.core.ui.util.MenuInvalidator
 import org.koharu.miyo.core.ui.util.ReversibleActionObserver
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
-import org.koharu.miyo.databinding.ActivityDownloadsBinding
+import org.koharu.miyo.shared.databinding.ActivityDownloadsBinding
 import org.koharu.miyo.download.ui.worker.DownloadWorker
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration
 import javax.inject.Inject

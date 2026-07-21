@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.view.ActionMode
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.ui.list.BaseListSelectionCallback

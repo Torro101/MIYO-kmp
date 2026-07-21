@@ -22,7 +22,7 @@ import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.image.CoilMemoryCacheKey
 import org.koharu.miyo.core.model.MangaSource
@@ -41,8 +41,8 @@ import org.koharu.miyo.core.util.ext.mangaSourceExtra
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.start
-import org.koharu.miyo.databinding.ActivityImageBinding
-import org.koharu.miyo.databinding.ItemErrorStateBinding
+import org.koharu.miyo.shared.databinding.ActivityImageBinding
+import org.koharu.miyo.shared.databinding.ItemErrorStateBinding
 import javax.inject.Inject
 import androidx.appcompat.R as appcompatR
 

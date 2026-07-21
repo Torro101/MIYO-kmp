@@ -11,7 +11,7 @@ import androidx.core.net.toUri
 import androidx.work.WorkManager
 import androidx.work.await
 import kotlinx.coroutines.Dispatchers
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.goAsync
 import org.koharu.miyo.core.util.ext.toUUIDOrNull
 import org.koharu.miyo.download.ui.list.DownloadsActivity

@@ -11,7 +11,7 @@ import androidx.core.content.withStyledAttributes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import androidx.viewpager2.widget.ViewPager2
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getThemeColorStateList
 import org.koharu.miyo.core.util.ext.measureDimension
 import org.koharu.miyo.core.util.ext.resolveDp

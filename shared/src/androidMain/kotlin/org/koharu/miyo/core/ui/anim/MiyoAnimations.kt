@@ -5,7 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 /**
  * MIYO UI/UX Redesign - Refined RecyclerView item animator.

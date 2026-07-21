@@ -7,7 +7,7 @@ import okhttp3.Interceptor.Chain
 import okhttp3.Request
 import okhttp3.Response
 import okio.IOException
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.parser.MangaLoaderContextImpl
 import org.koharu.miyo.core.parser.MangaRepository

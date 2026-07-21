@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.bookmarks.ui.AllBookmarksFragment
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.prefs.AppSettings
@@ -36,7 +36,7 @@ import org.koharu.miyo.core.ui.widgets.SlidingBottomNavigationView
 import org.koharu.miyo.core.util.ext.buildBundle
 import org.koharu.miyo.core.util.ext.setContentDescriptionAndTooltip
 import org.koharu.miyo.core.util.ext.smoothScrollToTop
-import org.koharu.miyo.databinding.NavigationRailFabBinding
+import org.koharu.miyo.shared.databinding.NavigationRailFabBinding
 import org.koharu.miyo.explore.ui.ExploreFragment
 import org.koharu.miyo.favourites.ui.container.FavouritesContainerFragment
 import org.koharu.miyo.history.ui.HistoryListFragment

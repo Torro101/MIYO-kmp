@@ -17,7 +17,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.backups.ui.periodical.PeriodicalBackupSettingsFragment
 import org.koharu.miyo.core.model.MangaSource
 import org.koharu.miyo.core.nav.AppRouter
@@ -28,7 +28,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.start
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ActivitySettingsBinding
+import org.koharu.miyo.shared.databinding.ActivitySettingsBinding
 import org.koharu.miyo.main.ui.owners.AppBarOwner
 import org.koharu.miyo.settings.about.AboutSettingsFragment
 import org.koharu.miyo.settings.discord.DiscordSettingsFragment

@@ -11,12 +11,12 @@ package org.koharu.miyo
  */
 object MiyoIosBootstrap {
 	fun start() {
-		MiyoRuntime.start(useSampleData = true)
+		MiyoShared.startSampleRuntime()
 	}
 
-	fun statusLine(): String = MiyoRuntime.platformSummary()
+	fun statusLine(): String = MiyoShared.platformSummary()
 
-	fun libraryCount(): Int = MiyoRuntime.librarySnapshot().size
+	fun libraryCount(): Int = MiyoShared.library().size
 
-	fun favoriteCount(): Int = MiyoRuntime.favoritesSnapshot().size
+	fun favoriteCount(): Int = MiyoShared.favorites().size
 }

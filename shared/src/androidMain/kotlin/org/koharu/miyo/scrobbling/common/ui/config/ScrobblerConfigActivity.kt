@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
@@ -21,7 +21,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.showOrHide
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityScrobblerConfigBinding
+import org.koharu.miyo.shared.databinding.ActivityScrobblerConfigBinding
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblerService
 import org.koharu.miyo.scrobbling.common.domain.model.ScrobblerUser

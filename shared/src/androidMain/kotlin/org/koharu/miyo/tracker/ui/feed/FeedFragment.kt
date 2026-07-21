@@ -12,7 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil3.ImageLoader
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.drop
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.BaseFragment
@@ -26,7 +26,7 @@ import org.koharu.miyo.core.util.ext.addMenuProvider
 import org.koharu.miyo.core.util.ext.consumeAll
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
-import org.koharu.miyo.databinding.FragmentListBinding
+import org.koharu.miyo.shared.databinding.FragmentListBinding
 import org.koharu.miyo.list.domain.ListFilterOption
 import org.koharu.miyo.list.ui.adapter.MangaListListener
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration

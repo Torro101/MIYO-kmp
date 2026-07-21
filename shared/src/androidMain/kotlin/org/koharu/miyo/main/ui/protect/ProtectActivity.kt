@@ -24,7 +24,7 @@ import androidx.lifecycle.withResumed
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.ui.util.DefaultTextWatcher
 import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
@@ -33,7 +33,7 @@ import org.koharu.miyo.core.util.ext.getParcelableExtraCompat
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityProtectBinding
+import org.koharu.miyo.shared.databinding.ActivityProtectBinding
 import com.google.android.material.R as materialR
 
 @AndroidEntryPoint

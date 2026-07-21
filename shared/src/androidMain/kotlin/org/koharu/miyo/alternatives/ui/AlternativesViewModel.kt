@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.alternatives.domain.AlternativesUseCase
 import org.koharu.miyo.alternatives.domain.MigrateUseCase
 import org.koharu.miyo.core.model.chaptersCount

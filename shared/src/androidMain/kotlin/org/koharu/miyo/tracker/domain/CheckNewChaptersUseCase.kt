@@ -2,7 +2,7 @@ package org.koharu.miyo.tracker.domain
 
 import android.util.Log
 import coil3.request.CachePolicy
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.core.model.getPreferredBranch
 import org.koharu.miyo.core.model.isLocal
 import org.koharu.miyo.core.parser.CachingMangaRepository

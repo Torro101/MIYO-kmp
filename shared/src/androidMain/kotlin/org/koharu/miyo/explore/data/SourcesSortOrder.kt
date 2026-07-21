@@ -1,7 +1,7 @@
 package org.koharu.miyo.explore.data
 
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 enum class SourcesSortOrder(
 	@StringRes val titleResId: Int,

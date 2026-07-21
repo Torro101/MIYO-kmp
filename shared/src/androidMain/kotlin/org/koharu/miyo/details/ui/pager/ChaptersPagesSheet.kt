@@ -12,7 +12,7 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
@@ -35,7 +35,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.recyclerView
 import org.koharu.miyo.core.util.ext.smoothScrollToTop
-import org.koharu.miyo.databinding.SheetChaptersPagesBinding
+import org.koharu.miyo.shared.databinding.SheetChaptersPagesBinding
 import org.koharu.miyo.details.ui.DetailsViewModel
 import org.koharu.miyo.details.ui.ReadButtonDelegate
 import org.koharu.miyo.download.ui.worker.DownloadStartedObserver

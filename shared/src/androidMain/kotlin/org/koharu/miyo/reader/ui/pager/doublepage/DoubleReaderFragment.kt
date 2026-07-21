@@ -11,12 +11,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.os.NetworkState
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.list.lifecycle.RecyclerViewLifecycleDispatcher
 import org.koharu.miyo.core.util.ext.firstVisibleItemPosition
-import org.koharu.miyo.databinding.FragmentReaderDoubleBinding
+import org.koharu.miyo.shared.databinding.FragmentReaderDoubleBinding
 import org.koharu.miyo.reader.domain.PageLoader
 import org.koharu.miyo.reader.ui.ReaderState
 import org.koharu.miyo.reader.ui.pager.BaseReaderAdapter

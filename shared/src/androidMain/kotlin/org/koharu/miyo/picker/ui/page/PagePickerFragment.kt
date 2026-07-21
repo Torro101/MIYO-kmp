@@ -12,7 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.ui.BaseFragment
@@ -23,7 +23,7 @@ import org.koharu.miyo.core.util.ext.consumeAll
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.showOrHide
-import org.koharu.miyo.databinding.FragmentPagesBinding
+import org.koharu.miyo.shared.databinding.FragmentPagesBinding
 import org.koharu.miyo.details.ui.pager.pages.PageThumbnail
 import org.koharu.miyo.details.ui.pager.pages.PageThumbnailAdapter
 import org.koharu.miyo.list.ui.GridSpanResolver

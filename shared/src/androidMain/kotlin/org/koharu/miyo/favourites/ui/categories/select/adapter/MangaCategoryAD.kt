@@ -2,10 +2,10 @@ package org.koharu.miyo.favourites.ui.categories.select.adapter
 
 import androidx.core.text.buildSpannedString
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.appendIcon
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
-import org.koharu.miyo.databinding.ItemCategoryCheckableBinding
+import org.koharu.miyo.shared.databinding.ItemCategoryCheckableBinding
 import org.koharu.miyo.favourites.ui.categories.select.model.MangaCategoryItem
 import org.koharu.miyo.list.ui.ListModelDiffCallback
 import org.koharu.miyo.list.ui.model.ListModel

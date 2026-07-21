@@ -2,7 +2,7 @@ package org.koharu.miyo.core.prefs
 
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 @Keep
 enum class SearchSuggestionType(

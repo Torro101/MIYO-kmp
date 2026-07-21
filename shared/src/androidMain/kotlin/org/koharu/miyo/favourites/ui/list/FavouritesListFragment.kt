@@ -10,12 +10,12 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.ui.list.ListSelectionController
 import org.koharu.miyo.core.util.ext.sortedByOrdinal
 import org.koharu.miyo.core.util.ext.withArgs
-import org.koharu.miyo.databinding.FragmentListBinding
+import org.koharu.miyo.shared.databinding.FragmentListBinding
 import org.koharu.miyo.list.domain.ListSortOrder
 import org.koharu.miyo.list.ui.MangaListFragment
 

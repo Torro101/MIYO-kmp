@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class WebtoonFrameLayout @JvmOverloads constructor(
 	context: Context,

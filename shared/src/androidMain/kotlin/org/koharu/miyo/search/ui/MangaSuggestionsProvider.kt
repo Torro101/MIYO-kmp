@@ -7,7 +7,7 @@ import android.content.SearchRecentSuggestionsProvider
 import android.net.Uri
 import android.provider.SearchRecentSuggestions
 import androidx.core.net.toUri
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 
 class MangaSuggestionsProvider : SearchRecentSuggestionsProvider() {
 

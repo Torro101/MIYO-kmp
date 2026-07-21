@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.backups.ui.periodical.PeriodicalBackupService
 import org.koharu.miyo.browser.AdListUpdateService
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
@@ -59,7 +59,7 @@ import org.koharu.miyo.core.util.ext.end
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.start
-import org.koharu.miyo.databinding.ActivityMainBinding
+import org.koharu.miyo.shared.databinding.ActivityMainBinding
 import org.koharu.miyo.details.service.MangaPrefetchService
 import org.koharu.miyo.favourites.ui.container.FavouritesContainerFragment
 import org.koharu.miyo.history.ui.HistoryListFragment

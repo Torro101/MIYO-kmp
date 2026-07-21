@@ -8,13 +8,13 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegate
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.getSummary
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.ui.list.OnTipCloseListener
 import org.koharu.miyo.core.util.ext.drawableStart
-import org.koharu.miyo.databinding.ItemSourceConfigBinding
-import org.koharu.miyo.databinding.ItemTipBinding
+import org.koharu.miyo.shared.databinding.ItemSourceConfigBinding
+import org.koharu.miyo.shared.databinding.ItemTipBinding
 import org.koharu.miyo.settings.sources.model.SourceConfigItem
 
 fun sourceConfigItemDelegate2(

@@ -2,7 +2,7 @@ package org.koharu.miyo.core.nav
 
 import android.content.Context
 import android.content.Intent
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.core.model.parcelable.ParcelableManga
 import org.koitharu.kotatsu.parsers.model.Manga

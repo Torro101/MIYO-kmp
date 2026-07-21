@@ -9,11 +9,11 @@ import androidx.core.widget.TextViewCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import kotlinx.coroutines.flow.FlowCollector
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.widgets.SegmentedBarView
 import org.koharu.miyo.core.util.FileSize
 import org.koharu.miyo.core.util.MiyoColors
-import org.koharu.miyo.databinding.PreferenceMemoryUsageBinding
+import org.koharu.miyo.shared.databinding.PreferenceMemoryUsageBinding
 
 class StorageUsagePreference @JvmOverloads constructor(
 	context: Context,

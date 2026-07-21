@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.ReaderIntent
 import org.koharu.miyo.core.nav.dismissParentDialog
 import org.koharu.miyo.core.nav.router
@@ -31,7 +31,7 @@ import org.koharu.miyo.core.util.ext.findAppCompatDelegate
 import org.koharu.miyo.core.util.ext.findParentCallback
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.FragmentChaptersBinding
+import org.koharu.miyo.shared.databinding.FragmentChaptersBinding
 import org.koharu.miyo.details.ui.adapter.ChaptersAdapter
 import org.koharu.miyo.details.ui.adapter.ChaptersSelectionDecoration
 import org.koharu.miyo.details.ui.model.ChapterListItem

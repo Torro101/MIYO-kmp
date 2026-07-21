@@ -2,7 +2,7 @@ package org.koharu.miyo.settings.utils
 
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koitharu.kotatsu.parsers.util.ifNullOrEmpty
 
 class EditTextDefaultSummaryProvider(

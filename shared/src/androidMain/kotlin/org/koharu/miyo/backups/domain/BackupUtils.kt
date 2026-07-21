@@ -2,7 +2,7 @@ package org.koharu.miyo.backups.domain
 
 import android.content.Context
 import androidx.annotation.CheckResult
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.printStackTraceDebug
 import java.io.File
 import java.text.ParseException

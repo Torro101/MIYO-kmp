@@ -10,7 +10,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import org.koharu.miyo.databinding.DialogTwoButtonsBinding
+import org.koharu.miyo.shared.databinding.DialogTwoButtonsBinding
 
 class BigButtonsAlertDialog private constructor(
 	private val delegate: AlertDialog

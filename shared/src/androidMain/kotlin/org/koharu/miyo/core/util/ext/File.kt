@@ -11,7 +11,7 @@ import androidx.core.database.getStringOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import org.jetbrains.annotations.Blocking
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.fs.FileSequence
 import org.koharu.miyo.core.util.MimeTypes
 import java.io.BufferedReader

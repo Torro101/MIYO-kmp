@@ -6,7 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.view.MenuProvider
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.dialog.buildAlertDialog
 import org.koharu.miyo.core.util.ext.resolve
 import org.koharu.miyo.core.util.ext.tryLaunch

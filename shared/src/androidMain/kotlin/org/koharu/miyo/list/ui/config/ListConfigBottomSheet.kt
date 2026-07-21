@@ -14,13 +14,13 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.ListMode
 import org.koharu.miyo.core.ui.sheet.BaseAdaptiveSheet
 import org.koharu.miyo.core.util.ext.consume
 import org.koharu.miyo.core.util.ext.setValueRounded
 import org.koharu.miyo.core.util.progress.IntPercentLabelFormatter
-import org.koharu.miyo.databinding.SheetListModeBinding
+import org.koharu.miyo.shared.databinding.SheetListModeBinding
 
 @AndroidEntryPoint
 class ListConfigBottomSheet :

@@ -51,7 +51,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.core.image.CoilMemoryCacheKey
 import org.koharu.miyo.core.model.FavouriteCategory
@@ -95,8 +95,8 @@ import org.koharu.miyo.core.util.ext.setTooltipCompat
 import org.koharu.miyo.core.util.ext.start
 import org.koharu.miyo.core.util.ext.textAndVisible
 import org.koharu.miyo.core.util.ext.toUriOrNull
-import org.koharu.miyo.databinding.ActivityDetailsBinding
-import org.koharu.miyo.databinding.LayoutDetailsTableBinding
+import org.koharu.miyo.shared.databinding.ActivityDetailsBinding
+import org.koharu.miyo.shared.databinding.LayoutDetailsTableBinding
 import org.koharu.miyo.details.data.MangaDetails
 import org.koharu.miyo.details.data.ReadingTime
 import org.koharu.miyo.details.service.MangaPrefetchService

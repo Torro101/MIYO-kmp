@@ -2,7 +2,7 @@ package org.koharu.miyo.list.ui.adapter
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.ItemEmptyCardBinding
+import org.koharu.miyo.shared.databinding.ItemEmptyCardBinding
 import org.koharu.miyo.list.ui.model.EmptyHint
 import org.koharu.miyo.list.ui.model.ListModel
 

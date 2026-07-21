@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.titleResId
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.dialog.buildAlertDialog
@@ -42,7 +42,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.parentView
 import org.koharu.miyo.core.util.ext.setValueRounded
 import org.koharu.miyo.core.util.ext.setValuesRounded
-import org.koharu.miyo.databinding.SheetFilterBinding
+import org.koharu.miyo.shared.databinding.SheetFilterBinding
 import org.koharu.miyo.filter.data.PersistableFilter
 import org.koharu.miyo.filter.data.PersistableFilter.Companion.MAX_TITLE_LENGTH
 import org.koharu.miyo.filter.ui.FilterCoordinator

@@ -16,7 +16,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.prefs.DownloadFormat
@@ -30,7 +30,7 @@ import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.parentView
 import org.koharu.miyo.core.util.ext.showOrHide
-import org.koharu.miyo.databinding.DialogDownloadBinding
+import org.koharu.miyo.shared.databinding.DialogDownloadBinding
 import org.koharu.miyo.main.ui.owners.BottomNavOwner
 import org.koitharu.kotatsu.parsers.util.format
 import org.koharu.miyo.settings.storage.DirectoryModel

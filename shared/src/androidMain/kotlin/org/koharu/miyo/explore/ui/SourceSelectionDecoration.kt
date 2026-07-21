@@ -9,7 +9,7 @@ import android.view.View
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_ID
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.decor.AbstractSelectionItemDecoration
 import org.koharu.miyo.core.util.ext.getItem
 import org.koharu.miyo.core.util.ext.getThemeColor

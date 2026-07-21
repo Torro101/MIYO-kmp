@@ -24,11 +24,11 @@ import androidx.core.widget.TextViewCompat
 import com.google.android.material.ripple.RippleUtils
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getDrawableCompat
 import org.koharu.miyo.core.util.ext.resolveDp
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ViewTwoLinesItemBinding
+import org.koharu.miyo.shared.databinding.ViewTwoLinesItemBinding
 
 @SuppressLint("RestrictedApi")
 class TwoLinesItemView @JvmOverloads constructor(

@@ -9,7 +9,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.text.inSpans
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.parser.external.ExternalMangaSource
 import org.koharu.miyo.core.parser.tachiyomi.KeiyoushiMangaSource
 import org.koharu.miyo.core.util.ext.getDisplayName

@@ -10,7 +10,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.StyleRes
 import androidx.appcompat.content.res.AppCompatResources
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.image.PaintDrawable
 import org.koharu.miyo.core.util.ext.hasFocusStateSpecified
 import org.koharu.miyo.core.util.ext.scale

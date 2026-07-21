@@ -5,7 +5,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.getSummary
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.ui.BaseListAdapter
@@ -16,11 +16,11 @@ import org.koharu.miyo.core.util.ext.recyclerView
 import org.koharu.miyo.core.util.ext.setProgressIcon
 import org.koharu.miyo.core.util.ext.setTooltipCompat
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemExploreButtonsBinding
-import org.koharu.miyo.databinding.ItemExploreSourceGridBinding
-import org.koharu.miyo.databinding.ItemExploreSourceListBinding
-import org.koharu.miyo.databinding.ItemRecommendationBinding
-import org.koharu.miyo.databinding.ItemRecommendationMangaBinding
+import org.koharu.miyo.shared.databinding.ItemExploreButtonsBinding
+import org.koharu.miyo.shared.databinding.ItemExploreSourceGridBinding
+import org.koharu.miyo.shared.databinding.ItemExploreSourceListBinding
+import org.koharu.miyo.shared.databinding.ItemRecommendationBinding
+import org.koharu.miyo.shared.databinding.ItemRecommendationMangaBinding
 import org.koharu.miyo.explore.ui.model.ExploreButtons
 import org.koharu.miyo.explore.ui.model.MangaSourceItem
 import org.koharu.miyo.explore.ui.model.RecommendationsItem

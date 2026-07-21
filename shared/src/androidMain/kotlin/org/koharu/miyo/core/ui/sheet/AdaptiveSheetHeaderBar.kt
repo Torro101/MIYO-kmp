@@ -14,8 +14,8 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.view.ancestors
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import org.koharu.miyo.R
-import org.koharu.miyo.databinding.LayoutSheetHeaderAdaptiveBinding
+import org.koharu.miyo.shared.R
+import org.koharu.miyo.shared.databinding.LayoutSheetHeaderAdaptiveBinding
 
 class AdaptiveSheetHeaderBar @JvmOverloads constructor(
 	context: Context,

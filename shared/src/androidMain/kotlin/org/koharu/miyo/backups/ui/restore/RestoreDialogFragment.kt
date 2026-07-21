@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.AlertDialogFragment
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
@@ -19,7 +19,7 @@ import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.DialogRestoreBinding
+import org.koharu.miyo.shared.databinding.DialogRestoreBinding
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date

@@ -13,7 +13,7 @@ import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityTrackerDebugBinding
+import org.koharu.miyo.shared.databinding.ActivityTrackerDebugBinding
 import org.koharu.miyo.list.ui.adapter.ListItemType
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration
 

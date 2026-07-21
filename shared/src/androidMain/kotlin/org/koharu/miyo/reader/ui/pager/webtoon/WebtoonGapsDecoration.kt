@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class WebtoonGapsDecoration : RecyclerView.ItemDecoration() {
 

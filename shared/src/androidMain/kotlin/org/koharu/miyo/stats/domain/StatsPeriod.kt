@@ -1,7 +1,7 @@
 package org.koharu.miyo.stats.domain
 
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 enum class StatsPeriod(
 	@StringRes val titleResId: Int,

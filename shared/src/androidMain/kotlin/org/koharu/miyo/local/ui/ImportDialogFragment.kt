@@ -9,11 +9,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.os.OpenDocumentTreeHelper
 import org.koharu.miyo.core.ui.AlertDialogFragment
 import org.koharu.miyo.core.util.ext.tryLaunch
-import org.koharu.miyo.databinding.DialogImportBinding
+import org.koharu.miyo.shared.databinding.DialogImportBinding
 import org.koharu.miyo.local.data.LocalStorageManager
 import javax.inject.Inject
 

@@ -3,7 +3,7 @@ package org.koharu.miyo.search.ui.suggestion.adapter
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.model.getSummary
 import org.koharu.miyo.core.model.getTitle
-import org.koharu.miyo.databinding.ItemSearchSuggestionSourceBinding
+import org.koharu.miyo.shared.databinding.ItemSearchSuggestionSourceBinding
 import org.koharu.miyo.search.ui.suggestion.SearchSuggestionListener
 import org.koharu.miyo.search.ui.suggestion.model.SearchSuggestionItem
 

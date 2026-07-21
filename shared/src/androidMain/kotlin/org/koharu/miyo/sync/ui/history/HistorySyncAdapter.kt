@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.SyncResult
 import android.os.Bundle
 import dagger.hilt.android.EntryPointAccessors
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.onError
 import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
 import org.koharu.miyo.sync.domain.SyncController

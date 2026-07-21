@@ -4,7 +4,7 @@ import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
 import org.koharu.miyo.core.util.ext.getDisplayMessage
 import org.koharu.miyo.core.util.ext.setTextAndVisible
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemEmptyHintBinding
+import org.koharu.miyo.shared.databinding.ItemEmptyHintBinding
 import org.koharu.miyo.list.ui.adapter.ListStateHolderListener
 import org.koharu.miyo.list.ui.model.ListModel
 import org.koharu.miyo.scrobbling.common.ui.selector.model.ScrobblerHint

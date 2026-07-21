@@ -1,11 +1,11 @@
 package org.koharu.miyo.settings.search
 
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.list.AdapterDelegateClickListenerAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ItemPreferenceBinding
+import org.koharu.miyo.shared.databinding.ItemPreferenceBinding
 
 fun settingsItemAD(
 	listener: OnListItemClickListener<SettingsItem>,

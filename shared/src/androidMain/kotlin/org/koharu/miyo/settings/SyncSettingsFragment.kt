@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.FragmentResultListener
 import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BasePreferenceFragment
 import org.koharu.miyo.sync.data.SyncSettings
 import org.koharu.miyo.sync.ui.SyncHostDialogFragment

@@ -5,7 +5,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.PendingIntentCompat
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.backups.data.BackupRepository
 import org.koharu.miyo.backups.domain.BackupUtils
 import org.koharu.miyo.backups.domain.ExternalBackupStorage

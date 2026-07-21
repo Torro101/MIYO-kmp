@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.bookmarks.domain.BookmarksRepository
 import org.koharu.miyo.core.exceptions.EmptyMangaException

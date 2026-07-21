@@ -3,7 +3,7 @@ package org.koharu.miyo.details.ui.scrobbling
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 
 class ScrobblingItemDecoration : RecyclerView.ItemDecoration() {
 

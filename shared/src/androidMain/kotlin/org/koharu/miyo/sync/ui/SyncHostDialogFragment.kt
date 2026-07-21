@@ -11,11 +11,11 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.AlertDialogFragment
 import org.koharu.miyo.core.util.ext.isHttpUrl
 import org.koharu.miyo.core.util.ext.withArgs
-import org.koharu.miyo.databinding.PreferenceDialogAutocompletetextviewBinding
+import org.koharu.miyo.shared.databinding.PreferenceDialogAutocompletetextviewBinding
 import org.koitharu.kotatsu.parsers.util.ifNullOrEmpty
 import org.koharu.miyo.settings.utils.validation.UrlValidator
 import org.koharu.miyo.sync.data.SyncSettings

@@ -8,7 +8,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.work.WorkInfo
 import kotlinx.coroutines.flow.StateFlow
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getThemeColor
 import org.koharu.miyo.download.ui.list.chapters.DownloadChapter
 import org.koharu.miyo.list.ui.ListModelDiffCallback

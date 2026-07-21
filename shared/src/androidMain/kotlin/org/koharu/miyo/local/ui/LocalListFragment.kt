@@ -14,7 +14,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.LocalMangaSource
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.list.ListSelectionController
@@ -23,7 +23,7 @@ import org.koharu.miyo.core.util.ShareHelper
 import org.koharu.miyo.core.util.ext.addMenuProvider
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.tryLaunch
-import org.koharu.miyo.databinding.FragmentListBinding
+import org.koharu.miyo.shared.databinding.FragmentListBinding
 import org.koharu.miyo.filter.ui.FilterCoordinator
 import org.koharu.miyo.list.ui.MangaListFragment
 import org.koharu.miyo.remotelist.ui.MangaSearchMenuProvider

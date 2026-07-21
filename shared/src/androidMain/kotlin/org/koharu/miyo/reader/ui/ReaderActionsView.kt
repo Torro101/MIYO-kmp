@@ -16,7 +16,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.ReaderControl
@@ -25,7 +25,7 @@ import org.koharu.miyo.core.util.ext.isRtl
 import org.koharu.miyo.core.util.ext.setContentDescriptionAndTooltip
 import org.koharu.miyo.core.util.ext.setTooltipCompat
 import org.koharu.miyo.core.util.ext.setValueRounded
-import org.koharu.miyo.databinding.LayoutReaderActionsBinding
+import org.koharu.miyo.shared.databinding.LayoutReaderActionsBinding
 import org.koharu.miyo.details.ui.pager.ChaptersPagesSheet
 import org.koharu.miyo.details.ui.pager.ChaptersPagesSheet.Companion.TAB_PAGES
 import org.koharu.miyo.reader.ui.ReaderControlDelegate.OnInteractionListener

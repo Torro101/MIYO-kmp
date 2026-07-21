@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.ZoomMode
 import org.koharu.miyo.core.network.DoHProvider
 import org.koharu.miyo.core.prefs.DetailsUiMode.MODERN

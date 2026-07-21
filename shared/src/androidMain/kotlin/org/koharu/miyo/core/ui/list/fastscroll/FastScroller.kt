@@ -31,10 +31,10 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getThemeColor
 import org.koharu.miyo.core.util.ext.isLayoutReversed
-import org.koharu.miyo.databinding.FastScrollerBinding
+import org.koharu.miyo.shared.databinding.FastScrollerBinding
 import kotlin.math.roundToInt
 import androidx.appcompat.R as appcompatR
 import com.google.android.material.R as materialR

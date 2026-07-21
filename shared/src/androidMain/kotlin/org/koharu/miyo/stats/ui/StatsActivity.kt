@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.FavouriteCategory
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.BaseActivity
@@ -34,8 +34,8 @@ import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.setTextAndVisible
 import org.koharu.miyo.core.util.ext.showOrHide
 import org.koharu.miyo.core.util.ext.start
-import org.koharu.miyo.databinding.ActivityStatsBinding
-import org.koharu.miyo.databinding.ItemEmptyStateBinding
+import org.koharu.miyo.shared.databinding.ActivityStatsBinding
+import org.koharu.miyo.shared.databinding.ItemEmptyStateBinding
 import org.koharu.miyo.list.ui.adapter.ListItemType
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koharu.miyo.stats.domain.StatsPeriod

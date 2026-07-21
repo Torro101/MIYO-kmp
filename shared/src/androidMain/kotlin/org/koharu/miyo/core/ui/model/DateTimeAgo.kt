@@ -2,7 +2,7 @@ package org.koharu.miyo.core.ui.model
 
 import android.content.Context
 import android.text.format.DateUtils
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.getQuantityStringSafe
 import org.koharu.miyo.core.util.ext.toMillis
 import java.time.LocalDate

@@ -1,7 +1,7 @@
 package org.koharu.miyo.list.domain
 
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koitharu.kotatsu.parsers.util.find
 import java.util.EnumSet
 

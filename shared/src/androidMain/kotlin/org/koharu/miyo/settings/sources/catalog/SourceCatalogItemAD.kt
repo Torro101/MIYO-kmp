@@ -4,7 +4,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePaddingRelative
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.getSummary
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.ui.image.FaviconDrawable
@@ -13,8 +13,8 @@ import org.koharu.miyo.core.util.ext.drawableStart
 import org.koharu.miyo.core.util.ext.setTooltipCompat
 import org.koharu.miyo.core.util.ext.getThemeDimensionPixelOffset
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.ItemEmptyHintBinding
-import org.koharu.miyo.databinding.ItemSourceCatalogBinding
+import org.koharu.miyo.shared.databinding.ItemEmptyHintBinding
+import org.koharu.miyo.shared.databinding.ItemSourceCatalogBinding
 import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koharu.miyo.list.ui.model.ListModel
 import androidx.appcompat.R as appcompatR

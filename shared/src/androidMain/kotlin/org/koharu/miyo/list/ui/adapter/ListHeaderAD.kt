@@ -4,7 +4,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.badge.BadgeDrawable
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.databinding.ItemHeaderBinding
+import org.koharu.miyo.shared.databinding.ItemHeaderBinding
 import org.koharu.miyo.list.ui.model.ListHeader
 import org.koharu.miyo.list.ui.model.ListModel
 

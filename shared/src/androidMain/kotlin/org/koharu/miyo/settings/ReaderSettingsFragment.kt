@@ -9,7 +9,7 @@ import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.ZoomMode
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.prefs.AppSettings

@@ -51,8 +51,8 @@ import okio.IOException
 import okio.use
 import org.json.JSONException
 import org.jsoup.internal.StringUtil.StringJoiner
-import org.koharu.miyo.BuildConfig
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.BuildConfig
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.main.ui.MainActivity
 import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
 import org.xmlpull.v1.XmlPullParser

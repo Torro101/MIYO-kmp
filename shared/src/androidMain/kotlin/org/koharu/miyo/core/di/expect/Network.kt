@@ -3,7 +3,7 @@ package org.koharu.miyo.core.di.expect
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
+import org.koharu.miyo.core.os.AndroidContextHolder
 
 actual class NetworkMonitor(private val context: Context) {
 	actual suspend fun isConnected(): Boolean {
@@ -43,6 +43,5 @@ actual class NetworkMonitor(private val context: Context) {
 
 actual class ConnectionType actual constructor(actual val name: String)
 
-actual fun createNetworkMonitor(): NetworkMonitor {
-	throw UnsupportedOperationException("Use Android-specific initialization with Context")
-}
+actual fun createNetworkMonitor(): NetworkMonitor =
+	NetworkMonitor(AndroidContextHolder.applicationContext)

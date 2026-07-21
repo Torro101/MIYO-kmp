@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.AlertDialogFragment
 import org.koharu.miyo.core.ui.widgets.SegmentedBarView
 import org.koharu.miyo.core.util.FileSize
@@ -20,7 +20,7 @@ import org.koharu.miyo.core.util.ext.getQuantityStringSafe
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.setProgressIcon
-import org.koharu.miyo.databinding.DialogLocalInfoBinding
+import org.koharu.miyo.shared.databinding.DialogLocalInfoBinding
 import androidx.appcompat.R as appcompatR
 
 @AndroidEntryPoint

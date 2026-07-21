@@ -20,7 +20,7 @@ import androidx.transition.TransitionManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseActivity
 import org.koharu.miyo.core.ui.util.DefaultTextWatcher
 import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
@@ -29,7 +29,7 @@ import org.koharu.miyo.core.util.ext.getParcelableExtraCompat
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivitySyncAuthBinding
+import org.koharu.miyo.shared.databinding.ActivitySyncAuthBinding
 import org.koharu.miyo.sync.data.SyncSettings
 import org.koharu.miyo.sync.domain.SyncAuthResult
 

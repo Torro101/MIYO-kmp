@@ -20,7 +20,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ErrorReporterReceiver
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.exceptions.CloudFlareProtectedException

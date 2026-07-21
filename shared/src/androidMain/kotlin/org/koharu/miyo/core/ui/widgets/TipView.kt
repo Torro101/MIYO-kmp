@@ -16,13 +16,13 @@ import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.ext.drawableStart
 import org.koharu.miyo.core.util.ext.getDrawableCompat
 import org.koharu.miyo.core.util.ext.getThemeColorStateList
 import org.koharu.miyo.core.util.ext.setTextAndVisible
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ViewTipBinding
+import org.koharu.miyo.shared.databinding.ViewTipBinding
 
 class TipView @JvmOverloads constructor(
 	context: Context,

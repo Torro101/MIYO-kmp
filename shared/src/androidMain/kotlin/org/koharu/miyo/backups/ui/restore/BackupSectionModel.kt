@@ -1,7 +1,7 @@
 package org.koharu.miyo.backups.ui.restore
 
 import androidx.annotation.StringRes
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.backups.domain.BackupSection
 import org.koharu.miyo.list.ui.ListModelDiffCallback
 import org.koharu.miyo.list.ui.model.ListModel

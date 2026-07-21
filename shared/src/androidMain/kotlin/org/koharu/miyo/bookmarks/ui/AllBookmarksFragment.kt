@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.bookmarks.domain.Bookmark
 import org.koharu.miyo.bookmarks.ui.adapter.BookmarksAdapter
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
@@ -30,7 +30,7 @@ import org.koharu.miyo.core.util.ext.findAppCompatDelegate
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.FragmentListSimpleBinding
+import org.koharu.miyo.shared.databinding.FragmentListSimpleBinding
 import org.koharu.miyo.list.ui.GridSpanResolver
 import org.koharu.miyo.list.ui.adapter.ListHeaderClickListener
 import org.koharu.miyo.list.ui.adapter.ListItemType

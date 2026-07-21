@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.details.ui.pager.bookmarks.BookmarksFragment
 import org.koharu.miyo.details.ui.pager.chapters.ChaptersFragment
 import org.koharu.miyo.details.ui.pager.pages.PagesFragment

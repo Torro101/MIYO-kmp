@@ -8,7 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import coil3.ImageLoader
 import dagger.hilt.android.AndroidEntryPoint
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.exceptions.resolve.SnackbarErrorObserver
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.nav.router
@@ -20,7 +20,7 @@ import org.koharu.miyo.core.util.ext.consumeAllSystemBarsInsets
 import org.koharu.miyo.core.util.ext.observe
 import org.koharu.miyo.core.util.ext.observeEvent
 import org.koharu.miyo.core.util.ext.systemBarsInsets
-import org.koharu.miyo.databinding.ActivityAlternativesBinding
+import org.koharu.miyo.shared.databinding.ActivityAlternativesBinding
 import org.koharu.miyo.list.ui.adapter.ListItemType
 import org.koharu.miyo.list.ui.adapter.ListStateHolderListener
 import org.koharu.miyo.list.ui.adapter.TypedListSpacingDecoration

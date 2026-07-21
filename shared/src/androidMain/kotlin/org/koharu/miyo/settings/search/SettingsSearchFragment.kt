@@ -14,7 +14,7 @@ import org.koharu.miyo.core.ui.BaseListAdapter
 import org.koharu.miyo.core.ui.list.OnListItemClickListener
 import org.koharu.miyo.core.util.ext.consumeAll
 import org.koharu.miyo.core.util.ext.observe
-import org.koharu.miyo.databinding.FragmentSearchSuggestionBinding
+import org.koharu.miyo.shared.databinding.FragmentSearchSuggestionBinding
 import org.koharu.miyo.list.ui.adapter.ListItemType
 
 @AndroidEntryPoint

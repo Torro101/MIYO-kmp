@@ -14,7 +14,7 @@ import androidx.core.app.PendingIntentCompat
 import androidx.core.content.ContextCompat
 import coil3.ImageLoader
 import coil3.request.ImageRequest
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.core.model.getLocalizedTitle
 import org.koharu.miyo.core.model.isNsfw

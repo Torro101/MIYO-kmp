@@ -4,11 +4,11 @@ import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegateViewBinding
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.ui.BaseListAdapter
 import org.koharu.miyo.core.util.ext.setTextAndVisible
-import org.koharu.miyo.databinding.ItemEmptyHintBinding
-import org.koharu.miyo.databinding.ItemSourceConfigBinding
+import org.koharu.miyo.shared.databinding.ItemEmptyHintBinding
+import org.koharu.miyo.shared.databinding.ItemSourceConfigBinding
 import org.koharu.miyo.list.ui.adapter.ListItemType
 import org.koharu.miyo.list.ui.model.ListModel
 

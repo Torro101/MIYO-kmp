@@ -2,7 +2,7 @@ package org.koharu.miyo.backups.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.koharu.miyo.BuildConfig
+import org.koharu.miyo.shared.BuildConfig
 
 @Serializable
 class BackupIndex(

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.plus
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.model.parcelable.ParcelableManga
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.parser.MangaDataRepository

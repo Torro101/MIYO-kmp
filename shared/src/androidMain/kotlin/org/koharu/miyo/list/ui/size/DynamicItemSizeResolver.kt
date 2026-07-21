@@ -8,7 +8,7 @@ import androidx.annotation.StyleRes
 import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.history.ui.util.ReadingProgressView
 import kotlin.math.roundToInt

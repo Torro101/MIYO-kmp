@@ -8,7 +8,7 @@ import androidx.preference.PreferenceManager
 import androidx.preference.PreferenceScreen
 import androidx.preference.get
 import dagger.Reusable
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.backups.ui.periodical.PeriodicalBackupSettingsFragment
 import org.koharu.miyo.core.LocalizedAppContext
 import org.koharu.miyo.settings.AppearanceSettingsFragment

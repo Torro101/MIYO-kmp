@@ -24,7 +24,7 @@ import io.noties.markwon.Markwon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.github.AppVersion
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.ui.BaseActivity
@@ -38,7 +38,7 @@ import org.koharu.miyo.core.util.ext.setTextAndVisible
 import org.koharu.miyo.core.util.ext.showOrHide
 import org.koharu.miyo.core.util.ext.systemBarsInsets
 import org.koharu.miyo.core.util.ext.textAndVisible
-import org.koharu.miyo.databinding.ActivityAppUpdateBinding
+import org.koharu.miyo.shared.databinding.ActivityAppUpdateBinding
 
 @AndroidEntryPoint
 class AppUpdateActivity : BaseActivity<ActivityAppUpdateBinding>(), View.OnClickListener {

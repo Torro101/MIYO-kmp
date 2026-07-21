@@ -1,6 +1,6 @@
 package org.koharu.miyo.settings.utils.validation
 
-import org.koharu.miyo.R
+import org.koharu.miyo.shared.R
 import org.koharu.miyo.core.util.EditTextValidator
 
 class PortNumberValidator : EditTextValidator() {
