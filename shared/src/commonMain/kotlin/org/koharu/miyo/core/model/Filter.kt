@@ -11,7 +11,7 @@ data class Filter(
 	val name: String,
 	val type: FilterType,
 	val options: List<FilterOption> = emptyList(),
-	val defaultValue: Any? = null
+	val defaultValue: String? = null,
 )
 
 @Serializable
@@ -43,5 +43,5 @@ data class FilterOption(
 	val id: String,
 	val name: String,
 	val value: String = id,
-	val isSelected: Boolean = false
+	val isSelected: Boolean = false,
 )

@@ -7,14 +7,24 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.concurrent.TimeUnit
 
-actual class HttpClient(private val client: OkHttpClient) {
+actual class HttpClient actual constructor() {
+	private val client: OkHttpClient = OkHttpClient.Builder()
+		.connectTimeout(30, TimeUnit.SECONDS)
+		.readTimeout(30, TimeUnit.SECONDS)
+		.writeTimeout(30, TimeUnit.SECONDS)
+		.build()
 
 	actual suspend fun get(url: String, headers: Map<String, String>): HttpResponse =
 		withContext(Dispatchers.IO) {
 			val requestBuilder = Request.Builder().url(url).get()
 			headers.forEach { (key, value) -> requestBuilder.addHeader(key, value) }
-			val response = client.newCall(requestBuilder.build()).execute()
-			HttpResponse(response)
+			client.newCall(requestBuilder.build()).execute().use { response ->
+				HttpResponse(
+					code = response.code,
+					body = response.body?.string().orEmpty(),
+					headers = response.headers.toMultimap().mapValues { it.value.joinToString(", ") },
+				)
+			}
 		}
 
 	actual suspend fun post(
@@ -22,11 +32,15 @@ actual class HttpClient(private val client: OkHttpClient) {
 		body: String,
 		headers: Map<String, String>,
 	): HttpResponse = withContext(Dispatchers.IO) {
-		val requestBuilder =
-			Request.Builder().url(url).post(body.toRequestBody(null))
+		val requestBuilder = Request.Builder().url(url).post(body.toRequestBody(null))
 		headers.forEach { (key, value) -> requestBuilder.addHeader(key, value) }
-		val response = client.newCall(requestBuilder.build()).execute()
-		HttpResponse(response)
+		client.newCall(requestBuilder.build()).execute().use { response ->
+			HttpResponse(
+				code = response.code,
+				body = response.body?.string().orEmpty(),
+				headers = response.headers.toMultimap().mapValues { it.value.joinToString(", ") },
+			)
+		}
 	}
 
 	actual fun close() {
@@ -35,23 +49,10 @@ actual class HttpClient(private val client: OkHttpClient) {
 	}
 }
 
-actual class HttpResponse(private val response: okhttp3.Response) {
-	actual val code: Int
-		get() = response.code
+actual class HttpResponse actual constructor(
+	actual val code: Int,
+	actual val body: String,
+	actual val headers: Map<String, String>,
+)
 
-	actual val body: String
-		get() = response.body?.string() ?: ""
-
-	actual val headers: Map<String, String>
-		get() = response.headers.toMultimap().mapValues { it.value.joinToString(", ") }
-}
-
-actual fun createHttpClient(): HttpClient {
-	val client =
-		OkHttpClient.Builder()
-			.connectTimeout(30, TimeUnit.SECONDS)
-			.readTimeout(30, TimeUnit.SECONDS)
-			.writeTimeout(30, TimeUnit.SECONDS)
-			.build()
-	return HttpClient(client)
-}
+actual fun createHttpClient(): HttpClient = HttpClient()

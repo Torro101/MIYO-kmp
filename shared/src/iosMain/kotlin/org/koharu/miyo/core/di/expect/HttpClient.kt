@@ -15,7 +15,7 @@ import platform.Foundation.setValue
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-actual class HttpClient {
+actual class HttpClient actual constructor() {
 	private val session = NSURLSession.sharedSession
 
 	actual suspend fun get(url: String, headers: Map<String, String>): HttpResponse =
