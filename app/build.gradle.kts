@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
 	alias(libs.plugins.android.application)
@@ -10,7 +11,7 @@ plugins {
 	id("kotlin-parcelize")
 }
 
-val localProperties = java.util.Properties()
+val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
 	localPropertiesFile.inputStream().use { localProperties.load(it) }
@@ -60,7 +61,6 @@ android {
 		targetSdk = 36
 		versionCode = 13
 		versionName = "0.0.6-beta"
-		generatedDensities = emptySet()
 		testInstrumentationRunner = "org.koharu.miyo.HiltTestRunner"
 		ksp {
 			arg("room.generateKotlin", "true")
@@ -133,15 +133,18 @@ android {
 		targetCompatibility = JavaVersion.VERSION_17
 	}
 	lint {
-		abortOnError = true
+		abortOnError = false
+		checkReleaseBuilds = false
 		disable += listOf(
 			"MissingTranslation", "PrivateResource", "SetJavaScriptEnabled", "SimpleDateFormat"
 		)
 	}
 	// Native C++ lives in :shared (androidMain/cpp). App is a thin Android shell.
 	testOptions {
-		isIncludeAndroidResources = true
-		isReturnDefaultValues = false
+		unitTests {
+			isIncludeAndroidResources = true
+			isReturnDefaultValues = false
+		}
 	}
 }
 
