@@ -94,6 +94,7 @@ kotlin {
 			implementation(libs.kotlin.stdlib)
 
 			implementation(files("${rootProject.projectDir}/app/libs/keiyoushi-extensions-lib.aar"))
+			implementation(libs.kotatsu.parsers)
 			implementation(libs.rxjava)
 			implementation(libs.injekt.core)
 			implementation(libs.quickjs)
