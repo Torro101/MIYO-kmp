@@ -92,7 +92,6 @@ kotlin {
 			implementation(libs.adapterdelegates)
 			implementation(libs.adapterdelegates.viewbinding)
 			implementation(libs.kotlin.stdlib)
-			coreLibraryDesugaring(libs.desugar.jdk.libs)
 
 			implementation(files("${rootProject.projectDir}/app/libs/keiyoushi-extensions-lib.aar"))
 			implementation(libs.rxjava)
@@ -107,11 +106,12 @@ kotlin {
 	}
 }
 
-// KSP targets for KMP android source set
+// KSP + Android-only configurations for the KMP android target
 dependencies {
 	add("kspAndroid", libs.androidx.room.compiler)
 	add("kspAndroid", libs.hilt.compiler)
 	add("kspAndroid", libs.androidx.hilt.compiler)
+	"coreLibraryDesugaring"(libs.desugar.jdk.libs)
 }
 
 android {
