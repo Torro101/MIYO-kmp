@@ -122,6 +122,10 @@ android {
 	ndkVersion = "27.0.12077973"
 	defaultConfig {
 		minSdk = 21
+		// Host app package values used by androidMain (library BuildConfig).
+		buildConfigField("String", "APPLICATION_ID", "\"org.koharu.miyo\"")
+		buildConfigField("int", "VERSION_CODE", "13")
+		buildConfigField("String", "VERSION_NAME", "\"0.0.6-beta\"")
 		externalNativeBuild {
 			cmake {
 				cppFlags += listOf("-std=c++20", "-Ofast")

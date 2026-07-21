@@ -85,7 +85,7 @@ actual class ImageLoader(private val context: Context) {
 	}
 }
 
-actual class ImageResult actual constructor(
+actual class ImageResult(
 	actual val isSuccess: Boolean,
 	actual val error: String?,
 	actual val width: Int,

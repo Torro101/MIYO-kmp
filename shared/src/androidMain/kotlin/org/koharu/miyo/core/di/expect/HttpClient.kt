@@ -49,7 +49,7 @@ actual class HttpClient actual constructor() {
 	}
 }
 
-actual class HttpResponse actual constructor(
+actual class HttpResponse(
 	actual val code: Int,
 	actual val body: String,
 	actual val headers: Map<String, String>,

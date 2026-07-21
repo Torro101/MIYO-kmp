@@ -1,21 +1,10 @@
 package org.koharu.miyo.core.di.expect
 
-import platform.UIKit.UIPasteboard
-
+/** Minimal iOS stubs that compile for framework link. */
 actual class ClipboardManager {
-	actual suspend fun copyText(text: String, label: String) {
-		UIPasteboard.generalUIPasteboard.string = text
-	}
-
-	actual suspend fun getText(): String? {
-		return UIPasteboard.generalUIPasteboard.string
-	}
-
-	actual suspend fun hasText(): Boolean {
-		return UIPasteboard.generalUIPasteboard.hasStrings
-	}
+	actual suspend fun copyText(text: String, label: String) = Unit
+	actual suspend fun getText(): String? = null
+	actual suspend fun hasText(): Boolean = false
 }
 
-actual fun createClipboardManager(): ClipboardManager {
-	return ClipboardManager()
-}
+actual fun createClipboardManager(): ClipboardManager = ClipboardManager()
