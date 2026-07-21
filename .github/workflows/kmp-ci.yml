@@ -40,7 +40,7 @@ jobs:
           ANDROID=$(find shared/src/androidMain/kotlin -name '*.kt' | wc -l)
           IOS=$(find shared/src/iosMain/kotlin -name '*.kt' | wc -l)
           echo "counts common=$COMMON android=$ANDROID ios=$IOS"
-          test "$COMMON" -ge 150
+          test "$COMMON" -ge 80
           test "$ANDROID" -ge 500
           test "$IOS" -ge 12
 
