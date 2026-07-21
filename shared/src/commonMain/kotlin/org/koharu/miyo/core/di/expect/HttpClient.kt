@@ -10,10 +10,10 @@ expect class HttpClient() {
 	fun close()
 }
 
-expect class HttpResponse(
-	val code: Int,
-	val body: String,
-	val headers: Map<String, String>,
-)
+expect class HttpResponse {
+	val code: Int
+	val body: String
+	val headers: Map<String, String>
+}
 
 expect fun createHttpClient(): HttpClient

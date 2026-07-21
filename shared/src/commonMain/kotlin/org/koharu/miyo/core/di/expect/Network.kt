@@ -10,6 +10,8 @@ expect class NetworkMonitor() {
 	suspend fun getConnectionType(): ConnectionType
 }
 
-expect class ConnectionType(val name: String)
+expect class ConnectionType {
+	val name: String
+}
 
 expect fun createNetworkMonitor(): NetworkMonitor
