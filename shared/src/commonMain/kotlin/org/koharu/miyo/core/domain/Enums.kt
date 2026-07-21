@@ -9,10 +9,10 @@ import kotlinx.serialization.Serializable
 enum class SortOrder {
 	POPULARITY,
 	UPDATED,
-.NEWEST,
+	NEWEST,
 	OLDEST,
-.ALPHABETICAL,
-.RATING;
+	ALPHABETICAL,
+	RATING;
 
 	companion object {
 		fun fromString(value: String): SortOrder {

@@ -10,8 +10,8 @@ enum class ReaderMode {
 	LEFT_TO_RIGHT,
 	RIGHT_TO_LEFT,
 	WEBTOON,
-.VERTICAL,
-.HORIZONTAL;
+	VERTICAL,
+	HORIZONTAL;
 
 	companion object {
 		fun fromString(value: String): ReaderMode {

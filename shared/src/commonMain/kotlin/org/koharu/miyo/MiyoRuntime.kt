@@ -48,29 +48,26 @@ object MiyoRuntime {
 	private val _ready = MutableStateFlow(false)
 	val isReady: StateFlow<Boolean> = _ready.asStateFlow()
 
-	@Volatile
+	// Plain flag — single-call bootstrap is enough for host apps.
 	private var started = false
 
 	fun isStarted(): Boolean = started
 
 	fun start(useSampleData: Boolean = true) {
 		if (started) return
-		synchronized(this) {
-			if (started) return
-			initializePlatform()
-			mangaRepo = InMemoryMangaRepository()
-			chapterRepo = InMemoryChapterRepository()
-			historyRepo = InMemoryHistoryRepository()
-			RepositoryBridges.install(
-				manga = mangaRepo,
-				chapter = chapterRepo,
-				history = historyRepo,
-			)
-			refreshBlocking()
-			started = true
-			_ready.value = true
-			log.i("MiyoRuntime", "started on ${Platform.name} sample=$useSampleData")
-		}
+		initializePlatform()
+		mangaRepo = InMemoryMangaRepository()
+		chapterRepo = InMemoryChapterRepository()
+		historyRepo = InMemoryHistoryRepository()
+		RepositoryBridges.install(
+			manga = mangaRepo,
+			chapter = chapterRepo,
+			history = historyRepo,
+		)
+		refreshBlocking()
+		started = true
+		_ready.value = true
+		log.i("MiyoRuntime", "started on ${Platform.name} sample=$useSampleData")
 	}
 
 	fun ensureStarted() {
