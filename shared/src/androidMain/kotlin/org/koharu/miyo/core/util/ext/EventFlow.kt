@@ -1,4 +1,5 @@
 package org.koharu.miyo.core.util.ext
+import androidx.annotation.AnyThread
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koharu.miyo.core.util.Event

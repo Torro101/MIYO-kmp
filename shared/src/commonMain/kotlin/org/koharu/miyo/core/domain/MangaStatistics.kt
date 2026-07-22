@@ -34,7 +34,11 @@ data class MangaStatistics(
 		}
 
 	val averageRatingDisplay: String
-		get() = String.format("%.1f", averageRating)
+		get() {
+			val v = (averageRating * 10).toInt() / 10.0
+			val s = v.toString()
+			return if (s.endsWith(".0")) s.dropLast(2) else s
+		}
 
 	val completionRate: Float
 		get() = if (totalManga > 0) completedManga.toFloat() / totalManga else 0f

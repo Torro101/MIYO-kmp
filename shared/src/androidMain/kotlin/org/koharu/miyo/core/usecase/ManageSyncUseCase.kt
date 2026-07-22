@@ -11,7 +11,7 @@ class ManageSyncUseCase {
 		return SyncResult(
 			success = true,
 			syncedItems = 0,
-			timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+			timestamp = System.currentTimeMillis()
 		)
 	}
 
@@ -19,7 +19,7 @@ class ManageSyncUseCase {
 		return SyncResult(
 			success = true,
 			syncedItems = 0,
-			timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+			timestamp = System.currentTimeMillis()
 		)
 	}
 
@@ -27,7 +27,7 @@ class ManageSyncUseCase {
 		return SyncResult(
 			success = true,
 			syncedItems = 0,
-			timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+			timestamp = System.currentTimeMillis()
 		)
 	}
 
@@ -35,7 +35,7 @@ class ManageSyncUseCase {
 		return SyncResult(
 			success = true,
 			syncedItems = 0,
-			timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+			timestamp = System.currentTimeMillis()
 		)
 	}
 
@@ -46,7 +46,7 @@ class ManageSyncUseCase {
 	suspend fun isSyncNeeded(settings: SyncSettings): Boolean {
 		if (!settings.isEnabled) return false
 		val lastSync = getLastSyncTimestamp()
-		val elapsed = kotlinx.datetime.Clock.System.now().toEpochMilliseconds() - lastSync
+		val elapsed = System.currentTimeMillis() - lastSync
 		return elapsed >= settings.syncIntervalMs
 	}
 }

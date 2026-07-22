@@ -44,6 +44,7 @@ import org.koharu.miyo.search.domain.SearchKind
 import org.koharu.miyo.search.domain.SearchV2Helper
 import java.util.Locale
 import javax.inject.Inject
+import org.koharu.miyo.core.model.isBroken
 
 private const val MAX_PARALLELISM = 4
 

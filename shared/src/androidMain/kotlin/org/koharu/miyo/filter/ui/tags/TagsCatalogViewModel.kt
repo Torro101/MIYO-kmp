@@ -24,6 +24,8 @@ import org.koharu.miyo.list.ui.model.LoadingState
 import org.koharu.miyo.list.ui.model.toErrorFooter
 import org.koharu.miyo.list.ui.model.toErrorState
 import org.koitharu.kotatsu.parsers.model.MangaTag
+import org.koharu.miyo.core.model.locale
+import org.koharu.miyo.core.model.title
 
 @HiltViewModel(assistedFactory = TagsCatalogViewModel.Factory::class)
 class TagsCatalogViewModel @AssistedInject constructor(

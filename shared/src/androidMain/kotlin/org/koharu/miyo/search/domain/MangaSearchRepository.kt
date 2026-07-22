@@ -24,6 +24,8 @@ import org.koitharu.kotatsu.parsers.util.levenshteinDistance
 import org.koitharu.kotatsu.parsers.util.mapToSet
 import org.koharu.miyo.search.ui.MangaSuggestionsProvider
 import javax.inject.Inject
+import org.koharu.miyo.core.model.contentType
+import org.koharu.miyo.core.model.title
 
 @Reusable
 class MangaSearchRepository @Inject constructor(

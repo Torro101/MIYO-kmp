@@ -20,7 +20,7 @@ class CompositeResult private constructor(
 	val isAllFailed: Boolean
 		get() = successCount == 0 && errors.isNotEmpty()
 
-	operator fun plus(result: kotlin.Result<*>): CompositeResult = CompositeResult(
+	operator fun plus(result: Result<*>): CompositeResult = CompositeResult(
 		successCount = successCount + if (result.isSuccess) 1 else 0,
 		errors = errors + listOfNotNull(result.exceptionOrNull()),
 	)
@@ -32,10 +32,13 @@ class CompositeResult private constructor(
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (javaClass != other?.javaClass) return false
+		if (this::class != other?.let { it::class }) return false
+
 		other as CompositeResult
+
 		if (successCount != other.successCount) return false
 		if (errors != other.errors) return false
+
 		return true
 	}
 
@@ -46,8 +49,11 @@ class CompositeResult private constructor(
 	}
 
 	companion object {
+
 		val EMPTY = CompositeResult(0, emptyList())
+
 		fun success() = CompositeResult(1, emptyList())
+
 		fun failure(error: Throwable) = CompositeResult(0, listOf(error))
 	}
 }

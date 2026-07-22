@@ -7,5 +7,5 @@ import org.koitharu.kotatsu.parsers.MangaLoaderContext
 @Suppress("unused")
 class TestMangaRepository(
 	private val loaderContext: MangaLoaderContext,
-	cache: MemoryContentCache
+	cache: MemoryContentCache,
 ) : EmptyMangaRepository(TestMangaSource)

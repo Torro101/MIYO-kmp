@@ -12,7 +12,7 @@ class ManageBackupUseCase {
 		return BackupEntry(
 			id = org.koharu.miyo.core.util.HashUtils.generateId(),
 			type = org.koharu.miyo.core.model.BackupType.FULL,
-			timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds(),
+			timestamp = System.currentTimeMillis(),
 			format = org.koharu.miyo.core.model.BackupFormat.JSON
 		)
 	}

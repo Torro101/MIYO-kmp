@@ -21,7 +21,7 @@ object HashUtils {
 	}
 
 	fun generateId(): String {
-		val timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+		val timestamp = org.koharu.miyo.core.di.expect.currentDateTime().toEpochMilliseconds()
 		val random = (0..999999).random()
 		return "$timestamp-$random"
 	}

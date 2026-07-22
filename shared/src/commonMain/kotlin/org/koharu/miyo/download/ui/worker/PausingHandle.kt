@@ -13,33 +13,27 @@ class PausingHandle : AbstractCoroutineContextElement(PausingHandle) {
 	@Volatile
 	private var skipAllErrors = false
 
-	@get:AnyThread
 	val isPaused: Boolean
 		get() = paused.value
 
-	@AnyThread
 	suspend fun awaitResumed() {
 		paused.first { !it }
 	}
 
-	@AnyThread
 	fun pause() {
 		paused.value = true
 	}
 
-	@AnyThread
 	fun resume() {
 		skipError.value = false
 		paused.value = false
 	}
 
-	@AnyThread
 	fun skip() {
 		skipError.value = true
 		paused.value = false
 	}
 
-	@AnyThread
 	fun skipAll() {
 		skipAllErrors = true
 		skip()

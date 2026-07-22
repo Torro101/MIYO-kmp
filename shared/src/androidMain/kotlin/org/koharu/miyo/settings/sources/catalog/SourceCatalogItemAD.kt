@@ -18,6 +18,8 @@ import org.koharu.miyo.shared.databinding.ItemSourceCatalogBinding
 import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koharu.miyo.list.ui.model.ListModel
 import androidx.appcompat.R as appcompatR
+import org.koharu.miyo.core.model.isBroken
+import org.koharu.miyo.core.model.title
 
 fun sourceCatalogItemSourceAD(
 	listener: OnListItemClickListener<SourceCatalogItem.Source>,

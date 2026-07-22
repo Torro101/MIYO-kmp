@@ -24,6 +24,8 @@ import org.koharu.miyo.core.parser.MangaDataRepository
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.ReaderBackground
 import org.koharu.miyo.core.prefs.ReaderMode
+import org.koharu.miyo.core.prefs.isLight
+import org.koharu.miyo.core.prefs.resolve
 import org.koharu.miyo.core.util.MediatorStateFlow
 import org.koharu.miyo.core.util.ext.isLowRamDevice
 import org.koharu.miyo.core.util.ext.processLifecycleScope

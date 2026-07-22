@@ -14,6 +14,14 @@ kotlin {
 	androidTarget {
 		compilerOptions {
 			jvmTarget.set(JvmTarget.JVM_17)
+			freeCompilerArgs.addAll(
+				"-opt-in=kotlin.RequiresOptIn",
+				"-opt-in=kotlin.ExperimentalStdlibApi",
+				"-opt-in=kotlin.contracts.ExperimentalContracts",
+				"-opt-in=org.koitharu.kotatsu.parsers.InternalParsersApi",
+				"-opt-in=coil3.annotation.InternalCoilApi",
+				"-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+			)
 		}
 	}
 

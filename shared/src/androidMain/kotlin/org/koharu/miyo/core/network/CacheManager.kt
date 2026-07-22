@@ -15,10 +15,11 @@ class CacheManager<K, V>(
 
 	data class CacheEntry<V>(
 		val value: V,
-		val timestamp: Long
+		val timestamp: Long,
+		val expirationTimeMillis: Long,
 	) {
 		fun isExpired(): Boolean {
-			return kotlinx.datetime.Clock.System.now().toEpochMilliseconds() - timestamp > expirationTimeMillis
+			return System.currentTimeMillis() - timestamp > expirationTimeMillis
 		}
 	}
 
@@ -47,7 +48,8 @@ class CacheManager<K, V>(
 
 			cache[key] = CacheEntry(
 				value = value,
-				timestamp = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+				timestamp = System.currentTimeMillis(),
+				expirationTimeMillis = expirationTimeMillis,
 			)
 		}
 	}

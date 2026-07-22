@@ -29,6 +29,8 @@ import org.koitharu.kotatsu.parsers.model.MangaSource
 import java.util.EnumSet
 import java.util.Locale
 import javax.inject.Inject
+import org.koharu.miyo.core.model.locale
+import org.koharu.miyo.core.model.contentType
 
 @HiltViewModel
 class SourcesCatalogViewModel @Inject constructor(

@@ -54,9 +54,10 @@ class MangaLoaderContextImpl @Inject constructor(
 
 	override fun getDefaultUserAgent(): String = webViewExecutor.defaultUserAgent ?: UserAgents.FIREFOX_MOBILE
 
-	override fun getParserSources(): List<MangaSource> = org.koharu.miyo.core.model.MangaSourceRegistry.sources
+	// Not part of upstream MangaLoaderContext API in current parsers — helpers for MIYO registry.
+	fun getParserSources(): List<MangaSource> = org.koharu.miyo.core.model.MangaSourceRegistry.sources
 
-	override fun newParserInstance(source: MangaSource): MangaParser =
+	fun newParserInstance(source: MangaSource): MangaParser =
 		DynamicParserManager.createParser(source, this, androidContext)
 
 	override fun getConfig(source: MangaSource): MangaSourceConfig {

@@ -19,8 +19,10 @@ import org.koharu.miyo.shared.R
 import org.koharu.miyo.alternatives.domain.AutoFixUseCase
 import org.koharu.miyo.alternatives.domain.AutoFixUseCase.NoAlternativesException
 import org.koharu.miyo.core.ErrorReporterReceiver
+import org.koharu.miyo.core.model.contentType
 import org.koharu.miyo.core.model.getTitle
 import org.koharu.miyo.core.model.isNsfw
+import org.koharu.miyo.core.model.locale
 import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.ui.CoroutineIntentService
 import org.koharu.miyo.core.util.ext.checkNotificationPermission

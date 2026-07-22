@@ -42,6 +42,7 @@ import java.io.File
 import java.util.EnumSet
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.koharu.miyo.core.model.title
 
 private const val MAX_PARALLELISM = 4
 const val LOCAL_MANGA_SKIP_FILE = ".notamanga"

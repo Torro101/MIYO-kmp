@@ -16,6 +16,9 @@ import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koitharu.kotatsu.parsers.util.runCatchingCancellable
 import java.util.Locale
 import javax.inject.Inject
+import org.koharu.miyo.core.model.locale
+import org.koharu.miyo.core.model.contentType
+import org.koharu.miyo.core.model.title
 
 private const val SEARCH_PARALLELISM = 3
 private const val DETAILS_PARALLELISM = 2

@@ -47,6 +47,7 @@ import org.koharu.miyo.search.domain.MangaSearchRepository
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
+import org.koharu.miyo.core.model.locale
 
 @ViewModelScoped
 class FilterCoordinator @Inject constructor(

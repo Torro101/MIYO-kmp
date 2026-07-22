@@ -37,6 +37,9 @@ import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koitharu.kotatsu.parsers.network.CloudFlareHelper
 import org.koitharu.kotatsu.parsers.util.mapNotNullToSet
 import org.koitharu.kotatsu.parsers.util.mapToSet
+import org.koharu.miyo.core.model.locale
+import org.koharu.miyo.core.model.isBroken
+import org.koharu.miyo.core.model.contentType
 
 import javax.inject.Inject
 import javax.inject.Singleton

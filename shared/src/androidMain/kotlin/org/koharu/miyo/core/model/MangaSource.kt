@@ -16,6 +16,7 @@ import org.koharu.miyo.core.util.ext.getDisplayName
 import org.koharu.miyo.core.util.ext.toLocale
 import org.koharu.miyo.core.util.ext.toLocaleOrNull
 import org.koitharu.kotatsu.parsers.model.ContentType
+import org.koitharu.kotatsu.parsers.model.MangaParserSource
 import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koitharu.kotatsu.parsers.util.splitTwoParts
 import java.util.Locale
@@ -26,6 +27,7 @@ data class PluginMangaSource(val delegate: MangaSource, val jarName: String) : M
 
     val sourceName: String
         get() = delegate.name
+    // Display fields are MIYO extras — kotatsu MangaSource is name-only.
     val locale: String
         get() = (delegate as? MangaParserSource)?.locale.orEmpty()
     val contentType: ContentType
@@ -201,34 +203,43 @@ fun SpannableStringBuilder.appendIcon(textView: TextView, @DrawableRes resId: In
 }
 
 // Display helpers — kotatsu MangaSource only exposes [name].
+// Member properties on concrete types win over these extensions after smart-cast.
 val MangaSource.locale: String
 	get() = when (this) {
+		is MangaSourceInfo -> mangaSource.locale
 		is MangaParserSource -> locale
 		is PluginMangaSource -> locale
 		is UnresolvedMangaSource -> locale
+		is KeiyoushiMangaSource -> locale
 		else -> ""
 	}
 
 val MangaSource.contentType: ContentType
 	get() = when (this) {
+		is MangaSourceInfo -> mangaSource.contentType
 		is MangaParserSource -> contentType
 		is PluginMangaSource -> contentType
 		is UnresolvedMangaSource -> contentType
+		is KeiyoushiMangaSource -> contentType
 		else -> ContentType.OTHER
 	}
 
 val MangaSource.title: String
 	get() = when (this) {
+		is MangaSourceInfo -> mangaSource.title
 		is MangaParserSource -> title
 		is PluginMangaSource -> title
 		is UnresolvedMangaSource -> title
+		is KeiyoushiMangaSource -> title
 		else -> name
 	}
 
 val MangaSource.isBroken: Boolean
 	get() = when (this) {
+		is MangaSourceInfo -> mangaSource.isBroken
 		is MangaParserSource -> isBroken
 		is PluginMangaSource -> isBroken
 		is UnresolvedMangaSource -> isBroken
+		is KeiyoushiMangaSource -> isBroken
 		else -> false
 	}

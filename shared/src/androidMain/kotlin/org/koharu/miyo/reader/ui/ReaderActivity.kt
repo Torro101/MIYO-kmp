@@ -47,6 +47,7 @@ import org.koharu.miyo.core.nav.AppRouter
 import org.koharu.miyo.core.nav.router
 import org.koharu.miyo.core.prefs.AppSettings
 import org.koharu.miyo.core.prefs.ReaderMode
+import org.koharu.miyo.core.prefs.isLight
 import org.koharu.miyo.core.ui.BaseFullscreenActivity
 import org.koharu.miyo.core.ui.dialog.buildAlertDialog
 import org.koharu.miyo.core.ui.dialog.setCheckbox

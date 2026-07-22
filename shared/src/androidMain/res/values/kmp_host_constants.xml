@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Hosted in :shared so androidMain code resolves R.string.* without :app flavor resources -->
+	<string name="account_type_sync" translatable="false">org.koharu.miyo.sync</string>
+	<string name="sync_authority_history" translatable="false">org.koharu.miyo.history</string>
+	<string name="sync_authority_favourites" translatable="false">org.koharu.miyo.favourites</string>
+	<string name="url_github" translatable="false">https://github.com/Torro101/MIYO</string>
+	<string name="app_icon_url" translatable="false">https://github.com/Torro101/MIYO/raw/main/app/src/main/ic_launcher-playstore.png</string>
+</resources>

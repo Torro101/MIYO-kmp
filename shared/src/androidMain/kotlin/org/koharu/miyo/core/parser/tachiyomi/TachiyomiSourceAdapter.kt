@@ -289,19 +289,20 @@ class TachiyomiSourceAdapter(
 class KeiyoushiMangaSource(
 	private val apkFileName: String,
 	private val sourceName: String,
-	override val locale: String,
+	/** Display locale — not part of kotatsu [MangaSource] (name-only). */
+	val locale: String,
 ) : MangaSource {
 
 	override val name: String = "keiyoushi:$apkFileName:$sourceName"
 
 	val sourceNameOnly: String get() = sourceName
 
-	override val title: String get() = sourceName
+	val title: String get() = sourceName
 
-	override val contentType: ContentType
+	val contentType: ContentType
 		get() = ContentType.MANGA
 
-	override val isBroken: Boolean
+	val isBroken: Boolean
 		get() = false
 
 	override fun equals(other: Any?): Boolean {

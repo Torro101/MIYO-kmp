@@ -17,7 +17,7 @@ data class BackupSettings(
 	val isCloudBackupEnabled: Boolean = false,
 	val cloudProvider: String = "",
 ) {
-	fun isBackupDue(nowMs: Long = System.currentTimeMillis()): Boolean {
+	fun isBackupDue(nowMs: Long = org.koharu.miyo.core.di.expect.currentDateTime().toEpochMilliseconds()): Boolean {
 		if (!isAutoBackupEnabled) return false
 		if (lastBackupTimestamp == 0L) return true
 		val elapsed = nowMs - lastBackupTimestamp

@@ -20,9 +20,11 @@ import org.koitharu.kotatsu.parsers.model.MangaListFilter
 import org.koitharu.kotatsu.parsers.model.MangaListFilterCapabilities
 import org.koitharu.kotatsu.parsers.model.MangaListFilterOptions
 import org.koitharu.kotatsu.parsers.model.MangaPage
+import org.koitharu.kotatsu.parsers.model.MangaParserSource
 import org.koitharu.kotatsu.parsers.model.MangaSource
 import org.koitharu.kotatsu.parsers.model.SortOrder
 import org.koharu.miyo.core.model.MangaSourceRegistry
+import org.koharu.miyo.core.model.PluginMangaSource
 import java.lang.ref.WeakReference
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -112,11 +114,24 @@ interface MangaRepository {
                                 EmptyMangaRepository(source)
                         }
 
-                        else -> ParserMangaRepository(
-                                parser = loaderContext.newParserInstance(source),
-                                cache = contentCache,
-                                mirrorSwitcher = mirrorSwitcher,
-                        )
+                        is KeiyoushiMangaSource, is PluginMangaSource, is MangaParserSource -> {
+                                val parser = try {
+                                        DynamicParserManager.createParser(source, loaderContext, context)
+                                } catch (_: Throwable) {
+                                        if (source is MangaParserSource) {
+                                                loaderContext.newParserInstance(source)
+                                        } else {
+                                                return EmptyMangaRepository(source)
+                                        }
+                                }
+                                ParserMangaRepository(
+                                        parser = parser,
+                                        cache = contentCache,
+                                        mirrorSwitcher = mirrorSwitcher,
+                                )
+                        }
+
+                        else -> null
                 }
         }
 }

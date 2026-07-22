@@ -46,6 +46,7 @@ import org.koharu.miyo.local.domain.model.LocalManga
 import org.koitharu.kotatsu.parsers.model.Manga
 import org.koitharu.kotatsu.parsers.util.sizeOrZero
 import javax.inject.Inject
+import org.koharu.miyo.core.model.isBroken
 
 private const val FILTER_MIN_INTERVAL = 250L
 

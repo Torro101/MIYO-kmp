@@ -56,7 +56,7 @@ class ManageScrobblingUseCase(
 		scrobblingRepository.updateScrobblingEntry(
 			entry.copy(
 				chaptersRead = chaptersRead,
-				lastUpdated = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+				lastUpdated = System.currentTimeMillis()
 			)
 		)
 	}

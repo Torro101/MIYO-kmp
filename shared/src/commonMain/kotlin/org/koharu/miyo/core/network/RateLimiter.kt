@@ -43,6 +43,6 @@ class RateLimiter(
 	}
 
 	private fun getCurrentTimeMillis(): Long {
-		return kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+		return org.koharu.miyo.core.di.expect.currentDateTime().toEpochMilliseconds()
 	}
 }

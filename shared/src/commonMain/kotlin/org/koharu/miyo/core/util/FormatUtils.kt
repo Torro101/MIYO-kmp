@@ -6,16 +6,16 @@ package org.koharu.miyo.core.util
 object FormatUtils {
 	fun formatNumber(number: Int): String {
 		return when {
-			number >= 1_000_000 -> String.format("%.1fM", number / 1_000_000.0)
-			number >= 1_000 -> String.format("%.1fK", number / 1_000.0)
+			number >= 1_000_000 -> "${trim1(number / 1_000_000.0)}M"
+			number >= 1_000 -> "${trim1(number / 1_000.0)}K"
 			else -> number.toString()
 		}
 	}
 
 	fun formatNumber(number: Long): String {
 		return when {
-			number >= 1_000_000 -> String.format("%.1fM", number / 1_000_000.0)
-			number >= 1_000 -> String.format("%.1fK", number / 1_000.0)
+			number >= 1_000_000L -> "${trim1(number / 1_000_000.0)}M"
+			number >= 1_000L -> "${trim1(number / 1_000.0)}K"
 			else -> number.toString()
 		}
 	}
@@ -23,9 +23,9 @@ object FormatUtils {
 	fun formatFileSize(bytes: Long): String {
 		return when {
 			bytes < 1024 -> "$bytes B"
-			bytes < 1024 * 1024 -> String.format("%.1f KB", bytes / 1024.0)
-			bytes < 1024 * 1024 * 1024 -> String.format("%.1f MB", bytes / (1024.0 * 1024))
-			else -> String.format("%.1f GB", bytes / (1024.0 * 1024 * 1024))
+			bytes < 1024 * 1024 -> "${trim1(bytes / 1024.0)} KB"
+			bytes < 1024L * 1024 * 1024 -> "${trim1(bytes / (1024.0 * 1024))} MB"
+			else -> "${trim1(bytes / (1024.0 * 1024 * 1024))} GB"
 		}
 	}
 
@@ -35,25 +35,21 @@ object FormatUtils {
 		val hours = minutes / 60
 
 		return when {
-			hours > 0 -> String.format("%dh %dm", hours, minutes % 60)
-			minutes > 0 -> String.format("%dm %ds", minutes, seconds % 60)
-			else -> String.format("%ds", seconds)
+			hours > 0 -> "${hours}h ${minutes % 60}m"
+			minutes > 0 -> "${minutes}m ${seconds % 60}s"
+			else -> "${seconds}s"
 		}
 	}
 
-	fun formatPercentage(value: Float): String {
-		return String.format("%.1f%%", value * 100)
-	}
+	fun formatPercentage(value: Float): String = "${trim1(value * 100.0)}%"
 
-	fun formatRating(rating: Float): String {
-		return String.format("%.1f", rating)
-	}
+	fun formatRating(rating: Float): String = trim1(rating.toDouble())
 
 	fun formatChapterNumber(chapter: Float): String {
 		return if (chapter == chapter.toInt().toFloat()) {
 			chapter.toInt().toString()
 		} else {
-			String.format("%.1f", chapter)
+			trim1(chapter.toDouble())
 		}
 	}
 
@@ -63,5 +59,11 @@ object FormatUtils {
 
 	fun formatAuthor(author: String): String {
 		return if (author.isNotBlank()) "by $author" else ""
+	}
+
+	private fun trim1(v: Double): String {
+		val scaled = (v * 10.0).toLong() / 10.0
+		val s = scaled.toString()
+		return if (s.endsWith(".0")) s.dropLast(2) else s
 	}
 }
