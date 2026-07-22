@@ -12,11 +12,15 @@ import java.io.File
 import java.nio.file.Files
 import coil3.util.MimeTypeMap as CoilMimeTypeMap
 
+/**
+ * Android MIME helpers. Coil3 [CoilMimeTypeMap] is opt-in via
+ * `-opt-in=coil3.annotation.InternalCoilApi` in shared/build.gradle.kts.
+ */
 object MimeTypes {
 
 	fun getMimeTypeFromExtension(fileName: String): MimeType? {
-		return CoilMimeTypeMap.getMimeTypeFromExtension(getNormalizedExtension(fileName) ?: return null)
-			?.toMimeTypeOrNull()
+		val ext = getNormalizedExtension(fileName) ?: return null
+		return CoilMimeTypeMap.getMimeTypeFromExtension(ext)?.toMimeTypeOrNull()
 	}
 
 	fun getMimeTypeFromUrl(url: String): MimeType? {

@@ -34,13 +34,16 @@ jobs:
           test -f settings.gradle.kts
           test -f iosApp/Miyo/ContentView.swift
           test -f shared/src/commonMain/kotlin/org/koharu/miyo/MiyoRuntime.kt
+          test -f shared/src/commonMain/kotlin/org/koharu/miyo/MiyoShared.kt
           test -f shared/src/iosMain/kotlin/org/koharu/miyo/MiyoIosBootstrap.kt
+          test -f tools/miyo_kmpify.py
+          test -f docs/KMPIFY_ADAPTATION.md
 
           COMMON=$(find shared/src/commonMain/kotlin -name '*.kt' | wc -l)
           ANDROID=$(find shared/src/androidMain/kotlin -name '*.kt' | wc -l)
           IOS=$(find shared/src/iosMain/kotlin -name '*.kt' | wc -l)
           echo "counts common=$COMMON android=$ANDROID ios=$IOS"
-          test "$COMMON" -ge 80
+          test "$COMMON" -ge 120
           test "$ANDROID" -ge 500
           test "$IOS" -ge 12
 
@@ -49,6 +52,9 @@ jobs:
           fi
           if grep -RInE '^import java\.|^import javax\.' shared/src/commonMain/kotlin --include='*.kt'; then
             echo "FAIL: JVM imports in commonMain"; exit 1
+          fi
+          if grep -RInE 'String\.format|System\.currentTimeMillis|\.javaClass\b' shared/src/commonMain/kotlin --include='*.kt'; then
+            echo "FAIL: JVM-only APIs in commonMain"; exit 1
           fi
 
           for f in Clipboard DateTime DateUtils FileSystem HttpClient ImageLoader Logger Network Notification Platform Preferences Share; do
@@ -59,6 +65,8 @@ jobs:
           test -f shared/src/commonMain/kotlin/org/koharu/miyo/core/nativeio/PlatformNative.kt
           test -f shared/src/androidMain/kotlin/org/koharu/miyo/core/nativeio/PlatformNative.android.kt
           test -f shared/src/iosMain/kotlin/org/koharu/miyo/core/nativeio/PlatformNative.ios.kt
+
+          python3 tools/miyo_kmpify.py expect-check
           echo "structure OK"
 
   compile-common:
@@ -99,8 +107,11 @@ jobs:
           path: shared/build/bin/iosSimulatorArm64/debugFramework/**
           if-no-files-found: error
 
+  # SOFT GATE — see docs/KMPIFY_ADAPTATION.md and docs/KMP_CI.md
+  # Flip continue-on-error to false and add to kmp-required when
+  # :shared:compileDebugKotlinAndroid is reliably green on main.
   compile-shared-android:
-    name: Compile shared (Android — WIP)
+    name: Compile shared (Android — soft)
     runs-on: ubuntu-latest
     needs: [ verify-structure ]
     continue-on-error: true
@@ -130,7 +141,7 @@ jobs:
           if-no-files-found: warn
 
   compile-app-android:
-    name: Compile Android app (WIP)
+    name: Compile Android app (soft)
     runs-on: ubuntu-latest
     needs: [ compile-common ]
     continue-on-error: true
@@ -149,10 +160,12 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon :app:assembleDebug --stacktrace
 
-  # Required green gate for the iOS KMP port
+  # Required green gate for the iOS + common KMP port
   kmp-required:
     name: KMP required gates
     runs-on: ubuntu-latest
     needs: [ verify-structure, compile-common, compile-shared-ios ]
     steps:
-      - run: echo "structure + common metadata + iOS framework OK"
+      - run: |
+          echo "HARD gates green: structure + common metadata + iOS framework"
+          echo "SOFT (non-blocking): shared Android compile, app assemble — see docs/KMP_CI.md"

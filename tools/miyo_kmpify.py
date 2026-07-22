@@ -1,171 +1,219 @@
 #!/usr/bin/env python3
-"""miyo_kmpify.py — MIYO-specific KMP hygiene (not MahmoudRH/kmpify).
+"""
+miyo_kmpify — View-based KMP migration helper for MIYO.
 
-MahmoudRH/kmpify targets Compose Multiplatform migrations.
-MIYO stays on Android Views + XML + Hilt/Room in androidMain, with a
-portable commonMain surface and thin iOS actuals/host.
+Inspired by https://github.com/MahmoudRH/kmpify (Compose MigrationManager),
+but for a **Views / XML / androidMain** KMP layout rather than Compose resources.
 
-This tool:
-  1) Audits common expect declarations vs android/ios actuals
-  2) Scans androidMain for portable candidates (no android/androidx/java/okhttp/hilt/room/work)
-  3) Optionally moves a curated allowlist into commonMain after JVM-API patches
+Scans `shared/src/androidMain/kotlin` for pure-Kotlin files (no Android /
+AndroidX / OkHttp / Hilt / Room / Coil / Material imports) and can list or
+move them into `shared/src/commonMain/kotlin`.
 
 Usage:
-  python3 tools/miyo_kmpify.py audit
-  python3 tools/miyo_kmpify.py candidates
-  python3 tools/miyo_kmpify.py expect-check
+  python3 tools/miyo_kmpify.py list
+  python3 tools/miyo_kmpify.py list --json
+  python3 tools/miyo_kmpify.py move --dry-run
+  python3 tools/miyo_kmpify.py move
+  python3 tools/miyo_kmpify.py check PATH.kt
+
+Exit codes: 0 ok, 1 error, 2 nothing matched.
 """
+
 from __future__ import annotations
 
 import argparse
+import json
 import re
+import shutil
 import sys
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SHARED = ROOT / "shared" / "src"
-COMMON = SHARED / "commonMain" / "kotlin"
-ANDROID = SHARED / "androidMain" / "kotlin"
-IOS = SHARED / "iosMain" / "kotlin"
+ANDROID_MAIN = ROOT / "shared" / "src" / "androidMain" / "kotlin"
+COMMON_MAIN = ROOT / "shared" / "src" / "commonMain" / "kotlin"
 
-BAD_IMPORT = re.compile(
+# Imports / FQCNs that keep a file on androidMain (or require expect/actual).
+BLOCKING_IMPORT_RE = re.compile(
     r"^\s*import\s+("
-    r"android\.|androidx\.|okhttp3\.|okhttp\.|dagger\.|javax\.inject|"
-    r"com\.google\.android|com\.google\.dagger|"
-    r"java\.|javax\.|org\.jsoup|org\.json|coil\.|moshi\.|"
-    r"kotlinx\.coroutines\.android|com\.hannesdorfmann|"
-    r"io\.reactivex|uy\.kohesive\.injekt|org\.acra|com\.squareup\.|"
-    r"org\.koitharu"
+    r"android\."
+    r"|androidx\."
+    r"|dalvik\."
+    r"|com\.google\.android\."
+    r"|dagger\.|javax\.inject\."
+    r"|okhttp3\.|okio\.(?!Path\b|FileSystem\b|ByteString\b|buffer\b|use\b)"  # okio pure types ok
+    r"|coil3?\."
+    r"|com\.google\.android\.material\."
+    r"|org\.json\."
+    r"|java\.(io|nio|net|util\.concurrent|security|text|time)\."
+    r"|javax\."
+    r"|kotlinx\.parcelize\."
+    r"|org\.koitharu\.kotatsu\.parsers\.(?!model\.)"  # parsers non-model often JVM/okhttp
     r")",
-    re.M,
+    re.MULTILINE,
 )
 
-EXPECT_RE = re.compile(
-    r"^\s*expect\s+(?:class|object|fun|val|interface|enum\s+class)\s+(\w+)",
-    re.M,
+# Soft markers — not hard blockers but reported.
+SOFT_MARKERS = (
+    "ConcurrentHashMap",
+    "System.currentTimeMillis",
+    "System.nanoTime",
+    "File(",
+    "java.util.",
+    "java.io.",
+    "java.net.",
 )
-ACTUAL_RE = re.compile(
-    r"^\s*actual\s+(?:class|object|fun|val|interface|enum\s+class)\s+(\w+)",
-    re.M,
-)
+
+PACKAGE_RE = re.compile(r"^\s*package\s+([\w.]+)", re.MULTILINE)
 
 
-def kt_files(base: Path) -> list[Path]:
-    if not base.exists():
-        return []
-    return sorted(base.rglob("*.kt"))
+@dataclass
+class Candidate:
+    rel_android: str
+    package: str
+    lines: int
+    soft_markers: list[str]
+    reason_clean: str
 
 
-def is_portable(text: str) -> bool:
-    if BAD_IMPORT.search(text):
-        return False
-    if re.search(r"\bandroidx?\.", text):
-        return False
-    if re.search(r"\bjava\.(util|io|net|text|time|lang)\.", text):
-        return False
-    if re.search(
-        r"@(Hilt|Inject|AndroidEntryPoint|Module|Dao|Entity|Database|Composable|Parcelize|Worker)\b",
-        text,
-    ):
-        return False
-    if re.search(r"\bSystem\.(currentTimeMillis|nanoTime|out|err)\b", text):
-        return False
-    if "String.format" in text or "javaClass" in text:
-        return False
-    return True
+def read_text(path: Path) -> str:
+    return path.read_text(encoding="utf-8", errors="replace")
 
 
-def cmd_expect_check() -> int:
-    expects: dict[str, list[str]] = {}
-    for p in kt_files(COMMON):
-        text = p.read_text(encoding="utf-8", errors="replace")
-        for m in EXPECT_RE.finditer(text):
-            expects.setdefault(m.group(1), []).append(str(p.relative_to(COMMON)))
-
-    android_actuals = set()
-    ios_actuals = set()
-    for p in kt_files(ANDROID):
-        text = p.read_text(encoding="utf-8", errors="replace")
-        android_actuals.update(ACTUAL_RE.findall(text))
-    for p in kt_files(IOS):
-        text = p.read_text(encoding="utf-8", errors="replace")
-        ios_actuals.update(ACTUAL_RE.findall(text))
-
-    missing = []
-    for name in sorted(expects):
-        a = name in android_actuals
-        i = name in ios_actuals
-        status = "OK" if a and i else "MISSING"
-        if status != "OK":
-            missing.append(name)
-        print(f"{status:8} expect {name:28} android={a} ios={i}  from {expects[name][0]}")
-
-    # trio file check for di/expect
-    trio_ok = True
-    expect_dir = COMMON / "org/koharu/miyo/core/di/expect"
-    for f in sorted(expect_dir.glob("*.kt")) if expect_dir.exists() else []:
-        stem = f.name
-        for side, base in (("android", ANDROID), ("ios", IOS)):
-            ap = base / "org/koharu/miyo/core/di/expect" / stem
-            if not ap.exists():
-                print(f"MISSING {side} file for {stem}")
-                trio_ok = False
-
-    print("---")
-    print(f"expects={len(expects)} missing_names={len(missing)} trio_ok={trio_ok}")
-    return 1 if missing or not trio_ok else 0
+def is_blocking(src: str) -> str | None:
+    m = BLOCKING_IMPORT_RE.search(src)
+    if m:
+        # return the import line for diagnostics
+        line = src[m.start() : src.find("\n", m.start())]
+        return line.strip()
+    # bare android type usage without import (rare)
+    if re.search(r"\bandroid\.(content|os|util|view|widget)\.", src):
+        return "bare android.* type reference"
+    if re.search(r"\bandroidx\.", src):
+        return "bare androidx.* type reference"
+    return None
 
 
-def cmd_candidates() -> int:
-    already = {str(p.relative_to(COMMON)) for p in kt_files(COMMON)}
-    cands = []
-    for p in kt_files(ANDROID):
-        rel = str(p.relative_to(ANDROID))
-        if rel.startswith("org/koharu/miyo/core/di/expect/"):
+def soft_hits(src: str) -> list[str]:
+    hits = []
+    for marker in SOFT_MARKERS:
+        if marker in src:
+            hits.append(marker)
+    return hits
+
+
+def scan() -> list[Candidate]:
+    if not ANDROID_MAIN.is_dir():
+        raise SystemExit(f"androidMain not found: {ANDROID_MAIN}")
+    out: list[Candidate] = []
+    for path in sorted(ANDROID_MAIN.rglob("*.kt")):
+        src = read_text(path)
+        block = is_blocking(src)
+        if block:
             continue
-        if "PlatformNative" in rel:
-            continue
-        if rel in already:
-            continue
-        text = p.read_text(encoding="utf-8", errors="replace")
-        if is_portable(text):
-            cands.append(rel)
-    print(f"portable_candidates_not_in_common={len(cands)}")
-    for rel in cands:
-        print(rel)
+        pkg_m = PACKAGE_RE.search(src)
+        pkg = pkg_m.group(1) if pkg_m else ""
+        rel = path.relative_to(ANDROID_MAIN).as_posix()
+        out.append(
+            Candidate(
+                rel_android=rel,
+                package=pkg,
+                lines=src.count("\n") + 1,
+                soft_markers=soft_hits(src),
+                reason_clean="no android/androidx/okhttp/hilt/room/coil imports",
+            )
+        )
+    return out
+
+
+def common_dest(rel_android: str) -> Path:
+    return COMMON_MAIN / rel_android
+
+
+def cmd_list(as_json: bool) -> int:
+    cands = scan()
+    if as_json:
+        print(json.dumps([asdict(c) for c in cands], indent=2))
+    else:
+        print(f"# pure-kotlin candidates under androidMain: {len(cands)}")
+        print(f"# androidMain={ANDROID_MAIN}")
+        print(f"# commonMain ={COMMON_MAIN}")
+        for c in cands:
+            soft = f"  soft={','.join(c.soft_markers)}" if c.soft_markers else ""
+            dest = common_dest(c.rel_android)
+            exists = " EXISTS" if dest.exists() else ""
+            print(f"{c.rel_android}  ({c.lines} lines){soft}{exists}")
+    return 0 if cands else 2
+
+
+def cmd_check(path: Path) -> int:
+    p = path if path.is_absolute() else (ROOT / path)
+    if not p.is_file():
+        print(f"not a file: {p}", file=sys.stderr)
+        return 1
+    src = read_text(p)
+    block = is_blocking(src)
+    if block:
+        print(f"BLOCKED: {block}")
+        return 1
+    print("CLEAN (candidate for commonMain)")
+    soft = soft_hits(src)
+    if soft:
+        print("soft markers:", ", ".join(soft))
     return 0
 
 
-def cmd_audit() -> int:
-    rc = cmd_expect_check()
-    print()
-    cmd_candidates()
-    for name in ("commonMain", "androidMain", "iosMain"):
-        n = len(list((SHARED / name / "kotlin").rglob("*.kt"))) if (SHARED / name / "kotlin").exists() else 0
-        print(f"count {name}={n}")
-    leaks = []
-    for p in kt_files(COMMON):
-        text = p.read_text(encoding="utf-8", errors="replace")
-        if BAD_IMPORT.search(text) or re.search(r"^\s*import\s+java\.", text, re.M):
-            leaks.append(str(p.relative_to(COMMON)))
-    print(f"common_platform_import_leaks={len(leaks)}")
-    for x in leaks:
-        print(" LEAK", x)
-    return rc
+def cmd_move(dry_run: bool) -> int:
+    cands = scan()
+    if not cands:
+        print("No candidates.")
+        return 2
+    moved = 0
+    skipped = 0
+    for c in cands:
+        src = ANDROID_MAIN / c.rel_android
+        dst = common_dest(c.rel_android)
+        if dst.exists():
+            print(f"SKIP exists: {c.rel_android}")
+            skipped += 1
+            continue
+        print(f"{'DRY ' if dry_run else ''}MOVE {c.rel_android}")
+        print(f"  -> {dst.relative_to(ROOT)}")
+        if not dry_run:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(src), str(dst))
+            # prune empty dirs under androidMain
+            parent = src.parent
+            while parent != ANDROID_MAIN and parent.is_dir() and not any(parent.iterdir()):
+                parent.rmdir()
+                parent = parent.parent
+        moved += 1
+    print(f"done: moved={moved} skipped={skipped} dry_run={dry_run}")
+    return 0
 
 
-def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("command", choices=["audit", "candidates", "expect-check"])
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description="MIYO View-based KMP pure-Kotlin scanner/mover")
+    sub = ap.add_subparsers(dest="cmd", required=True)
+
+    p_list = sub.add_parser("list", help="List pure-Kotlin candidates in androidMain")
+    p_list.add_argument("--json", action="store_true")
+
+    p_move = sub.add_parser("move", help="Move candidates androidMain -> commonMain")
+    p_move.add_argument("--dry-run", action="store_true")
+
+    p_check = sub.add_parser("check", help="Check a single .kt file")
+    p_check.add_argument("path", type=Path)
+
     args = ap.parse_args(argv)
-    if args.command == "audit":
-        return cmd_audit()
-    if args.command == "candidates":
-        return cmd_candidates()
-    if args.command == "expect-check":
-        return cmd_expect_check()
-    return 2
+    if args.cmd == "list":
+        return cmd_list(args.json)
+    if args.cmd == "move":
+        return cmd_move(args.dry_run)
+    if args.cmd == "check":
+        return cmd_check(args.path)
+    return 1
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(main())

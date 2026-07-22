@@ -3,9 +3,14 @@ package org.koharu.miyo.core.util
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.sync.Mutex
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * Per-key mutex map. Uses [ConcurrentHashMap] (JVM/Android).
+ * Keep on androidMain (or jvmMain) — not portable to native without a different map.
+ */
 open class MultiMutex<T : Any> {
 
 	private val delegates = ConcurrentHashMap<T, Mutex>()
@@ -27,6 +32,7 @@ open class MultiMutex<T : Any> {
 		delegates[element]?.unlock()
 	}
 
+	@OptIn(ExperimentalContracts::class)
 	suspend inline fun <R> withLock(element: T, block: () -> R): R {
 		contract {
 			callsInPlace(block, InvocationKind.EXACTLY_ONCE)

@@ -10,7 +10,6 @@ class PausingHandle : AbstractCoroutineContextElement(PausingHandle) {
 	private val paused = MutableStateFlow(false)
 	private val skipError = MutableStateFlow(false)
 
-	@Volatile
 	private var skipAllErrors = false
 
 	val isPaused: Boolean
