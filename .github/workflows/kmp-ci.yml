@@ -22,7 +22,7 @@ jobs:
     name: Verify KMP structure
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Source sets and hygiene
         run: |
@@ -66,13 +66,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ verify-structure ]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: android-actions/setup-android@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: compileKotlinMetadata
         run: |
           chmod +x gradlew
@@ -83,17 +83,17 @@ jobs:
     runs-on: macos-14
     needs: [ verify-structure ]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Link iOS Simulator arm64 framework
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon :shared:linkDebugFrameworkIosSimulatorArm64 --stacktrace
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: shared-ios-simulator-framework
           path: shared/build/bin/iosSimulatorArm64/debugFramework/**
@@ -105,15 +105,15 @@ jobs:
     needs: [ verify-structure ]
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
       - name: Install NDK
         run: yes | sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1" || true
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: compileDebugKotlinAndroid
         id: android_kt
         run: |
@@ -122,7 +122,7 @@ jobs:
       - name: assembleDebug AAR
         if: steps.android_kt.outcome == 'success'
         run: ./gradlew --no-daemon :shared:assembleDebug --stacktrace
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: success()
         with:
           name: shared-debug-aar
@@ -135,15 +135,15 @@ jobs:
     needs: [ compile-common ]
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v4
       - name: Install NDK
         run: yes | sdkmanager --install "ndk;27.0.12077973" "cmake;3.22.1" || true
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: assembleDebug
         run: |
           chmod +x gradlew
