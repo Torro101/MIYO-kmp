@@ -26,18 +26,14 @@ data class PluginMangaSource(val delegate: MangaSource, val jarName: String) : M
 
     val sourceName: String
         get() = delegate.name
-
-    override val locale: String
-        get() = delegate.locale
-
-    override val contentType: ContentType
-        get() = delegate.contentType
-
-    override val title: String
-        get() = delegate.title
-
-    override val isBroken: Boolean
-        get() = delegate.isBroken
+    val locale: String
+        get() = (delegate as? MangaParserSource)?.locale.orEmpty()
+    val contentType: ContentType
+        get() = (delegate as? MangaParserSource)?.contentType ?: ContentType.OTHER
+    val title: String
+        get() = (delegate as? MangaParserSource)?.title ?: delegate.name
+    val isBroken: Boolean
+        get() = (delegate as? MangaParserSource)?.isBroken ?: false
 }
 
 data object LocalMangaSource : MangaSource {
@@ -49,10 +45,10 @@ data object UnknownMangaSource : MangaSource {
 }
 
 data class UnresolvedMangaSource(override val name: String) : MangaSource {
-    override val locale: String get() = ""
-    override val contentType: ContentType get() = ContentType.OTHER
-    override val title: String get() = name
-    override val isBroken: Boolean get() = true
+    val locale: String get() = ""
+    val contentType: ContentType get() = ContentType.OTHER
+    val title: String get() = name
+    val isBroken: Boolean get() = true
 }
 
 data object TestMangaSource : MangaSource {
@@ -203,3 +199,36 @@ fun SpannableStringBuilder.appendIcon(textView: TextView, @DrawableRes resId: In
         }
         return inSpans(ImageSpan(icon, alignment)) { append(' ') }
 }
+
+// Display helpers — kotatsu MangaSource only exposes [name].
+val MangaSource.locale: String
+	get() = when (this) {
+		is MangaParserSource -> locale
+		is PluginMangaSource -> locale
+		is UnresolvedMangaSource -> locale
+		else -> ""
+	}
+
+val MangaSource.contentType: ContentType
+	get() = when (this) {
+		is MangaParserSource -> contentType
+		is PluginMangaSource -> contentType
+		is UnresolvedMangaSource -> contentType
+		else -> ContentType.OTHER
+	}
+
+val MangaSource.title: String
+	get() = when (this) {
+		is MangaParserSource -> title
+		is PluginMangaSource -> title
+		is UnresolvedMangaSource -> title
+		else -> name
+	}
+
+val MangaSource.isBroken: Boolean
+	get() = when (this) {
+		is MangaParserSource -> isBroken
+		is PluginMangaSource -> isBroken
+		is UnresolvedMangaSource -> isBroken
+		else -> false
+	}
