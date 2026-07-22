@@ -33,25 +33,43 @@ ROOT = Path(__file__).resolve().parents[1]
 ANDROID_MAIN = ROOT / "shared" / "src" / "androidMain" / "kotlin"
 COMMON_MAIN = ROOT / "shared" / "src" / "commonMain" / "kotlin"
 
-# Imports / FQCNs that keep a file on androidMain (or require expect/actual).
-BLOCKING_IMPORT_RE = re.compile(
-    r"^\s*import\s+("
-    r"android\."
-    r"|androidx\."
-    r"|dalvik\."
-    r"|com\.google\.android\."
-    r"|dagger\.|javax\.inject\."
-    r"|okhttp3\.|okio\.(?!Path\b|FileSystem\b|ByteString\b|buffer\b|use\b)"  # okio pure types ok
-    r"|coil3?\."
-    r"|com\.google\.android\.material\."
-    r"|org\.json\."
-    r"|java\.(io|nio|net|util\.concurrent|security|text|time)\."
-    r"|javax\."
-    r"|kotlinx\.parcelize\."
-    r"|org\.koitharu\.kotatsu\.parsers\.(?!model\.)"  # parsers non-model often JVM/okhttp
-    r")",
-    re.MULTILINE,
+# Imports that keep a file on androidMain (or need expect/actual).
+_BLOCKING_PREFIXES = (
+    "android.",
+    "androidx.",
+    "dalvik.",
+    "com.google.android.",
+    "dagger.",
+    "javax.inject.",
+    "javax.",
+    "okhttp3.",
+    "coil.",
+    "coil3.",
+    "org.json.",
+    "kotlinx.parcelize.",
+    "java.io.",
+    "java.nio.",
+    "java.net.",
+    "java.util.concurrent.",
+    "java.security.",
+    "java.text.",
+    "java.time.",
 )
+
+# okio: allow a few pure multiplatform symbols; block the rest.
+_OKIO_ALLOWED = {
+    "okio.Path",
+    "okio.FileSystem",
+    "okio.ByteString",
+    "okio.buffer",
+    "okio.use",
+    "okio.Source",
+    "okio.Sink",
+    "okio.BufferedSource",
+    "okio.BufferedSink",
+}
+
+IMPORT_RE = re.compile(r"^\s*import\s+(?:static\s+)?([`\w.*]+)", re.MULTILINE)
 
 # Soft markers — not hard blockers but reported.
 SOFT_MARKERS = (
@@ -80,26 +98,43 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace")
 
 
+def _import_blocked(imp: str) -> str | None:
+    # strip backticks / alias
+    imp = imp.strip().strip("`")
+    if imp.startswith("okio."):
+        base = imp.split(" as ")[0].rstrip(".*")
+        # allow exact multiplatform-ish symbols and star only if we cannot tell
+        if imp == "okio.*" or any(base == a or base.startswith(a + ".") for a in _OKIO_ALLOWED):
+            return None
+        return f"import {imp}"
+    for prefix in _BLOCKING_PREFIXES:
+        if imp == prefix.rstrip(".") or imp.startswith(prefix):
+            return f"import {imp}"
+    # kotatsu-parsers non-model packages tend to pull OkHttp / JVM APIs
+    if imp.startswith("org.koitharu.kotatsu.parsers.") and not imp.startswith(
+        "org.koitharu.kotatsu.parsers.model."
+    ):
+        return f"import {imp}"
+    return None
+
+
 def is_blocking(src: str) -> str | None:
-    m = BLOCKING_IMPORT_RE.search(src)
-    if m:
-        # return the import line for diagnostics
-        line = src[m.start() : src.find("\n", m.start())]
-        return line.strip()
-    # bare android type usage without import (rare)
-    if re.search(r"\bandroid\.(content|os|util|view|widget)\.", src):
+    for m in IMPORT_RE.finditer(src):
+        reason = _import_blocked(m.group(1))
+        if reason:
+            return reason
+    # bare type references without import
+    if re.search(r"(?<![\w.])android\.(content|os|util|view|widget|app|graphics)\.", src):
         return "bare android.* type reference"
-    if re.search(r"\bandroidx\.", src):
+    if re.search(r"(?<![\w.])androidx\.", src):
         return "bare androidx.* type reference"
+    if re.search(r"(?<![\w.])okhttp3\.", src):
+        return "bare okhttp3.* type reference"
     return None
 
 
 def soft_hits(src: str) -> list[str]:
-    hits = []
-    for marker in SOFT_MARKERS:
-        if marker in src:
-            hits.append(marker)
-    return hits
+    return [marker for marker in SOFT_MARKERS if marker in src]
 
 
 def scan() -> list[Candidate]:
@@ -182,13 +217,48 @@ def cmd_move(dry_run: bool) -> int:
         if not dry_run:
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(src), str(dst))
-            # prune empty dirs under androidMain
             parent = src.parent
             while parent != ANDROID_MAIN and parent.is_dir() and not any(parent.iterdir()):
                 parent.rmdir()
                 parent = parent.parent
         moved += 1
     print(f"done: moved={moved} skipped={skipped} dry_run={dry_run}")
+    return 0
+
+
+def cmd_expect_check() -> int:
+    """CI hygiene: every expect file has android + ios actuals."""
+    expect_names = [
+        "Clipboard", "DateTime", "DateUtils", "FileSystem", "HttpClient",
+        "ImageLoader", "Logger", "Network", "Notification", "Platform",
+        "Preferences", "Share",
+    ]
+    missing = []
+    for name in expect_names:
+        for root, label in (
+            (COMMON_MAIN / "org/koharu/miyo/core/di/expect" / f"{name}.kt", "common"),
+            (ANDROID_MAIN / "org/koharu/miyo/core/di/expect" / f"{name}.kt", "android"),
+            (
+                ROOT / "shared/src/iosMain/kotlin/org/koharu/miyo/core/di/expect" / f"{name}.kt",
+                "ios",
+            ),
+        ):
+            if not root.is_file():
+                missing.append(f"{label}:{name}")
+    native = [
+        COMMON_MAIN / "org/koharu/miyo/core/nativeio/PlatformNative.kt",
+        ANDROID_MAIN / "org/koharu/miyo/core/nativeio/PlatformNative.android.kt",
+        ROOT / "shared/src/iosMain/kotlin/org/koharu/miyo/core/nativeio/PlatformNative.ios.kt",
+    ]
+    for p in native:
+        if not p.is_file():
+            missing.append(str(p.relative_to(ROOT)))
+    if missing:
+        print("expect-check FAIL:")
+        for m in missing:
+            print(" ", m)
+        return 1
+    print(f"expect-check OK ({len(expect_names)} trios + PlatformNative)")
     return 0
 
 
@@ -205,13 +275,19 @@ def main(argv: list[str] | None = None) -> int:
     p_check = sub.add_parser("check", help="Check a single .kt file")
     p_check.add_argument("path", type=Path)
 
+    sub.add_parser("expect-check", help="Verify expect/actual trios for CI")
+    sub.add_parser("audit", help="Alias of list")
+    sub.add_parser("candidates", help="Alias of list")
+
     args = ap.parse_args(argv)
-    if args.cmd == "list":
-        return cmd_list(args.json)
+    if args.cmd in ("list", "audit", "candidates"):
+        return cmd_list(getattr(args, "json", False))
     if args.cmd == "move":
         return cmd_move(args.dry_run)
     if args.cmd == "check":
         return cmd_check(args.path)
+    if args.cmd == "expect-check":
+        return cmd_expect_check()
     return 1
 
 

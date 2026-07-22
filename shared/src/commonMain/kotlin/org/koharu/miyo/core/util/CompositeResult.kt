@@ -20,7 +20,8 @@ class CompositeResult private constructor(
 	val isAllFailed: Boolean
 		get() = successCount == 0 && errors.isNotEmpty()
 
-	operator fun plus(result: Result<*>): CompositeResult = CompositeResult(
+	// Fully-qualify kotlin.Result — same package has a custom Result sealed class.
+	operator fun plus(result: kotlin.Result<*>): CompositeResult = CompositeResult(
 		successCount = successCount + if (result.isSuccess) 1 else 0,
 		errors = errors + listOfNotNull(result.exceptionOrNull()),
 	)

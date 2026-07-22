@@ -65,7 +65,8 @@ Each has **androidMain + iosMain** actuals. CI `verify-structure` enforces the f
 After moves, re-run:
 
 ```bash
-python3 tools/miyo_kmpify.py audit
+python3 tools/miyo_kmpify.py expect-check
+python3 tools/miyo_kmpify.py list
 ```
 
 ## CI policy (Android soft gate)

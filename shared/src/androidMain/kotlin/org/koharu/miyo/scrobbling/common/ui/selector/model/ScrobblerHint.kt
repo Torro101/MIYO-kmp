@@ -1,6 +1,8 @@
 package org.koharu.miyo.scrobbling.common.ui.selector.model
-import org.koharu.miyo.list.ui.model.ListModel
+
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import org.koharu.miyo.list.ui.model.ListModel
 
 data class ScrobblerHint(
 	@DrawableRes val icon: Int,

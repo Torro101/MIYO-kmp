@@ -48,13 +48,13 @@ Last full pass: finished layout for Android + iOS (source only; **no Gradle/JDK 
 6. **iosApp**
    - SwiftUI shell, Info.plist, README, starter Xcode project
 
-## Counts (approx after mass-migration hygiene pass)
+## Counts (after portable expand + iOS harden pass)
 
 | Set | .kt |
 |-----|-----|
-| commonMain | ~165 (portable only) |
-| androidMain | ~1024 (full Android app) |
-| iosMain | 13 |
+| commonMain | ~138 (portable only) |
+| androidMain | ~1067 (full Android app) |
+| iosMain | 14 |
 | app | 21 |
 
 See also `docs/KMP_MASS_MIGRATION.md` for the hygiene pass that moved ~79 non-portable files out of commonMain and added shared domain types.

@@ -251,7 +251,7 @@ class TachiyomiSourceAdapter(
 					if (cont.isActive) cont.resume(result) {}
 				},
 				{ error ->
-					if (cont.isActive) cont.resumeWith(Result.failure(error))
+					if (cont.isActive) cont.resumeWith(kotlin.Result.failure(error))
 				},
 			)
 			cont.invokeOnCancellation { subscription.unsubscribe() }
